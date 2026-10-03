@@ -28,6 +28,7 @@ export class GamepadInput implements InputDevice {
   private sprintToggled = false;
   private activePad: Gamepad | null = null;
   private padIndex = -1;
+  private blocked = false;
   private readonly onConnect = (e: GamepadEvent) => {
     this.padIndex = e.gamepad.index;
     this.style = detectGamepadStyle(e.gamepad.id);
@@ -47,8 +48,15 @@ export class GamepadInput implements InputDevice {
   }
 
   private poll(): Gamepad | null {
-    if (!navigator.getGamepads) return null;
-    const pads = navigator.getGamepads();
+    if (this.blocked || !navigator.getGamepads) return null;
+    let pads: (Gamepad | null)[];
+    try {
+      pads = navigator.getGamepads();
+    } catch {
+      // embedded pages can be denied the Gamepad API by permissions policy (throws SecurityError)
+      this.blocked = true;
+      return null;
+    }
     if (this.padIndex >= 0 && pads[this.padIndex]) return pads[this.padIndex];
     for (const p of pads) {
       if (p && p.connected) {
@@ -116,9 +124,13 @@ export class GamepadInput implements InputDevice {
     const pad = this.activePad as (Gamepad & { vibrationActuator?: { playEffect?: (t: string, p: object) => Promise<unknown> } }) | null;
     const act = pad?.vibrationActuator;
     if (!act?.playEffect) return;
-    act
-      .playEffect('dual-rumble', { duration: durationMs, strongMagnitude: strong, weakMagnitude: weak })
-      .catch(() => undefined);
+    try {
+      act
+        .playEffect('dual-rumble', { duration: durationMs, strongMagnitude: strong, weakMagnitude: weak })
+        .catch(() => undefined);
+    } catch {
+      /* not allowed here */
+    }
   }
 
   endFrame(): void {
