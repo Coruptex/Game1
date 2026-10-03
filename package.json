@@ -1,0 +1,24 @@
+{
+  "name": "ember-of-retribution",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ember of Retribution - a stylized isometric pirate Soulslike (Three.js + TypeScript prototype)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}

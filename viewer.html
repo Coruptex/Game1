@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asset Viewer — Ember of Retribution (dev)</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1a22; }
+      #viewer-root { position: fixed; inset: 0; }
+      #viewer-info { position: fixed; left: 8px; top: 8px; color: #fff; font: 12px monospace; text-shadow: 0 1px 2px #000; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="viewer-root"></div>
+    <div id="viewer-info"></div>
+    <script type="module" src="/src/tools/AssetViewer.ts"></script>
+  </body>
+</html>
