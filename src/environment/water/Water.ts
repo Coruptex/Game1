@@ -166,7 +166,8 @@ export class Water {
           float foam = clamp(smoothstep(0.35, 0.8, shore * (0.55 + foamTex * 0.9)) + bands * foamTex * 0.75, 0.0, 1.0);
           col = mix(col, vec3(0.97, 1.0, 1.0), foam * 0.85);
 
-          float alpha = mix(0.3, 0.94, smoothstep(0.2, 6.0, depth));
+          // thin in the shallows so reef colours read (the seabed shader already tints by depth)
+          float alpha = mix(0.16, 0.94, smoothstep(0.4, 7.5, depth));
           alpha = max(alpha, foam * 0.9);
           alpha *= smoothstep(-0.02, 0.06, depth);
           if (alpha < 0.01) discard;

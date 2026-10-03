@@ -79,4 +79,12 @@ describe('PhysicsWorld', () => {
     expect(w.lineOfSight(0, 2, 0, 9, 2, 0)).toBe(false);
     expect(w.lineOfSight(0, 2, 5, 9, 2, 5)).toBe(true);
   });
+
+  it('thin trunks and posts do not break line of sight, thick trunks do', () => {
+    const w = new PhysicsWorld(ground);
+    w.addCircle(5, 0, 0.37, 0, 8, 'plant');
+    expect(w.lineOfSight(0, 2, 0, 9, 2, 0)).toBe(true);
+    w.addCircle(5, 3, 1.6, 0, 8, 'plant');
+    expect(w.lineOfSight(0, 2, 3, 9, 2, 3)).toBe(false);
+  });
 });

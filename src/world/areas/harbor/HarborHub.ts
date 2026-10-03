@@ -20,6 +20,7 @@ import { buildEmberShrineBase } from '../../../environment/architecture/Ancient'
 import { EmberFlame } from '../../../effects/EmberFlame';
 import { addDockPlatforms, placeDockVisuals } from './HarborDocks';
 import { placeHarborDressing } from './HarborDressing';
+import { placeHarborShips } from './HarborShips';
 import { buildChestParts } from '../../../environment/props/Props';
 
 /**
@@ -127,6 +128,9 @@ export const HarborHubArea: AreaDefinition = {
     placeDockVisuals(placer);
     keep.rect(L.quay.minX, L.quay.minZ, L.quay.maxX, L.quay.maxZ + 1);
 
+    await ctx.progress(0.38, 'Mooring the fleet');
+    placeHarborShips(placer, physics, keep);
+
     await ctx.progress(0.4, 'Raising the old stones');
     const ruins = placeHarborRuins(placer, hf, ctx.rng.fork(1), keep);
     for (const f of ruins.flames) {
@@ -178,6 +182,7 @@ export const HarborHubArea: AreaDefinition = {
       physics,
       ground,
       spawn: { x: L.playerStart.x, z: L.playerStart.z, yaw: L.playerStart.yaw, cameraYaw: L.startCameraYaw },
+      titleShot: { x: 9, z: 36, radius: 56, height: 24, yaw: 0.86, swing: 0.22, lookX: 4, lookY: 3, lookZ: 16 },
       regions,
       enemySpawns,
       interactables,

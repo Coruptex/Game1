@@ -11,6 +11,7 @@ import {
   palmFrondTexture,
   rockDetailTexture,
   sailClothTexture,
+  skyEnvironmentTexture,
   stoneBlocksTexture,
   thatchTexture,
   woodGrainTexture,
@@ -149,27 +150,35 @@ export class MaterialLibrary {
       case 'vertexColor':
         return lambert({}, { caustics: true });
       case 'metal':
-        return standard({ color: 0xffffff, metalness: 0.75, roughness: 0.42 });
+        return standard({ color: 0xffffff, metalness: 0.75, roughness: 0.42, envMap: skyEnvironmentTexture(), envMapIntensity: 0.8 });
       case 'gold':
-        return standard({ color: 0xffffff, metalness: 0.95, roughness: 0.28, emissive: 0x3a2400, emissiveIntensity: 0.6 });
+        return standard({
+          color: 0xffffff,
+          metalness: 0.95,
+          roughness: 0.28,
+          emissive: 0x3a2400,
+          emissiveIntensity: 0.6,
+          envMap: skyEnvironmentTexture(),
+          envMapIntensity: 1.1,
+        });
       case 'brass':
-        return standard({ color: 0xffffff, metalness: 0.85, roughness: 0.38 });
+        return standard({ color: 0xffffff, metalness: 0.85, roughness: 0.38, envMap: skyEnvironmentTexture(), envMapIntensity: 0.9 });
       case 'sail':
         return lambert(
           { map: sailClothTexture(), side: THREE.DoubleSide },
-          { cloth: { amplitude: 0.35, frequency: 3, speed: 1.6, billow: 0.6 } },
+          { cloth: { amplitude: 0.35, frequency: 3, speed: 1.6, billow: 0.6, pinEdges: true }, translucency: 0.3 },
         );
       case 'flag':
         return lambert(
           { map: jollyRogerTexture(), side: THREE.DoubleSide, vertexColors: false },
-          { cloth: { amplitude: 0.22, frequency: 9, speed: 7 } },
+          { cloth: { amplitude: 0.22, frequency: 9, speed: 7 }, translucency: 0.25 },
         );
       case 'rope':
         return lambert({ color: Palette.rope });
       case 'thatch':
         return lambert({ map: thatchTexture() });
       case 'cloth':
-        return lambert({ side: THREE.DoubleSide }, { cloth: { amplitude: 0.05, frequency: 5, speed: 2.5 } });
+        return lambert({ side: THREE.DoubleSide }, { cloth: { amplitude: 0.05, frequency: 5, speed: 2.5 }, translucency: 0.25 });
       case 'palmBark':
         return lambert({ map: palmBarkTexture() }, { wind: { sway: 0.4, heightScale: 0.1, flutter: 0 } });
       case 'palmLeaf':

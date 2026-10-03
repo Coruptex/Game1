@@ -53,6 +53,18 @@ Use `MaterialLibrary` names only (never `new THREE.Material` inside asset builde
 - UVs matter for textured materials: map wood grain along the length of planks/posts, stone blocks
   so blocks are ~0.5–0.8 m (`stoneBlocks` texture tile = 6 rows of blocks).
 
+### Shader behaviour builders should know about
+
+- **Wind sway** (`palm*`, `canopy*`, `fern`, `broadLeaf`, `grass`, `flower`) grows with the vertex's
+  prop-local height, read from the `styWindH` attribute. The batcher and the instancer fill it in
+  automatically (`ensureWindHeight`); author it yourself only to damp very tall plants.
+- **Cloth** (`sail`, `flag`, `cloth`) ripples along the vertex **normal**, so point cloth normals the
+  way the billow should go. Sails keep their `v = 0` / `v = 1` edges still (lashed to the yards).
+  Cloth is lit through from its shaded side (translucency).
+- **Metals** (`metal`, `gold`, `brass`) reflect a small procedural sky environment map.
+- **See-through** parts are dithered inside a cylinder between camera and player, and faded out
+  completely when they come within a few metres of the camera lens.
+
 ## Geometry helpers (`src/assets/geometry/GeometryUtils.ts`)
 
 `paint`, `paintGradientY`, `bakeGroundAO`, `jitterColors`, `displace`, `sphericalNormals`, `flatShaded`,

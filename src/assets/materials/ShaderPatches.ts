@@ -32,6 +32,8 @@ export interface ClothPatch {
   speed?: number;
   /** 0: ripple along local Z (flags), 1: billow along local Z using uv.y too (sails) */
   billow?: number;
+  /** Keep the v = 0 / v = 1 edges still (sails lashed to their yards). */
+  pinEdges?: boolean;
 }
 
 export interface RimPatch {
@@ -43,6 +45,8 @@ export interface RimPatch {
 export interface PatchOptions {
   /** Keep un-flipped normals on back faces (fluffy foliage) and add sun translucency. */
   foliage?: boolean;
+  /** Sunlight transmitted through thin surfaces seen from their shaded side (cloth, sails). */
+  translucency?: number;
   wind?: WindPatch;
   cloth?: ClothPatch;
   seeThrough?: boolean;
@@ -109,8 +113,23 @@ float styCaustics(vec2 p, float t) {
 }
 `;
 
-/** Per-vertex prop-local height for wind sway on batched (world-space) geometry. */
+/**
+ * Per-vertex prop-local height driving the wind sway. Static batching merges geometry in world
+ * space, so the height can't come from `position`; see ensureWindHeight().
+ */
 export const WIND_HEIGHT_ATTRIBUTE = 'styWindH';
+
+/**
+ * Gives a geometry used with a wind material its sway-height attribute (if the builder didn't
+ * author one): `position.y - baseY`, measured in the space the geometry is currently in.
+ */
+export function ensureWindHeight(geometry: THREE.BufferGeometry, baseY = 0): void {
+  if (geometry.getAttribute(WIND_HEIGHT_ATTRIBUTE)) return;
+  const pos = geometry.getAttribute('position');
+  const h = new Float32Array(pos.count);
+  for (let i = 0; i < pos.count; i++) h[i] = pos.getY(i) - baseY;
+  geometry.setAttribute(WIND_HEIGHT_ATTRIBUTE, new THREE.BufferAttribute(h, 1));
+}
 
 function windVertex(w: WindPatch): string {
   const base = (w.base ?? 0).toFixed(4);
@@ -120,12 +139,8 @@ function windVertex(w: WindPatch): string {
   return /* glsl */ `
   {
     vec3 styOrigin = (modelMatrix * styInst * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
-    #ifdef USE_INSTANCING
-      float styLocalY = position.y;
-    #else
-      // batched static geometry lives in world space: the batcher bakes the prop-local height
-      float styLocalY = styWindH;
-    #endif
+    // prop-local height (the batcher/scatter fill it; builders may author it to damp tall plants)
+    float styLocalY = styWindH;
     float styH = max(styLocalY - ${base}, 0.0) * ${hs};
     float styPhase = uTime * 1.25 + styOrigin.x * 0.23 + styOrigin.z * 0.19;
     float styGust = 0.75 + 0.25 * sin(uTime * 0.35 + styOrigin.x * 0.02);
@@ -152,7 +167,10 @@ function clothVertex(c: ClothPatch): string {
     float styW = sin(styUv.x * ${freq} - uTime * ${speed} + position.y * 0.6) * 0.6
                + sin(styUv.x * ${freq} * 1.9 - uTime * ${speed} * 1.4) * 0.4;
     float styB = sin(styUv.y * 3.14159) * sin(styUv.x * 3.14159) * ${billow};
-    transformed.z += (styW * styUv.x + styB * (0.8 + 0.2 * sin(uTime * 1.3))) * ${amp} * uWindStrength;
+    ${c.pinEdges ? 'styW *= sin(styUv.y * 3.14159);' : ''}
+    // ripple along the cloth's normal: batched geometry is in world space, so a fixed axis would
+    // make sideways-rotated flags ripple within their own plane
+    transformed += normalize(objectNormal) * (styW * styUv.x + styB * (0.8 + 0.2 * sin(uTime * 1.3))) * ${amp} * uWindStrength;
   }`;
 }
 
@@ -263,6 +281,14 @@ export function applyStylePatches<T extends THREE.Material>(material: T, opts: P
           vec3 styView = normalize(vStyWorldPos - uCamPos);
           float styTl = pow(max(dot(styView, uSunDir), 0.0), 3.0);
           outgoingLight += diffuseColor.rgb * uSunColor * styTl * 0.45;
+        }`);
+    }
+    if (opts.translucency) {
+      outgoingMods.push(/* glsl */ `
+        {
+          vec3 stySunV = normalize((viewMatrix * vec4(uSunDir, 0.0)).xyz);
+          float styBack = max(-dot(normal, stySunV), 0.0);
+          outgoingLight += diffuseColor.rgb * uSunColor * styBack * ${opts.translucency.toFixed(3)};
         }`);
     }
     if (opts.rim) {

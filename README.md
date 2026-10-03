@@ -24,6 +24,9 @@ npm run preview      # http://localhost:4173
 
 Other scripts: `npm test` (unit tests), `npm run typecheck`.
 
+Dev tools (with `npm run dev`): `/viewer.html?asset=<name>` shows any procedural asset (see
+[docs/ASSET_GUIDE.md](docs/ASSET_GUIDE.md)), `/audio-test.html` plays every synthesised sound.
+
 Requires a browser with WebGL2 (current Chrome, Edge, Firefox, Safari). Useful URL options:
 `?quality=low|medium|high` (otherwise auto-detected; also changeable in the pause menu) and
 `?nosave` (don't load or save progress).
@@ -60,6 +63,27 @@ switches its button prompts automatically. Touch controls appear as soon as the 
 * If you die, you respawn at the last shrine and the enemies return.
 * Progress (doubloons, opened chests, kindled shrine) is saved in `localStorage`. Use
   *Pause → Restart Journey* to reset it.
+
+## First milestone: verified
+
+Each item below was exercised in the running game through scripted headless playtests
+(`scripts/playtest.mjs`, real keyboard/mouse events, a fake gamepad and CDP touch input):
+
+* launch → title → play; spawn on the harbour docks with the galleon, turquoise water, coral reef,
+  jungle and ruins in view
+* move with WASD (walk, run, sprint with stamina drain), rotate the camera (Q/E, middle-mouse
+  drag), zoom with the wheel
+* walk the piers, climb the gangplank onto the galleon's deck
+* meet a pirate: it notices you, closes in, strafes and attacks; light/heavy attacks and dodge
+  rolls; you lose health, the pirate staggers and dies and drops doubloons; lock-on with reticle
+* die ("YOU DIED") and respawn at the last kindled shrine with enemies restored
+* kindle and rest at the Ember Shrine (restores health and stamina, sets the respawn point)
+* open a treasure chest (+doubloons)
+* the same actions with an Xbox/PlayStation-layout gamepad and with touch controls; button
+  prompts switch to the active device
+
+Rough render cost (1280×720, all passes): 150–520 draw calls and 0.4–1.4 M triangles depending on
+where you stand (the jungle is the heaviest spot). The low preset trims vegetation and shadows.
 
 ## Project layout
 

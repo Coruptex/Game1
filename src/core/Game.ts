@@ -647,11 +647,19 @@ export class Game {
     const cam = this.cameraController;
     if (!this.player) return;
     if (this.phase === 'title') {
-      // slow cinematic orbit behind the title screen
-      const yaw = this.area.spawn.cameraYaw + Math.sin(this.titleOrbit * 0.05) * 0.6;
+      // slow establishing shot of the area behind the title screen
+      const shot = this.area.titleShot;
+      if (shot) {
+        const t = this.titleOrbit;
+        const a = shot.yaw + Math.sin(t * 0.045) * shot.swing;
+        const camera = cam.camera;
+        camera.position.set(shot.x + Math.sin(a) * shot.radius, shot.height + Math.sin(t * 0.07) * 1.2, shot.z + Math.cos(a) * shot.radius);
+        camera.lookAt(shot.lookX, shot.lookY, shot.lookZ);
+        return;
+      }
       cam.setDistance(26);
       cam.update(this.time.realDelta, { lookYaw: 0, lookPitch: 0, zoom: 0 }, this.player.position, null);
-      cam.yaw = yaw;
+      cam.yaw = this.area.spawn.cameraYaw + Math.sin(this.titleOrbit * 0.05) * 0.6;
       return;
     }
     const input = this.paused || this.respawning ? null : this.input;

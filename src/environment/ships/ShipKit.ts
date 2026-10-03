@@ -539,7 +539,7 @@ export function quad(a: V3, b: V3, c: V3, d: V3, uvs: [number, number][] = [[0, 
 export const ShipColors = {
   iron: 0x3f4245,
   ironDark: 0x2c2e31,
-  ochre: 0xc28f40,
+  ochre: 0xb98a42,
   ochreDark: 0xa8742a,
   deepRed: 0x8e2a20,
   window: 0x1b1712,
@@ -687,6 +687,30 @@ export function cannonKit(len = 1.5, r = 0.14): Kit {
   const g = lathe(prof, 7);
   tone(g, ShipColors.iron, 0.12);
   return [{ m: 'metal', g }];
+}
+
+/** Swivel gun on a short post (origin at the post foot), barrel pointing +Z. */
+export function swivelGunKit(): Kit {
+  const post = new THREE.CylinderGeometry(0.06, 0.08, 0.5, 6);
+  post.translate(0, 0.25, 0);
+  const fork = box(0.22, 0.12, 0.08, 'x').translate(0, 0.55, 0);
+  const prof: Array<[number, number]> = [
+    [0.001, -0.08],
+    [0.07, -0.05],
+    [0.075, 0.0],
+    [0.06, 0.45],
+    [0.075, 0.5],
+    [0.075, 0.6],
+    [0.035, 0.6],
+    [0.035, 0.5],
+  ];
+  const barrel = lathe(prof, 7);
+  barrel.rotateX(Math.PI / 2);
+  barrel.translate(0, 0.64, -0.12);
+  return [
+    { m: 'metal', g: tone(merge([post, fork]), ShipColors.iron, 0.05) },
+    { m: 'brass', g: tone(barrel, Palette.brass, 0.05) },
+  ];
 }
 
 /** Ship's wheel on a pedestal standing on y = 0, wheel plane = XY (helmsman on -Z side). */

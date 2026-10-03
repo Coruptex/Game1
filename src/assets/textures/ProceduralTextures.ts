@@ -903,6 +903,55 @@ export function waterNormalTexture(): THREE.Texture {
 }
 
 // ---------------------------------------------------------------------------
+// Environment
+// ---------------------------------------------------------------------------
+
+/**
+ * Tiny equirectangular "tropical sky" for metal reflections (gold, brass, iron, blades): blue
+ * zenith, bright hazy horizon, turquoise sea / warm sand below and a sun spot. Three converts it
+ * to a PMREM on first use. Only metallic materials use it, so the rest of the look is unchanged.
+ */
+export function skyEnvironmentTexture(): THREE.Texture {
+  return cached('skyEnvironment', () => {
+    const W = 256;
+    const H = 128;
+    const { c, ctx } = canvas(W, H);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#4f9bd0');
+    g.addColorStop(0.36, '#9fd2ec');
+    g.addColorStop(0.49, '#f4f1e2');
+    g.addColorStop(0.52, '#6fc6c0');
+    g.addColorStop(0.7, '#3f8f86');
+    g.addColorStop(1, '#5b5238');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    // a few soft clouds along the horizon band
+    for (let i = 0; i < 14; i++) {
+      const x = (i * 97.3) % W;
+      const y = H * (0.3 + ((i * 37) % 13) / 80);
+      const r = 8 + ((i * 53) % 11);
+      const cg = ctx.createRadialGradient(x, y, 0, x, y, r * 1.6);
+      cg.addColorStop(0, 'rgba(255,255,255,0.55)');
+      cg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = cg;
+      ctx.fillRect(x - r * 2, y - r * 2, r * 4, r * 4);
+    }
+    // the sun: warm hot spot high in the sky
+    const sx = W * 0.62;
+    const sy = H * 0.2;
+    const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 22);
+    sg.addColorStop(0, 'rgba(255,252,236,1)');
+    sg.addColorStop(0.25, 'rgba(255,236,190,0.9)');
+    sg.addColorStop(1, 'rgba(255,230,180,0)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(sx - 24, sy - 24, 48, 48);
+    const t = finish(c, { repeat: false, mipmaps: false });
+    t.mapping = THREE.EquirectangularReflectionMapping;
+    return t;
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Sprites
 // ---------------------------------------------------------------------------
 

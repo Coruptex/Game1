@@ -94,7 +94,7 @@ export function placeHarborDressing(placer: PropPlacer, hf: Heightfield, physics
   put(campfireBase(41), 33.4, 1.4, 0, 1, 1.4);
   fires.push({ x: 33.4 + CAMPFIRE_FIRE.x, y: gy(33.4, 1.4) + CAMPFIRE_FIRE.topY - 0.1, z: 1.4 + CAMPFIRE_FIRE.z });
   put(crate(0, 42), 38.8, 3.2, 0.3, 1, 1);
-  put(barrelGroup(43), 35.2, -4.6, 0.8, 1, 1.6);
+  put(barrelGroup(43), 33.6, -6.8, 0.8, 1, 1.6);
   put(weaponRack(44), 31.6, -2.6, 1.2, 1, 1);
   put(flagpole(45), 30.2, -5.2, 0.4, 1, 0.8);
   put(treasureHeap(46), 41.4, 11.6, 0.7, 1, 1.6);

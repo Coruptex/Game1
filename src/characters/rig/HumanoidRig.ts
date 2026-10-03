@@ -4,6 +4,7 @@ import type { Appearance } from './Appearance';
 import { buildBodyParts, buildWeapon, mergeSimple } from './PartBuilders';
 import type { Pose } from '../animation/Pose';
 import { applyStylePatches } from '../../assets/materials/ShaderPatches';
+import { skyEnvironmentTexture } from '../../assets/textures/ProceduralTextures';
 
 /**
  * Procedural humanoid: all rigid body parts are merged into ONE skinned mesh (each vertex bound
@@ -111,7 +112,14 @@ export class HumanoidRig {
     // --- weapon ----------------------------------------------------------------
     const w = buildWeapon(appearance.weapon);
     if (w) {
-      this.weaponMaterial = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.65, roughness: 0.35 });
+      this.weaponMaterial = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        metalness: 0.65,
+        roughness: 0.35,
+        // (no canvas in headless unit tests)
+        envMap: typeof document === 'undefined' ? null : skyEnvironmentTexture(),
+        envMapIntensity: 0.7,
+      });
       this.weapon = new THREE.Mesh(w.geometry, this.weaponMaterial);
       this.weapon.name = 'weapon';
       this.weapon.castShadow = true;

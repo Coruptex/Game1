@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { ensureStandardAttributes } from '../../assets/geometry/GeometryUtils';
-import { WIND_HEIGHT_ATTRIBUTE } from '../../assets/materials/ShaderPatches';
+import { ensureWindHeight } from '../../assets/materials/ShaderPatches';
 
 export interface BatchOptions {
   castShadow?: boolean;
@@ -34,14 +34,8 @@ export class StaticBatcher {
   add(geometry: THREE.BufferGeometry, material: THREE.Material, matrix?: THREE.Matrix4, opts: BatchOptions = {}): void {
     const g = matrix ? geometry.clone().applyMatrix4(matrix) : geometry;
     ensureStandardAttributes(g);
-    if (material.userData.windSway) {
-      // wind sway grows with height above the prop's base, which merging into world space loses
-      const pos = g.getAttribute('position');
-      const baseY = matrix ? matrix.elements[13] : 0;
-      const h = new Float32Array(pos.count);
-      for (let i = 0; i < pos.count; i++) h[i] = pos.getY(i) - baseY;
-      g.setAttribute(WIND_HEIGHT_ATTRIBUTE, new THREE.BufferAttribute(h, 1));
-    }
+    // wind sway grows with height above the prop's base, which merging into world space loses
+    if (material.userData.windSway) ensureWindHeight(g, matrix ? matrix.elements[13] : 0);
     g.computeBoundingBox();
     g.boundingBox!.getCenter(this.center);
     const cx = Math.floor(this.center.x / this.cellSize);

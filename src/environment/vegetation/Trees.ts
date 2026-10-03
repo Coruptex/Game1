@@ -405,7 +405,7 @@ export function jungleTree(variant = 0): InstancedAsset {
  * The giant tree as a static `PropDefinition` (for trees next to walkable paths): every part uses
  * the dithered see-through variant so the canopy / trunk never hide the player, and the buttress
  * fins get their own box colliders (trunk circle r ≈ 1.2 × trunk radius, h 9).
- * Note: batched props sway with world-space height (wind uses position.y after batching).
+ * (The StaticBatcher bakes the prop-local height for wind, so it sways like the instanced version.)
  */
 export function jungleTreeProp(variant = 0): PropDefinition {
   const v = wrapVariant(variant, JUNGLE.length);
@@ -644,8 +644,8 @@ function buildJungleTree(v: number, cfg: JungleConfig): InstancedAsset {
         detail: cl.r.x > 2.6 ? 1 : 0,
         scale: 0.66,
         uv: CORE_UV.canopy,
-        bottom: shade(rgb(0.24, 0.32, 0.44), 1, warm),
-        top: shade(rgb(0.56, 0.66, 0.52), 1, warm),
+        bottom: shade(rgb(0.2, 0.27, 0.38), 1, warm),
+        top: shade(rgb(0.42, 0.5, 0.4), 1, warm),
         // cores don't cast shadows: sun flecks get through the card gaps (dappled floor)
         target: cores,
       },
@@ -893,7 +893,7 @@ function buildSmallTree(v: number, cfg: SmallTreeConfig): InstancedAsset {
       normalDrop: 0.3,
       upBlend: 0.14,
       randomness: 0.65,
-      core: { detail: 1, scale: 0.64, uv: CORE_UV.canopy, bottom: shade(rgb(0.26, 0.34, 0.46).multiply(cfg.tint), 1, warm), top: shade(rgb(0.58, 0.68, 0.52).multiply(cfg.tint), 1, warm) },
+      core: { detail: 1, scale: 0.64, uv: CORE_UV.canopy, bottom: shade(rgb(0.22, 0.29, 0.4).multiply(cfg.tint), 1, warm), top: shade(rgb(0.46, 0.55, 0.43).multiply(cfg.tint), 1, warm) },
     });
   }
   // a vine or two

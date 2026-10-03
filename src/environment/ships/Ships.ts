@@ -22,6 +22,7 @@ import {
   cannonKit,
   coilKit,
   crateKit,
+  flipFaces,
   fromArrays,
   gratingKit,
   grid,
@@ -38,6 +39,7 @@ import {
   stampMatrix,
   stairsKit,
   sweep,
+  swivelGunKit,
   tone,
   tube,
   wheelKit,
@@ -615,6 +617,20 @@ export function buildGalleon(): PropDefinition {
   stamp(bin, coil, 1.3, FC, 11.6, 2.0, 0, 0, 0.8);
   // ship's wheel on the quarterdeck (helmsman faces the bow)
   stamp(bin, wheelKit(0.62), 0, QD, -10.0);
+  // swivel guns on the quarterdeck rail and at the bow
+  {
+    const sg = swivelGunKit();
+    for (const side of [1, -1]) {
+      for (const [z, yaw] of [
+        [-9.3, side * 1.2],
+        [-14.3, side * 2.2],
+      ]) {
+        const w = hull.wAt(z, S(z));
+        const p = hull.point(w, S(z)).lerp(hull.innerPoint(w, S(z), T), 0.5);
+        stamp(bin, sg, side * p.x, S(z) + 0.06, p.z, yaw, 0, 0, 1, ST);
+      }
+    }
+  }
   // bowsprit bitts on the forecastle
   {
     const bt: THREE.BufferGeometry[] = [];
@@ -1870,81 +1886,10 @@ export function buildShipwreck(): PropDefinition {
     });
   }
   const toWorld = (p: V3): V3 => p.clone().applyMatrix4(M);
-  let bin2Sand: THREE.BufferGeometry | null = null;
-
-  // ----- sand: fills the hull and banks up against it (world space)
-  {
-    // footprint of the hull at sand level: x-range of hull points below y = 0.3, per z row
-    const rows = 34;
-    const zMin = -4.9;
-    const zMax = 6.0;
-    const foot: Array<[number, number] | null> = [];
-    for (let j = 0; j <= rows; j++) {
-      const z = lerp(zMin, zMax, j / rows);
-      if (z < Z0 - 0.05 || z > 5.0) {
-        foot.push(null);
-        continue;
-      }
-      const w = hull.wAt(z, 0.4);
-      const st = hull.station(w);
-      let a = Infinity;
-      let b = -Infinity;
-      for (let k = 0; k <= 16; k++) {
-        const y = lerp(st.D, st.S, k / 16);
-        for (const side of [-1, 1]) {
-          const q = toWorld(V(side * hull.xOf(st, y), y, z));
-          if (q.y > 0.3) continue;
-          a = Math.min(a, q.x);
-          b = Math.max(b, q.x);
-        }
-      }
-      foot.push(Number.isFinite(a) ? [a, b] : null);
-    }
-    const footAt = (z: number): [number, number] | null => foot[Math.round(((z - zMin) / (zMax - zMin)) * rows)] ?? null;
-    const sandH = (x: number, z: number): number => {
-      const n = noise.noise(x * 0.9 + 11.7, z * 0.9 - 4.2) * 0.06 + noise.noise(x * 2.3, z * 2.3) * 0.02;
-      // distance outside the footprint (0 inside), searching neighbouring rows for the ends
-      let d = Infinity;
-      let inside = -1;
-      for (let dz = -1.4; dz <= 1.41; dz += 0.2) {
-        const f = footAt(z + dz);
-        if (!f) continue;
-        const dx = x < f[0] ? f[0] - x : x > f[1] ? x - f[1] : 0;
-        const dd = Math.hypot(dx, dz);
-        if (dd < d) d = dd;
-        if (Math.abs(dz) < 0.11 && dx === 0) inside = (x - (f[0] + f[1]) / 2) / Math.max(0.5, (f[1] - f[0]) / 2);
-      }
-      const level = 0.16 + 0.14 * Math.max(-1, Math.min(1, inside)) + n;
-      if (inside > -1 || d === 0) return level;
-      const reach = z < Z0 + 0.3 ? 1.3 : 0.55;
-      return lerp(0.2 + n, -0.07, smoothstep(0, reach, d));
-    };
-    const g = grid(26, 34, (u, v, out) => {
-      const x = lerp(-3.4, 4.2, u);
-      const z = lerp(-4.9, 6.0, v);
-      out.set(x, sandH(x, z), z);
-    }, (u, v) => [u * 3, v * 3]);
-    // grid faces +u x +v = +x x +z = -y: flip to face up
-    const idx = g.index!;
-    for (let i = 0; i < idx.count; i += 3) {
-      const b = idx.getX(i + 1);
-      idx.setX(i + 1, idx.getX(i + 2));
-      idx.setX(i + 2, b);
-    }
-    g.computeVertexNormals();
-    tone(g, 0xe3ce99, 0.06, 7, 0.8);
-    shadeRGB(g, (_x, y, _z, o) => {
-      const k = 1 - 0.12 * (1 - smoothstep(-0.05, 0.12, y));
-      o[0] = k;
-      o[1] = k * 0.99;
-      o[2] = k * 0.96;
-    });
-    bin2Sand = g;
-  }
 
   // ----- debris on the sand (already in world space)
   const deb = new PartBin();
-  deb.add('vertexColor', bin2Sand!, { castShadow: false });
+  deb.add('vertexColor', wreckSand(hull, toWorld, Z0, noise), { castShadow: false });
   const loose: THREE.BufferGeometry[] = [];
   const planks: Array<[number, number, number, number]> = [
     [-2.7, -1.6, 0.4, 2.1],
@@ -1991,6 +1936,8 @@ export function buildShipwreck(): PropDefinition {
       p.x = -p.x;
       out.copy(toWorld(p));
     }, (u, v) => [u * 0.14, 1 - v]);
+    // normals must point away from the hull: the cloth shader ripples along the vertex normal
+    flipFaces(g);
     tone(g, 0xe8dcc2, 0.08);
     shade(g, (_x, y) => 0.72 + 0.28 * smoothstep(0, 0.8, y));
     deb.add('sail', g);
@@ -2048,4 +1995,76 @@ export function buildShipwreck(): PropDefinition {
   colliders.push({ type: 'box', x: -2.9 + 0.41 * Math.cos(0.9), z: 2.0 - 0.41 * Math.sin(0.9), halfX: 0.44, halfZ: 0.32, yaw: 0.9, yMin: 0, yMax: 0.6, tag: 'barrel' });
   colliders.push({ type: 'box', x: 2.75, z: 2.1, halfX: 0.42, halfZ: 0.42, yaw: 0.6, yMin: 0, yMax: 0.55, tag: 'crate' });
   return { name: 'shipwreck', parts: allParts, colliders };
+}
+
+/**
+ * Sand surface for the wreck (world space): fills the hull and banks up against it, sloping
+ * below the beach level ~0.5 m outside the hull footprint (spilling further at the broken stern).
+ */
+function wreckSand(hull: Hull, toWorld: (p: V3) => V3, Z0: number, noise: Noise2D): THREE.BufferGeometry {
+  // footprint of the hull at sand level: x-range of hull points below y = 0.3, per z row
+  const rows = 34;
+  const zMin = -4.9;
+  const zMax = 6.0;
+  const foot: Array<[number, number] | null> = [];
+  for (let j = 0; j <= rows; j++) {
+    const z = lerp(zMin, zMax, j / rows);
+    if (z < Z0 - 0.05 || z > 5.0) {
+      foot.push(null);
+      continue;
+    }
+    const w = hull.wAt(z, 0.4);
+    const st = hull.station(w);
+    let a = Infinity;
+    let b = -Infinity;
+    for (let k = 0; k <= 16; k++) {
+      const y = lerp(st.D, st.S, k / 16);
+      for (const side of [-1, 1]) {
+        const q = toWorld(V(side * hull.xOf(st, y), y, z));
+        if (q.y > 0.3) continue;
+        a = Math.min(a, q.x);
+        b = Math.max(b, q.x);
+      }
+    }
+    foot.push(Number.isFinite(a) ? [a, b] : null);
+  }
+  const footAt = (z: number): [number, number] | null => foot[Math.round(((z - zMin) / (zMax - zMin)) * rows)] ?? null;
+  const sandH = (x: number, z: number): number => {
+    const n = noise.noise(x * 0.9 + 11.7, z * 0.9 - 4.2) * 0.06 + noise.noise(x * 2.3, z * 2.3) * 0.02;
+    // distance outside the footprint (0 inside), searching neighbouring rows for the ends
+    let d = Infinity;
+    let inside: number | null = null;
+    for (let dz = -1.4; dz <= 1.41; dz += 0.2) {
+      const f = footAt(z + dz);
+      if (!f) continue;
+      const dx = x < f[0] ? f[0] - x : x > f[1] ? x - f[1] : 0;
+      const dd = Math.hypot(dx, dz);
+      if (dd < d) d = dd;
+      if (Math.abs(dz) < 0.11 && dx === 0) inside = (x - (f[0] + f[1]) / 2) / Math.max(0.5, (f[1] - f[0]) / 2);
+    }
+    if (inside !== null) return 0.16 + 0.14 * Math.max(-1, Math.min(1, inside)) + n;
+    const reach = z < Z0 + 0.3 ? 1.3 : 0.55;
+    return lerp(0.2 + n, -0.07, smoothstep(0, reach, d));
+  };
+  const g = grid(26, 34, (u, v, out) => {
+    const x = lerp(-3.4, 4.2, u);
+    const z = lerp(-4.9, 6.0, v);
+    out.set(x, sandH(x, z), z);
+  }, (u, v) => [u * 3, v * 3]);
+  // grid faces +u x +v = +x x +z = -y: flip to face up
+  const idx = g.index!;
+  for (let i = 0; i < idx.count; i += 3) {
+    const b = idx.getX(i + 1);
+    idx.setX(i + 1, idx.getX(i + 2));
+    idx.setX(i + 2, b);
+  }
+  g.computeVertexNormals();
+  tone(g, 0xe3ce99, 0.06, 7, 0.8);
+  shadeRGB(g, (_x, y, _z, o) => {
+    const k = 1 - 0.12 * (1 - smoothstep(-0.05, 0.12, y));
+    o[0] = k;
+    o[1] = k * 0.99;
+    o[2] = k * 0.96;
+  });
+  return g;
 }

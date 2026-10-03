@@ -363,6 +363,8 @@ export class PhysicsWorld {
       if (c.blocksSight === false) continue;
       if (c.yMax < sightY || c.yMin > Math.max(ay, by)) continue;
       if (c.type === 'circle') {
+        // thin things (palm trunks, posts, masts) don't break lock-on or AI sight
+        if (c.radius < 0.5) continue;
         if (segmentCircle(ax, az, bx, bz, c.x, c.z, c.radius * 0.9)) return false;
       } else if (segmentBox(ax, az, bx, bz, c)) {
         return false;

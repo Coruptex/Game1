@@ -36,7 +36,7 @@ export const ATMOSPHERES: Record<string, AtmosphereProfile> = {
     sunIntensity: 2.4,
     skyLight: 0xa6e0c0,
     groundLight: 0x4d6a2c,
-    hemiIntensity: 1.0,
+    hemiIntensity: 1.3,
     fogColor: 0x9cc4a0,
     fogDensity: 0.0125,
     exposure: 1.02,

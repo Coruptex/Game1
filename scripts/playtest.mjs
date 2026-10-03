@@ -1,7 +1,7 @@
 // Scripted gameplay test using the debug API (fixed-step simulation, no real-time dependency).
 // Usage: node scripts/playtest.mjs <scenario.json> [url]
 // Steps: {"eval": js} | {"down": code} | {"up": code} | {"advance": seconds} | {"press": action}
-//        {"shot": file} | {"mouse": "down"|"up", "button": "left"|"right"|"middle"} | {"log": label}
+//        {"shot": file} | {"mouse": "down"|"up", "button": "left"|"right"|"middle"} | {"wheel": dy} | {"sleep": ms} | {"log": label}
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 const require = createRequire(import.meta.url);
@@ -59,6 +59,11 @@ for (const s of steps) {
     await page.mouse.move(640, 360);
     if (s.mouse === 'down') await page.mouse.down({ button: s.button ?? 'left' });
     else await page.mouse.up({ button: s.button ?? 'left' });
+  }
+  if (s.sleep) await page.waitForTimeout(s.sleep);
+  if (s.wheel) {
+    await page.mouse.move(640, 360);
+    await page.mouse.wheel(0, s.wheel);
   }
   if (s.press) await page.evaluate((a) => window.__game.debug.press(a), s.press);
   if (s.touch && cdp) {

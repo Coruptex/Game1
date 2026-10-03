@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { ensureStandardAttributes } from '../../assets/geometry/GeometryUtils';
+import { ensureWindHeight } from '../../assets/materials/ShaderPatches';
 
 export interface InstancePart {
   geometry: THREE.BufferGeometry;
@@ -32,6 +33,7 @@ export class InstancedScatter {
   register(key: string, variant: InstanceVariant): void {
     for (const p of variant.parts) {
       ensureStandardAttributes(p.geometry);
+      if (p.material.userData.windSway) ensureWindHeight(p.geometry);
       p.geometry.computeBoundingSphere();
     }
     this.variants.set(key, variant);

@@ -105,7 +105,7 @@ export const HarborLayout = {
     { type: 'pirateSwordsman', x: -2.5, z: -27, yaw: 0.1 },
     { type: 'pirateSwordsman', x: 15.5, z: -57.5, yaw: 2.6 },
     { type: 'pirateSwordsman', x: 21.5, z: -60.5, yaw: 3.0 },
-    { type: 'pirateSwordsman', x: 1, z: -93, yaw: 0, patrol: [{ x: -3, z: -91.5 }, { x: 4, z: -94.5 }] },
+    { type: 'pirateSwordsman', x: 1, z: -91.5, yaw: 0, patrol: [{ x: -2.5, z: -91.2 }, { x: 3.2, z: -91.6 }] },
     { type: 'pirateSwordsman', x: -41, z: -3, yaw: 1.4 },
   ],
 

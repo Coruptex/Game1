@@ -78,6 +78,18 @@ export interface BuiltArea {
   interactables: InteractableSpawn[];
   /** Ambient particle sources driven by the game's particle system. */
   emitters?: AmbientEmitter[];
+  /** Camera orbit for the title screen: around (x, z) at `radius`/`height`, looking at `look*`. */
+  titleShot?: {
+    x: number;
+    z: number;
+    radius: number;
+    height: number;
+    yaw: number;
+    swing: number;
+    lookX: number;
+    lookY: number;
+    lookZ: number;
+  };
   /** Optional model factories for interactables (fallback models are used otherwise). */
   chestParts?: (seed: number) => ChestParts;
   shrineModel?: () => ShrineModel;

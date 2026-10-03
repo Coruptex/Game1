@@ -12,10 +12,4 @@ export const assets: AssetCatalog = {
   'rowboat-1': () => ({ kind: 'prop', def: buildRowboat(1) }),
   'rowboat-2': () => ({ kind: 'prop', def: buildRowboat(2) }),
   shipwreck: () => ({ kind: 'prop', def: buildShipwreck() }),
-  // TEMP debug (remove): galleon without sails/ropes for collider checks
-  'galleon-debug': () => {
-    const d = buildGalleon();
-    d.parts = d.parts.filter((p) => !['sail', 'rope', 'flag', 'cloth'].includes(p.material));
-    return { kind: 'prop', def: d };
-  },
 };
