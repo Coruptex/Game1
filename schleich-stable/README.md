@@ -30,6 +30,10 @@ is not affiliated with Schleich.
    and order are in [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md).
 4. **Assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
 
+Viewing the assembled model: `docs/assembly_preview.glb` is coloured and opens in any glTF
+viewer. `3mf/assembly_preview.3mf` has all parts at their assembled positions, for viewing
+only; print from the `P..` plates.
+
 ## Documentation
 
 * [docs/SPEC.md](docs/SPEC.md): reference analysis, requirements, dimensions, mechanisms, CAD workflow

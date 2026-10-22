@@ -45,6 +45,7 @@ L = ["# Print plan (Bambu Lab A1)", "",
      "painted.", "",
      "## Plates", "",
      "Print the test plates **T1/T2 first** (see `TESTING.md`) and adjust `config.scad` if needed.", "",
+     "![All print plates (rendered from the plate files)](images/plates.png)", "",
      "| Plate (3MF) | Parts | Colour | Est. time | Est. filament |", "|---|---|---|---|---|"]
 tot_t = defaultdict(float); tot_g = defaultdict(float)
 for pid, p in plates.items():

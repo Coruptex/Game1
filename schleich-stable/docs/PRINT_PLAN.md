@@ -32,6 +32,8 @@ painted.
 
 Print the test plates **T1/T2 first** (see `TESTING.md`) and adjust `config.scad` if needed.
 
+![All print plates (rendered from the plate files)](images/plates.png)
+
 | Plate (3MF) | Parts | Colour | Est. time | Est. filament |
 |---|---|---|---|---|
 | `P01_floor_LF.3mf` | floor_LF | grey | 4 h 25 min | 183 g |

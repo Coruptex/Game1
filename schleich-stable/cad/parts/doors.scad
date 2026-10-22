@@ -84,9 +84,12 @@ module bolt_bar_print() {
     translate([0, 0, 0]) linear_extrude(bolt_s) crect(bolt_x1 - bolt_x0, bolt_s, c);
     translate([bolt_x1 - bolt_x0 - 0.5, -2, 0]) linear_extrude(bolt_s + 4) crect(6.5, bolt_s + 4, 1.2);
 }
-module bolt_bar_world(open = false) {
+// ang > 0: bolt unlocked (slid right) and riding on the opened right leaf
+module bolt_bar_world(ang = 0) {
+    ax = [2 * XC - md_ax[0], md_ax[1]];
+    translate([ax[0], ax[1], 0]) rotate([0, 0, ang]) translate([-ax[0], -ax[1], 0])
     // centred in the loop tunnels: 0.3 mm clearance each side
-    translate([bolt_x0 + (open ? 23 : 0), Y0 - md_face_off - trim_h - 0.6 - bolt_s, md_bar_z - bolt_s / 2])
+    translate([bolt_x0 + (ang > 0 ? 23 : 0), Y0 - md_face_off - trim_h - 0.6 - bolt_s, md_bar_z - bolt_s / 2])
         rotate([90, 0, 0]) translate([0, 0, -bolt_s]) bolt_bar_print();
 }
 

@@ -91,8 +91,8 @@ module inst(n, ang = 0) {
     else if (n == "main_leaf_FR") main_leaf_world(true, ang);
     else if (n == "main_leaf_BR") rot180_c() main_leaf_world(false, ang);
     else if (n == "main_leaf_BL") rot180_c() main_leaf_world(true, ang);
-    else if (n == "bolt_bar_F") bolt_bar_world(ang > 0);
-    else if (n == "bolt_bar_B") rot180_c() bolt_bar_world(ang > 0);
+    else if (n == "bolt_bar_F") bolt_bar_world(ang);
+    else if (n == "bolt_bar_B") rot180_c() bolt_bar_world(ang);
     else if (has(n, "stall_door_")) quad(q) stall_door_world(ang);
     else if (has(n, "casement_")) quad(q) casement_world(ang);
     else if (n == "roof_central_F") c_tent_world();
