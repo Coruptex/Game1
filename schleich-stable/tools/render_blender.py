@@ -2,10 +2,11 @@
 Blender is only a renderer here; nothing is modelled in it.
 
   blender -b -P tools/render_blender.py -- <view> <out.png> [samples]
-views: hero, roof_off, doors_open, roof_lifted, hinge_detail, roof_detail
-Needs: build/placed/*.stl (tools/build.py --placed) and build/render/*.stl
-(tools/render_export.py)."""
-import bpy, os, sys, math, glob
+views: hero, roof_off, doors_open, roof_lifted, hinge_detail, roof_detail, horses
+Needs: build/placed/*.stl (tools/build.py --placed), build/render/*.stl
+(tools/render_export.py), build/dims.json (tools/dims.py) and, for the
+horses view, build/render/horses/*.stl (tools/validate.py)."""
+import bpy, os, sys, math, glob, json
 from mathutils import Vector
 
 argv = sys.argv[sys.argv.index("--") + 1:]
@@ -14,7 +15,9 @@ SAMPLES = int(argv[2]) if len(argv) > 2 else 64
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PL = os.path.join(ROOT, "build", "placed")
 RD = os.path.join(ROOT, "build", "render")
-XC, YC = 272.0, 168.0
+D = json.load(open(os.path.join(ROOT, "build", "dims.json")))
+XC, YC = D["XC"], D["YC"]
+K = D["X3"] / 544.0          # camera distances were tuned on a 544 mm wide stable
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -27,7 +30,8 @@ def material(name, rgb, rough, spec=0.4):
     if "Specular IOR Level" in b.inputs: b.inputs["Specular IOR Level"].default_value = spec
     return m
 
-MATS = {"white": material("white", (0.80, 0.79, 0.75), 0.55),
+MATS = {"horse": material("horse", (0.36, 0.20, 0.10), 0.6),
+        "white": material("white", (0.80, 0.79, 0.75), 0.55),
         "black": material("black", (0.012, 0.012, 0.014), 0.5, 0.3),
         "grey": material("grey", (0.30, 0.295, 0.285), 0.85),
         "roof": material("roof", (0.045, 0.048, 0.055), 0.55, 0.3),
@@ -82,31 +86,43 @@ def load_stable(roof=True, door=None, roof_dz=0.0, side_out=0.0, skip=(), only=N
 bpy.ops.mesh.primitive_plane_add(size=4000, location=(XC, YC, -0.05))
 bpy.context.object.data.materials.append(MATS["ground"])
 
+def rel(o, t, k=K):
+    """camera / target given as offsets from the building centre (v1 scale)"""
+    return (XC + k * o[0], YC + k * o[1], k * o[2]), (XC + k * t[0], YC + k * t[1], k * t[2])
+
+
+HX, HY = D["sd_ax_x"], D["sd_ax_y"]      # stall-door hinge FL (detail view)
 V = {
-    "hero":        dict(cam=(-330, -560, 430), tgt=(282, 150, 120), lens=50),
-    "roof_off":    dict(cam=(560, -330, 690), tgt=(272, 175, 40), lens=42, roof=False,
+    "hero":        dict(cam_tgt=rel((-602, -728, 430), (10, -18, 120)), lens=50),
+    "roof_off":    dict(cam_tgt=rel((288, -498, 690), (0, 7, 40)), lens=42, roof=False,
                         door={"main_leaf": 90, "stall_door": 70, "casement": 70, "bolt_bar": 70}),
-    "doors_open":  dict(cam=(272, -640, 210), tgt=(272, 150, 140), lens=48,
+    "doors_open":  dict(cam_tgt=rel((0, -930, 230), (0, -18, 140)), lens=48,
                         door={"main_leaf": 90, "stall_door": 0, "casement": 90, "bolt_bar": 90}),
-    "roof_lifted": dict(cam=(-430, -520, 560), tgt=(282, 168, 170), lens=46, roof_dz=110, side_out=40),
-    "hinge_detail": dict(cam=(300, 150, 175), tgt=(200, 14, 70), lens=45, roof=False,
+    "roof_lifted": dict(cam_tgt=rel((-640, -700, 760), (10, 0, 160)), lens=46, roof_dz=110 * K, side_out=40 * K),
+    "hinge_detail": dict(cam_tgt=((HX + 110, HY + 138, 175), (HX + 10, HY + 2, 70)), lens=45, roof=False,
                          door={"stall_door": 90},
                          only=["post_jamb_FL", "stall_door_FL", "stall_front_FL", "floor_AF", "floor_LF",
                                "gable_wing_FL", "post_mid_FL", "partition_L", "post_corner_FL", "side_wall_FL"]),
-    "roof_detail": dict(cam=(272, 420, 205), tgt=(272, 168, 238), lens=40, roof_dz=40,
+    "roof_detail": dict(cam_tgt=rel((0, 252, 205), (0, 0, 238)), lens=40, roof_dz=40 * K,
                         only=["roof_central_F", "post_mid_FL", "post_mid_FR", "stall_front_FL", "stall_front_FR",
                               "stall_front_BL", "stall_front_BR", "floor_AF", "floor_AB", "partition_L", "partition_R",
                               "pediment_F", "post_jamb_FL", "post_jamb_FR"]),
+    # design-horse proxies (tools/validate.py) in the stalls, roof off
+    "horses":      dict(cam_tgt=rel((170, -420, 860), (0, 10, 30)), lens=40, roof=False, horses=True,
+                        door={"main_leaf": 90, "stall_door": 90, "casement": 0, "bolt_bar": 90}),
 }
 v = V[VIEW]
 load_stable(roof=v.get("roof", True), door=v.get("door"), roof_dz=v.get("roof_dz", 0),
             side_out=v.get("side_out", 0), skip=v.get("skip", ()), only=v.get("only"))
+if v.get("horses"):
+    for f in sorted(glob.glob(os.path.join(RD, "horses", "horse_??.stl"))):    # stall poses only
+        imp(f, "horse")
 
 # camera
 cam = bpy.data.cameras.new("cam"); cam.lens = v["lens"]; cam.clip_end = 10000
 co = bpy.data.objects.new("cam", cam); sc.collection.objects.link(co); sc.camera = co
-co.location = Vector(v["cam"])
-d = Vector(v["tgt"]) - co.location
+co.location = Vector(v["cam_tgt"][0])
+d = Vector(v["cam_tgt"][1]) - co.location
 co.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
 
 # light: key sun + soft fill from the sky

@@ -330,8 +330,17 @@ def gaps_to(m, placed, names, search=40.0):
     return sorted(out)
 
 
+def save_mesh(m, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    me = m.to_mesh()
+    trimesh.Trimesh(np.asarray(me.vert_properties)[:, :3], np.asarray(me.tri_verts)).export(path)
+
+
 def check_horses(placed, report):
     d = dims()
+    hdir = os.path.join(ROOT, "build", "render", "horses")      # proxies for the "horses" render
+    for f in glob.glob(os.path.join(hdir, "*.stl")):
+        os.remove(f)
     L, W, H, wt, ft = d["horse_l"], d["horse_w"], d["horse_h"], d["wall_t"], d["floor_top"]
     horse = horse_proxy(L, W, H)
     solid = [n for n in placed if not n.startswith(("pin_", "floor_"))]
@@ -349,6 +358,8 @@ def check_horses(placed, report):
         for facing, label in ((aisle, "facing the aisle"), ("-x" if left else "+x", "facing the outer wall")):
             nose_x = (xb - c) if facing == "+x" else (xa + c)
             m = place_horse(horse, (nose_x, yc), ft + 0.05, facing)
+            if label == "facing the aisle":
+                save_mesh(m, os.path.join(hdir, f"horse_{q}.stl"))
             g = gaps_to(m, placed, solid)
             res["stalls"].append({"stall": q, "pose": label, "end_clearance_mm": round(c, 1),
                                   "side_clearance_mm": round((yb - ya - W) / 2, 1),
@@ -382,18 +393,26 @@ def check_horses(placed, report):
         tm = load(door)
         v = tm.vertices[(tm.vertices[:, 0] > d["X1"] + 6)]
         y0 = float(v[:, 1].max())                      # open leaf, aisle-side face
-        y1 = d["sf_ud"]                                 # latch stile edge
+        y1 = d["sf_ud"] - d["stop_bevel"]               # latch stile edge, past its stop bevel
         pas = dict(placed); pas["stall_door_FL"] = (tm, to_mf(tm), tm.bounds)
-        worst = None
+        # the same horse without its top and bottom 5 mm: its gaps are the side room
+        sides = horse ^ mf.Manifold.cube([1000, 1000, H - 10]).translate([-500, -500, 5])
+        door_parts = ["stall_front_FL", "stall_door_FL", "post_jamb_FL"]
+        worst, side = None, None
         # straight out until the nose nearly touches the stall front opposite;
         # by then the head, ears and body have passed the door
         for nx in np.arange(d["X1"] - wt / 2 - 2, d["X2"] - wt / 2 - 3, 5.0):
-            m = place_horse(horse, (nx, (y0 + y1) / 2), d["sill_top"] + 1.0, "+x")
-            g = gaps_to(m, pas, solid, 20)
-            if g and (worst is None or g[0][0] < worst[0]):
-                worst = g[0]
+            for prox, key in ((horse, "w"), (sides, "s")):
+                m = place_horse(prox, (nx, (y0 + y1) / 2), d["sill_top"] + 1.0, "+x")
+                g = gaps_to(m, pas, solid if key == "w" else door_parts, 20)
+                if key == "w" and g and (worst is None or g[0][0] < worst[0]):
+                    worst = g[0]
+                if key == "s" and g and (side is None or g[0][0] < side[0]):
+                    side = g[0]
         res["passages"].append({"what": "horse through stall door FL (open 90 deg)",
-                                "opening_mm": round(y1 - y0, 1), "min_gap": worst})
+                                "opening_mm": f"{y1 - y0:.1f} x {d['stall_door_top'] - d['sill_top']:.0f}",
+                                "passes": worst is None or worst[0] >= 0, "side_room": side,
+                                "head_room_mm": round(d["stall_door_top"] - d["sill_top"] - 1.0 - H, 1)})
     # with rider through the open front main door (leaves at 90 deg)
     rider = horse_proxy(L, W, H, d["rider_h"])
     files = {n: os.path.join(ROOT, "build", "swing", f"{n}_090.stl") for n in ("main_leaf_FL", "main_leaf_FR", "bolt_bar_F")}
@@ -401,6 +420,7 @@ def check_horses(placed, report):
         pas = dict(placed)
         for n, f in files.items():
             tm = load(f); pas[n] = (tm, to_mf(tm), tm.bounds)
+        save_mesh(place_horse(rider, (d["XC"], -0.45 * L), ft + 0.2, "-y"), os.path.join(hdir, "horse_rider.stl"))
         worst = None
         for ny in np.arange(20.0, -L - 30, -5.0):      # nose 20 mm inside -> tail 30 mm outside
             m = place_horse(rider, (d["XC"], ny), ft + 0.2, "-y")
@@ -408,7 +428,8 @@ def check_horses(placed, report):
             if g and (worst is None or g[0][0] < worst[0]):
                 worst = g[0]
         res["passages"].append({"what": "horse with rider through the front main door (open 90 deg)",
-                                "opening_mm": round(2 * (d["XC"] - d["md_ax_x"]) - 7.0, 1), "min_gap": worst})
+                                "opening_mm": f"{2 * (d['XC'] - d['md_ax_x']) - 7.0:.1f} x {d['door_crown_z'] - ft:.0f}",
+                                "passes": worst is None or worst[0] >= 0, "side_room": None, "min_gap": worst})
     report["horses"] = res
     return res
 
@@ -481,12 +502,17 @@ def write_md(rep, path):
         for r in h["lift_out_FL"]:
             bl = r["blocked"]
             L.append(f"| {r['how']} | " + ("free (to 200 mm up)" if not bl else
-                     f"stops after {bl['dz']} mm up / {abs(bl['dx'])} mm out at {bl['by']}") + " |")
+                     f"stops after {bl['dz']} mm" + (f" up and {abs(bl['dx'])} mm out" if bl["dx"] else "") +
+                     f" at {bl['by']}") + " |")
         L += ["", "Led through the doors (horse lifted 1 mm over the 3 mm sill):", ""]
-        L += ["| passage | clear opening mm | smallest gap on the way (mm, part) |", "|---|---|---|"]
+        L += ["| passage | clear opening w x h mm | passes | smallest gap while moving through |", "|---|---|---|---|"]
         for p in h["passages"]:
-            g = p["min_gap"]
-            L.append(f"| {p['what']} | {p['opening_mm']} | " + (f"{g[0]} ({g[1]})" if g else "> 20") + " |")
+            if p.get("side_room") is not None:
+                gap = f"{p['side_room'][0]} mm at the sides ({p['side_room'][1]}), {p['head_room_mm']} mm head room"
+            else:
+                g = p.get("min_gap")
+                gap = f"{g[0]} mm ({g[1]})" if g else "> 20 mm"
+            L.append(f"| {p['what']} | {p['opening_mm']} | {'yes' if p['passes'] else '**NO**'} | {gap} |")
         L.append(f"\nThe rider height ({h['rider_h']:g} mm above the floor) is an estimate.")
     L += ["", "## Roof lift-off (others in place)", "",
           "Central units lift straight up. Side units lift a few mm (off their 1.6 mm tabs) under the",

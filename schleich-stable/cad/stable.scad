@@ -45,7 +45,7 @@ module echo_dims() {
          ["stall_door_w", stall_door_w], ["stall_door_top", stall_door_top],
          ["door_spring_z", door_spring_z], ["door_crown_z", door_crown_z],
          ["horse_l", horse_l], ["horse_w", horse_w], ["horse_h", horse_h], ["rider_h", rider_h],
-         ["sd_ax_x", sd_ax[0]], ["sd_ax_y", sd_ax[1]], ["sf_ud", sf_ud], ["md_ax_x", md_ax[0]]];
+         ["sd_ax_x", sd_ax[0]], ["sd_ax_y", sd_ax[1]], ["sf_ud", sf_ud], ["stop_bevel", stop_bevel], ["md_ax_x", md_ax[0]]];
     for (e = d) echo(str("DIM ", e[0], "=", e[1]));
 }
 if (part == "dims") echo_dims();

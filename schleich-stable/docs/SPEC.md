@@ -1,7 +1,11 @@
 # Technical specification
 
-Scope: a modular, 3D-printable toy horse stable for Schleich-size figures,
+Scope: a compact, modular, 3D-printable toy horse stable for Schleich-size figures,
 printed on a Bambu Lab A1 (256 x 256 x 256 mm, 0.4 mm nozzle), in PLA/PLA+.
+
+This describes the **compact version (v2)**. Its dimensions come from the horse figures; the
+derivation and the comparison with the reference and with the first, full-size version (v1)
+are in [`DIMENSION_PLAN.md`](DIMENSION_PLAN.md).
 
 ## 1. Reference analysis
 
@@ -62,29 +66,25 @@ and the cobbled aisle.
 
 ## 2. Figure sizes (design inputs)
 
-Retailer listings, so sizes are approximate and vary by model:
+Retailer listings of ten figures are in `DIMENSION_PLAN.md`, with sources. The **design horse**
+is 170 x 53 x 120 mm: the longest (Shire stallion 13734), the widest (Friesian stallion
+13975) and the tallest (Shire) listed figures combined. Most horses are 133-155 x 33-50 x
+95-115 mm. Estimates, not published: ear tips 40-50 mm behind the nose; mounted rider
+145-160 mm to the top of the helmet (155 mm is used in the checks).
 
-| Figure | L x W x H (cm) |
-|---|---|
-| Arabian stallion 13981 | 15 x 4.5 x 10 |
-| Friesian stallion 13975 | 15.5 x 5.3 x 11.2 |
-| Andalusian stallion 13821 | 14 x 5 x 11.5 |
-| Shire stallion 13734 (largest common) | about 17 x 4 x 12 |
-| Mares | 13-14.5 x 3.4-4.5 x 10-11.2 |
-
-Design envelope: horse up to **170 x 55 x 125 mm**. The mounted-rider height (helmet top) is
-estimated at 145-160 mm. This is an estimate: no published rider-figure height was found.
+The design horse is a parameter (`horse_l`, `horse_w`, `horse_h` in `config.scad`).
+`tools/validate.py` places a proxy of it in every stall and through the doors.
 
 ## 3. Requirements and how they are met
 
 | # | Requirement | Solution |
 |---|---|---|
-| 1 | Schleich-size horses | Stall 185 x 165 mm between walls; aisle 165 mm between stall fronts; main door 152 mm wide, 182 mm clear at the crown and 152 mm at the springing; tie beam 209 mm above the floor |
+| 1 | Schleich-size horses, compact | Stall 173 x 113 mm between walls (design horse + 1.6 mm at each end, + 30 mm at each side); stall door 72 x 125 mm (62 mm passage when open); aisle 113 mm; main door 100 mm wide, 160 mm clear at the crown; outer eave 116 mm above the floor. All checked with the horse proxy |
 | 2 | Attractive, coherent | Reference-inspired facade, textures, black trim by filament change |
 | 3 | Sturdy | 16 mm posts in 6-28 mm deep sockets; 2.8 mm panels held on three or four edges; 8 mm sandwich floor; interlocking floor tiles |
-| 4 | Printable on the A1 | 28 unique parts, all <= 231 x 215 mm footprint, <= 240 mm tall; checked in `docs/VALIDATION.md` |
+| 4 | Printable on the A1 | 26 unique parts, all <= 197 x 207 mm footprint, <= 216 mm tall; checked in `docs/VALIDATION.md` |
 | 5 | Roof removable without tools | 6 gravity-seated roof units, located by tabs/pockets and post notches |
-| 6 | Stall doors open/close | Knuckle hinges with a full-length pin, 0-90 deg (stops at the closed main door) |
+| 6 | Stall doors open/close | Knuckle hinges with a full-length pin, 0-90 deg; facing doors hinge at opposite ends so all can be open at once in the narrow aisle |
 | 7 | Other doors functional | Main double doors 0-105 deg with slide bolt; casement windows 0-150 deg |
 | 8 | No excessively thin walls | Walls 2.8 mm (2.25 mm at board grooves), posts 16 mm, roof 2.4-3.6 mm |
 | 9 | Straightforward assembly | Slide-in panels, drop-in pins, one assembly order (`docs/ASSEMBLY.md`) |
@@ -94,27 +94,32 @@ estimated at 145-160 mm. This is an estimate: no published rider-figure height w
 
 ## 4. Architecture
 
-Grid of post centre lines (mm): X0 = 0, X1 = 188, X2 = 356, X3 = 544; Y0 = 0, Y1 = 168, Y2 = 336.
+Grid of post centre lines (mm): X0 = 0, X1 = 176, X2 = 292, X3 = 468; Y0 = 0, Y1 = 116, Y2 = 232.
 
 | Module | Qty | Notes |
 |---|---|---|
 | Floor tiles | 6 | 3 x 2 grid; aisle: cobbles, stalls: rubber-mat grid; perimeter stone plinth (22 mm) with wall grooves; post sockets straddle the tile joints |
-| Posts | 12 | 16 x 16 mm, printed upright: 4 corner, 2 side-mid, 4 door-jamb (with hinge knuckles), 2 mid-aisle; aisle posts bevelled 45 deg under the central roof |
+| Posts | 12 | 16 x 16 mm, printed upright: 4 corner, 2 side-mid, 4 door-jamb (main-door knuckles; the front-left and back-right ones also carry a stall door), 2 mid-aisle (each carries a stall door); aisle posts bevelled 45 deg under the central roof |
 | Side walls | 4 | Barred arched window |
 | Gable wings | 4 | Casement window with hinge knuckles; sloped top carries the side roof |
 | Partitions | 2 | Horizontal boards with a bar window; sloped top carries the side roofs |
-| Stall fronts | 4 | Portal frame: boards, bars, latch stile, sill, gallery with knee braces, roof beam with tabs |
+| Stall fronts | 4 | One part, rotated copies: door opening, latch stile, barred side section, sill, gallery with knee braces, roof beam with tabs |
 | Pediments | 2 | Door arch, round gable window, name plate; rake carries the central roof |
 | Main door leaves | 4 | 2x2 panes, Z-brace, strap hinges; slide-bolt loops |
-| Stall doors | 4 | Boards, bars, neck yoke; click latch; stop bevel |
+| Stall doors | 4 | One part: boards, bars, neck yoke; click latch; stop bevel |
 | Casements | 4 | 4 panes |
 | Bolt bars | 2 | Slide through the loops of both leaves |
 | Central roof units | 2 | 45 deg, skylights, ridge roll, barge boards; the rear end frame is a truss notched over the mid posts |
 | Side roof units | 4 | 20 deg lean-to, shingles |
 
-Main heights above the table: floor 8, plinth 30, side eaves 142, central eaves 229,
-apex (roof underside) 321, ridge about 329 mm.
-Footprint: base 565 x 357 mm, roof 577 x 363 mm.
+Main heights above the table: floor 8, plinth 26, side eaves 124, central eaves 202,
+apex (roof underside) 268, ridge about 275 mm.
+Footprint: base 489 x 253 mm; overall 497 x 268 x 276 mm including the roof eaves and the door bolts.
+
+**Stall-door arrangement.** Seen from the aisle, every stall door hinges on the left of its
+stall front. The left-hand doors are therefore at the gables and the right-hand doors at the
+middle posts. Facing doors never meet, so the aisle can be narrow. The building has 180 deg
+rotational symmetry (front-left = back-right, front-right = back-left).
 
 ## 5. Mechanisms
 
@@ -143,8 +148,9 @@ Footprint: base 565 x 357 mm, roof 577 x 363 mm.
 
 ### Main doors
 * The leaves close against the back of the pediment (4 mm overlap) and are locked by a
-  sliding **bolt bar** through loops on both leaves. The knob is a stop; the bar stays on the
-  right leaf when unlocked.
+  sliding **bolt bar** (37 mm) through a loop on the left leaf and a long loop on the right
+  leaf. The knob is the stop when locking; unlocked, the bar slides 13 mm right and stays on
+  the right leaf, clear of the hinge.
 
 ### Removable roof
 * Six units: 2 central "tents" and 4 side panels. All are gravity-seated, with nothing to
@@ -153,8 +159,8 @@ Footprint: base 565 x 357 mm, roof 577 x 363 mm.
   end-frame notches straddle the mid posts (locate in X and Y). Tabs on the stall-front beams
   (3.5 mm) enter pockets in the slopes. Lift straight up.
 * Side: 1.6 mm tabs on the gable-wing and partition rakes enter pockets in the panel
-  underside. The side units lift about 6 mm under the central eaves and then pull outward,
-  or lift freely once the central unit is off.
+  underside. The side units lift about 4-6 mm under the central eaves and then pull outward
+  (checked: 3 mm up, then 60 mm out), or lift freely once the central unit is off.
 
 ### Structural joints
 * **Panels to posts:** plain grooves, 3.2 mm wide (0.2 mm per side), 5 mm deep. Panels slide
@@ -179,8 +185,8 @@ Footprint: base 565 x 357 mm, roof 577 x 363 mm.
 
 ## 7. Safety
 
-* Every pin, bar and part can be removed, but none is glued. The **hinge pins (1.75 mm, 33-146 mm long)
-  and the 63 mm bolt bars are small, long parts**. They are captured when assembled, but
+* Every pin, bar and part can be removed, but none is glued. The **hinge pins (1.75 mm, 30-126 mm long)
+  and the 37 mm bolt bars are small parts**. They are captured when assembled, but
   are a hazard for children under 3. The latch has no loose parts.
 * Exposed corners are rounded or chamfered: base corners r4, roof eave corners r4, door
   corners r1.2, post edges chamfered 1.2 mm, plinth edges chamfered.
@@ -198,5 +204,5 @@ text, the Customizer works, there is no extra runtime, and booleans are robust. 
 would add fillets and STEP export, but it is a heavier install for the user, and its fillet
 operations fail more often on textured geometry. To keep the old CGAL kernel fast, the
 geometry is built 2D-first: each texture is a single extruded profile. With CGAL a full
-build takes about 3 minutes on 4 cores; OpenSCAD 2023+ with `--backend manifold` is much
+build of the compact version takes about 1 minute on 4 cores; OpenSCAD 2023+ with `--backend manifold` is much
 faster. Validation uses Python (trimesh + manifold3d); estimates use PrusaSlicer.

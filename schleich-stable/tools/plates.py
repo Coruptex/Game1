@@ -13,49 +13,113 @@ sys.path.insert(0, os.path.dirname(__file__))
 from slice import slice_one  # noqa: E402
 
 LO, HI = 6.0, 250.0          # usable bed area (mm) incl. brim margin
+GAP = 6.0                    # between parts on a plate (flat parts)
 
-# plate id, colour, brim mm, note, [(part, x_min, y_min, rot_deg)]
-PLATES = [
-    ("P01_floor_LF", "grey", 0, "", [("floor_LF", 24, 34, 0)]),
-    ("P02_floor_AF", "grey", 0, "", [("floor_AF", 34, 34, 0)]),
-    ("P03_floor_RF", "grey", 0, "", [("floor_RF", 24, 34, 0)]),
-    ("P04_floor_LB", "grey", 0, "", [("floor_LB", 24, 34, 0)]),
-    ("P05_floor_AB", "grey", 0, "", [("floor_AB", 34, 34, 0)]),
-    ("P06_floor_RB", "grey", 0, "", [("floor_RB", 24, 34, 0)]),
-    ("P07_posts_short", "black", 5, "upright", [("post_corner", 80, 90, 0), ("post_corner", 120, 90, 0), ("post_corner", 160, 90, 0),
-                                               ("post_corner", 80, 130, 0), ("post_sidemid", 120, 130, 0), ("post_sidemid", 160, 130, 0)]),
-    ("P08_posts_tall", "black", 5, "upright, 240 mm", [("post_jamb_L", 65, 85, 0), ("post_jamb_L", 112, 85, 0), ("post_jamb_R", 159, 85, 0),
-                                                       ("post_jamb_R", 65, 135, 0), ("post_mid", 116, 140, 0), ("post_mid", 163, 140, 0)]),
-    ("P09_side_walls", "white", 0, "trim", [("side_wall", 47, 8, 0), ("side_wall", 47, 130, 0)]),
-    ("P10_side_walls", "white", 0, "trim", [("side_wall", 47, 8, 0), ("side_wall", 47, 130, 0)]),
-    ("P11_gable_wing_A", "white", 0, "trim", [("gable_wing_A", 37, 36, 0)]),
-    ("P12_gable_wing_A", "white", 0, "trim", [("gable_wing_A", 37, 36, 0)]),
-    ("P13_gable_wing_B", "white", 0, "trim", [("gable_wing_B", 37, 36, 0)]),
-    ("P14_gable_wing_B", "white", 0, "trim", [("gable_wing_B", 37, 36, 0)]),
-    ("P15_partition", "white", 0, "trim", [("partition", 37, 26, 0)]),
-    ("P16_partition", "white", 0, "trim", [("partition", 37, 26, 0)]),
-    ("P17_stall_front_A", "white", 0, "trim", [("stall_front_A", 47, 12, 0)]),
-    ("P18_stall_front_A", "white", 0, "trim", [("stall_front_A", 47, 12, 0)]),
-    ("P19_stall_front_B", "white", 0, "trim", [("stall_front_B", 47, 12, 0)]),
-    ("P20_stall_front_B", "white", 0, "trim", [("stall_front_B", 47, 12, 0)]),
-    ("P21_pediment", "white", 0, "trim", [("pediment", 47, 48, 0)]),
-    ("P22_pediment", "white", 0, "trim", [("pediment", 47, 48, 0)]),
-    ("P23_doors_1", "black", 0, "", [("main_leaf_A", 8, 30, 0), ("main_leaf_B", 90, 30, 0),
-                                     ("stall_door_A", 172, 8, 0), ("casement_A", 180, 150, 0)]),
-    ("P24_doors_2", "black", 0, "", [("main_leaf_A", 8, 30, 0), ("main_leaf_B", 90, 30, 0),
-                                     ("stall_door_B", 172, 8, 0), ("casement_B", 180, 150, 0)]),
-    ("P25_doors_3", "black", 0, "", [("stall_door_A", 10, 10, 0), ("stall_door_B", 94, 10, 0),
-                                     ("casement_A", 10, 150, 0), ("casement_B", 80, 150, 0),
-                                     ("bolt_bar", 150, 160, 0), ("bolt_bar", 150, 185, 0)]),
-    ("P26_roof_central", "roof", 5, "", [("roof_central", 20, 37, 0)]),
-    ("P27_roof_central", "roof", 5, "", [("roof_central", 20, 37, 0)]),
-    ("P28_roof_side_A", "roof", 0, "", [("roof_side_A", 24, 37, 0)]),
-    ("P29_roof_side_A", "roof", 0, "", [("roof_side_A", 24, 37, 0)]),
-    ("P30_roof_side_B", "roof", 0, "", [("roof_side_B", 24, 37, 0)]),
-    ("P31_roof_side_B", "roof", 0, "", [("roof_side_B", 24, 37, 0)]),
+# Print groups. One colour per plate; parts of a group are packed onto as
+# few plates as possible. (prefix, colour, brim mm, note, gap, [(part, qty)])
+GROUPS = [
+    ("floor_LF", "grey", 0, "", GAP, [("floor_LF", 1)]),
+    ("floor_AF", "grey", 0, "", GAP, [("floor_AF", 1)]),
+    ("floor_RF", "grey", 0, "", GAP, [("floor_RF", 1)]),
+    ("floor_LB", "grey", 0, "", GAP, [("floor_LB", 1)]),
+    ("floor_AB", "grey", 0, "", GAP, [("floor_AB", 1)]),
+    ("floor_RB", "grey", 0, "", GAP, [("floor_RB", 1)]),
+    # upright posts: wide spacing for brims and cooling
+    ("posts_short", "black", 5, "upright", 26, [("post_corner", 4), ("post_sidemid", 2)]),
+    ("posts_tall", "black", 5, "upright", 26, [("post_jamb_L", 2), ("post_jamb_R", 2), ("post_mid", 2)]),
+    ("walls", "white", 0, "trim", GAP, [("stall_front", 4), ("partition", 2), ("gable_wing_A", 2), ("gable_wing_B", 2),
+                                          ("pediment", 2), ("side_wall", 4)]),
+    ("doors", "black", 0, "", GAP, [("main_leaf_A", 2), ("main_leaf_B", 2), ("stall_door", 4),
+                                     ("casement_A", 2), ("casement_B", 2), ("bolt_bar", 2)]),
+    ("roof_central", "roof", 5, "", GAP, [("roof_central", 2)]),
+    ("roof_side", "roof", 0, "", GAP, [("roof_side_A", 2), ("roof_side_B", 2)]),
 ]
 TEST_PLATES = [("T1_test_hinges_latches", "any", 3, "", [("tests/plate_T1", None, None, 0)]),
                ("T2_test_fits", "any", 3, "", [("tests/plate_T2", None, None, 0)])]
+
+
+def footprint(part):
+    m = trimesh.load(os.path.join(ROOT, "stl", part + ".stl"), force="mesh")
+    return m.extents[0], m.extents[1]
+
+
+ORDERS = [lambda t: -t[1] * t[2],                  # area
+          lambda t: (-max(t[1], t[2]), -min(t[1], t[2])),
+          lambda t: (-min(t[1], t[2]), -max(t[1], t[2])),
+          lambda t: (-t[2], -t[1]), lambda t: (-t[1], -t[2])]
+
+
+def pack(items, gap):
+    """Shelf packing, several orderings tried; the fewest plates wins (ties:
+    the fullest first plates, i.e. the emptiest last plate)."""
+    best = None
+    for key in ORDERS:
+        for flat in (True, False):
+            r = pack_once(sorted(items, key=key), gap, flat)
+            score = (len(r), len(r[-1]))
+            if best is None or score < best[0]:
+                best = (score, r)
+    return best[1]
+
+
+def pack_once(items, gap, flat=True):
+    """Shelf packing: items [(part, w, h)] in the given order -> plates
+    [[(part, x, y, rot)]]; each part may be turned 90 deg to fit a shelf.
+    flat: a new shelf lays the part on its long side (low shelves);
+    otherwise parts keep their own orientation when they fit."""
+    W = HI - LO
+    def shelf_orients(w, h):
+        o = [(w, h, 0), (h, w, 90)]
+        return sorted(o, key=lambda t: t[1]) if flat else o
+    plates = []                       # each: {"shelves": [[y, h, x_used]], "y_used": float, "parts": []}
+    for part, w, h in items:
+        placed = False
+        for pl in plates:
+            for sh in pl["shelves"]:
+                for (pw, ph, rot) in ((w, h, 0), (h, w, 90)):
+                    if ph <= sh[1] + 1e-6 and sh[2] + pw <= W + 1e-6:
+                        pl["parts"].append((part, LO + sh[2], LO + sh[0], rot))
+                        sh[2] += pw + gap
+                        placed = True
+                        break
+                if placed:
+                    break
+            if not placed:
+                for (pw, ph, rot) in shelf_orients(w, h):
+                    if pw <= W and pl["y_used"] + ph <= W + 1e-6:
+                        pl["shelves"].append([pl["y_used"], ph, pw + gap])
+                        pl["parts"].append((part, LO, LO + pl["y_used"], rot))
+                        pl["y_used"] += ph + gap
+                        placed = True
+                        break
+            if placed:
+                break
+        if not placed:
+            pw, ph, rot = min(((w, h, 0), (h, w, 90)), key=lambda t: t[1] if t[0] <= W else 1e9)
+            if pw > W or ph > W:
+                raise SystemExit(f"{part} does not fit the bed ({w:.0f} x {h:.0f} mm)")
+            plates.append({"shelves": [[0.0, ph, pw + gap]], "y_used": ph + gap, "parts": [(part, LO, LO, rot)]})
+    # centre each plate's content on the bed
+    out = []
+    for pl in plates:
+        out.append(pl["parts"])
+    return out
+
+
+def plan():
+    """[(plate id, colour, brim, note, [(part, x, y, rot)])], numbered P01..."""
+    res, k = [], 1
+    for prefix, colour, brim, note, gap, parts in GROUPS:
+        items = []
+        for part, q in parts:
+            w, h = footprint(part)
+            items += [(part, w, h)] * q
+        plates = pack(items, gap)
+        for i, pl in enumerate(plates):
+            suffix = f"_{i + 1}" if len(plates) > 1 else ""
+            res.append((f"P{k:02d}_{prefix}{suffix}", colour, brim, note, pl))
+            k += 1
+    return res
 
 
 def place(part, x, y, rot):
@@ -69,8 +133,19 @@ def place(part, x, y, rot):
     return m
 
 
+def centre(meshes):
+    """shift a whole plate so its content is centred on the bed"""
+    lo = np.min([m.bounds[0] for _, m in meshes], axis=0)
+    hi = np.max([m.bounds[1] for _, m in meshes], axis=0)
+    d = [(LO + HI) / 2 - (lo[0] + hi[0]) / 2, (LO + HI) / 2 - (lo[1] + hi[1]) / 2, 0]
+    for _, m in meshes:
+        m.apply_translation(d)
+
+
 def build_plate(pid, parts):
     meshes = [(p, place(p, x, y, r)) for p, x, y, r in parts]
+    if parts[0][1] is not None:
+        centre(meshes)
     issues = []
     for p, m in meshes:
         b = m.bounds
@@ -91,8 +166,12 @@ def main():
     a = ap.parse_args()
     os.makedirs(os.path.join(ROOT, "3mf"), exist_ok=True)
     os.makedirs(os.path.join(ROOT, "build", "plates"), exist_ok=True)
+    # plates from an earlier layout must not linger (the plate count can change)
+    import glob
+    for f in glob.glob(os.path.join(ROOT, "3mf", "[PT][0-9]*.3mf")) + glob.glob(os.path.join(ROOT, "build", "plates", "*.stl")):
+        os.remove(f)
     out, jobs = {}, []
-    for pid, colour, brim, note, parts in PLATES + TEST_PLATES:
+    for pid, colour, brim, note, parts in plan() + TEST_PLATES:
         meshes, issues = build_plate(pid, parts)
         scene = trimesh.Scene()
         for k, (p, m) in enumerate(meshes):

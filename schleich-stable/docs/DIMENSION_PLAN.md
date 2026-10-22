@@ -44,9 +44,9 @@ Most horses are 133-155 long, 33-50 wide and 95-115 tall.
 |---|---|---|
 | Stall depth (along the horse) | longest horse 170 + 3 mm | **173 mm** between the wall boards (post spacing 176) |
 | Stall width | widest horse 53 + about 30 mm each side for fingers and a hand | **113 mm** between the boards (post spacing 116); 100 mm between the corner posts |
-| Stall door width | widest horse plus 4-5 mm each side once the door is open | 70 mm clear when closed; about **62 mm** passage with the door open 90 deg |
+| Stall door width | widest horse plus 4-5 mm each side once the door is open | 72 mm clear when closed; about **62 mm** passage with the door open 90 deg, past the latch stop (changed from 70 during modelling, see section 7) |
 | Stall door height | tallest horse 120 + 5 | **125 mm** clear above a 3 mm sill |
-| Neck yoke in the stall door | head out over the door | 34 x 20 mm cut-out at the top |
+| Neck yoke in the stall door | head out over the door | 36 x 30 mm cut-out at the top, bottom 97 mm above the floor (changed from 34 x 20, see section 7) |
 | Outer eave (lowest point inside) | horse facing the outer wall: nose at the wall, ears 45 mm in; ears 120 + 10 mm clearance | roof underside **116 mm** above the floor at the wall, 133 mm at 45 mm in |
 | Aisle | horse 53 + 23 mm each side; an open stall door (70) must leave room | **113 mm** between the stall fronts, 100 mm between the posts |
 | Main door | horse with rider, two leaves | **100 mm** wide between the posts (about 85 mm between the open leaves); **160 mm** high at the crown, 132 mm at the springing |
@@ -68,7 +68,7 @@ the textures (10 mm boards, 9 mm shingle rows, cobbles).
 | Number of stalls | **4**, two on each side of a drive-through aisle (the reference layout) |
 | Inside each stall | 173 x 113 mm between the walls (160 x 100 mm between the corner posts); clear height 116 mm at the outer wall, about 177 mm at the stall front |
 | Aisle | 113 x 232 mm, doors at both gables |
-| Stall door opening | 70 x 125 mm (above the 3 mm sill); about 62 mm passage when open |
+| Stall door opening | 72 x 125 mm (above the 3 mm sill); about 62 mm passage when open |
 | Main door opening | 100 mm wide; 132 mm high at the springing, 160 mm at the crown |
 | Windows | casement (gable wings) 44 x 60 mm; side walls 36 x 48 mm, barred |
 | Roof | 6 lift-off units: 2 central 45 deg "tents", each about 150 x 127 mm at the eaves; 4 side 20 deg lean-to panels, each about 193 x 127 mm along the slope |
@@ -88,7 +88,7 @@ the textures (10 mm boards, 9 mm shingle rows, cobbles).
 | Stall inside | about as deep as the aisle is wide | 185 x 165 mm | **173 x 113 mm** |
 | Aisle | 170-180 mm door | 165 mm | **113 mm** |
 | Main door | 170-180 x 170 mm | 152 x 182 mm | **100 x 160 mm** |
-| Material / print time | n/a | 3.44 kg / 116 h (slicer) | about 2.3 kg / 90 h (estimate) |
+| Material / print time | n/a | 3.44 kg / 116 h (slicer) | **2.33 kg / 80 h** (slicer, after modelling; planned about 2.3 kg / 85-95 h) |
 
 **Where the space was saved:**
 
@@ -127,3 +127,28 @@ Everything is in `cad/config.scad`. The main dimensions are `bay_x_stall` (stall
 `stall_door_top`, `door_spring_z` and `door_crown_z`. The design horse (`horse_l`, `horse_w`,
 `horse_h`) is also there. The validation script places this horse in every stall, facing
 both ways, and checks its clearances. Change a value, rebuild, and run the validation again.
+
+## 7. Result after modelling (checked)
+
+Numbers measured on the exported model (`tools/validate.py`, `docs/VALIDATION.md`) and
+from the slicer (`docs/PRINT_PLAN.md`):
+
+| Item | Plan | Built and checked |
+|---|---|---|
+| Base footprint | 489 x 253 mm | 489 x 253 mm |
+| Overall size incl. roof and door bolts | 495 x 255 x 275 mm | 497 x 268 x 276 mm (the bolt knobs on the main doors stand 7.5 mm proud at each gable) |
+| Design horse in a stall, both ways round | fits | fits: 1.6 mm at each end, 30 mm at each side, 7 mm above the ears when facing the outer wall |
+| Stall door passage (door open 90 deg) | about 62 mm | 62.3 x 125 mm; design horse passes with 4.3 mm at the sides and 4 mm head room |
+| Main door with rider | 160 mm at the crown | passes with 4 mm under the arch (rider 155 mm, an estimate) |
+| All doors, windows and bolts open at once | | no collisions |
+| Side roof lift under the central eave | about 7 mm | 4-6 mm, then it slides out (checked over 60 mm) |
+| Taking a horse out from above | | a typical horse (150 mm) lifts straight out with only its side roof off; the 170 mm design horse with its head at the stall front also needs the central roof unit off (the central eave covers the front 20 mm of the stall) |
+| Material / time | about 2.3 kg / 85-95 h | 2.33 kg / 80 h on 26 plates (PrusaSlicer with A1-equivalent settings) |
+
+Changes made during modelling:
+
+* **Stall door 70 to 72 mm.** The latch stile's 2.4 mm stop bevel narrows the opening. With
+  70 mm the passage was only 60 mm (2.4 mm side room for the widest horse). It is now 62 mm.
+* **Neck yoke 34 x 20 to 36 x 30 mm.** The shallower yoke started above the head height of
+  most figures, so a horse could not look out.
+

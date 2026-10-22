@@ -1,31 +1,36 @@
 # Assembly guide
 
 No glue, no screws. Every part can be taken out again later.
-You need: the printed parts, about 1.25 m of 1.75 mm filament for the hinge pins
-(cut: 4 x 146 mm, 4 x 122 mm, 4 x 33 mm), flush cutters.
+You need: the printed parts, about 1.2 m of 1.75 mm filament for the hinge pins
+(cut: 4 x 126 mm, 4 x 122 mm, 4 x 30 mm), flush cutters.
 
 ![Exploded view: roof lifted](images/roof_lifted.png)
 
 ## Where everything goes (plan view, front at the bottom)
 
 ```
-                                   BACK (second gable, same as the front)
+                                   BACK (the front, rotated 180 deg)
  corner ── gable_wing_B ── jamb_R ══ main_leaf_B | main_leaf_A ══ jamb_L ── gable_wing_A ── corner
-   │       (casement_B)      │        pediment    bolt bar        │       (casement_A)        │
- side_wall   STALL BL   stall_front_B          AISLE          stall_front_A   STALL BR   side_wall
-   │                    + stall_door_B                        + stall_door_A               │
- sidemid ──── partition ──── mid ───────────────────────────────── mid ──── partition ──── sidemid
-   │                    + stall_door_A                        + stall_door_B               │
- side_wall   STALL FL   stall_front_A          AISLE          stall_front_B   STALL FR   side_wall
-   │       (casement_A)      │        pediment    bolt bar        │       (casement_B)        │
+   │       (casement_B)      │         pediment     bolt bar        │ door BR (casement_A)      │
+ side_wall    STALL BL     bars                                     │          STALL BR    side_wall
+   │                         │ door BL          AISLE             bars                        │
+ sidemid ──── partition ──── mid ────────────────────────────────── mid ──── partition ──── sidemid
+   │                       bars                           door FR │                           │
+ side_wall    STALL FL       │                  AISLE             bars         STALL FR    side_wall
+   │       (casement_A)      │ door FL                              │       (casement_B)        │
  corner ── gable_wing_A ── jamb_L ══ main_leaf_A | main_leaf_B ══ jamb_R ── gable_wing_B ── corner
                                    FRONT
  floor tiles:  floor_LF  floor_AF  floor_RF   (front row)
                floor_LB  floor_AB  floor_RB   (back row)
 ```
 
+All four stall fronts are the same part (`stall_front`), and so are all four stall doors
+(`stall_door`). Seen from the aisle, every stall door is on the left of its stall front.
+So the left doors sit at the gables and the right doors at the middle. Facing doors never
+meet, and all of them open fully in the narrow aisle.
+
 Parts marked `_A`/`_L` and `_B`/`_R` are mirror images. The back half of the stable is the
-front half rotated by 180 deg. That is why `stall_front_A` appears at front-left and back-right.
+front half rotated by 180 deg.
 
 ## Before you start
 
@@ -49,26 +54,33 @@ horizontally on a flat table. Do not press them down from above.
 5. The base now holds together vertically. Once the posts are in, it can be lifted by its
    edges.
 
-## 2. Hang the doors on the jamb posts
+## 2. Hang the doors on their posts
 
-Each door post (`post_jamb_L` x2, `post_jamb_R` x2) carries a main door leaf and a stall door.
+Hold each door so its knuckles sit in the gaps between the post's knuckles, then push the pin
+up from below through all knuckles until it stops. The pin ends hang out at the bottom; they
+will rest on the floor, which keeps them in.
 
-1. **Stall door:** hold the door so its two knuckles sit in the gaps between the post's
-   knuckles on the stall-front side. Push a **122 mm** pin up from below through all
-   knuckles until it stops. Pairs: `stall_door_A` on `post_jamb_L`, `stall_door_B` on
-   `post_jamb_R`.
-2. **Main door leaf:** the same on the other face with a **146 mm** pin. Pairs:
-   `main_leaf_A` on `post_jamb_L`, `main_leaf_B` on `post_jamb_R`.
-3. The pin ends now hang out at the bottom. They will rest on the floor, which keeps them in.
+| Post (qty) | Main door leaf, **126 mm** pin | Stall door, **122 mm** pin |
+|---|---|---|
+| `post_jamb_L` (2) | `main_leaf_A` | `stall_door` |
+| `post_jamb_R` (2) | `main_leaf_B` | none |
+| `post_mid` (2) | none | `stall_door` |
 
 ![Hinges and latch on a door post](images/hinge_detail.png)
 
 ## 3. Posts
 
-Push all 12 posts into their sockets: 4 corners, 2 side-mid, 2 mid-aisle, and 4 jamb posts
-with their doors. The four corner posts are identical, as are the two side-mid posts.
-Rotate each one so its grooves line up with the plinth grooves of the walls that meet it.
-For the jamb posts, the main door must face outward and the stall door toward the stall front.
+Push all 12 posts into their sockets: 4 corners, 2 side-mid, 4 gable-door posts and 2 mid
+posts, each with its doors. The four corner posts are identical, as are the two side-mid
+posts. Rotate each one so its grooves line up with the plinth or floor grooves of the walls
+that meet it.
+
+* `post_jamb_L` goes at **front-left** and **back-right**. `post_jamb_R` goes at front-right
+  and back-left. The main door faces outward. On the jamb_L posts the stall door faces along
+  the stall front.
+* Each mid post stands with its stall door toward the **back** on the left side (stall BL) and
+  toward the **front** on the right side (stall FR). The two mid posts are the same part,
+  rotated 180 deg.
 
 ## 4. Walls
 
@@ -77,16 +89,16 @@ below.
 
 1. `side_wall` (x4), between the corner and side-mid posts. The window trim faces outward.
 2. `gable_wing_A` at front-left and back-right, `gable_wing_B` at front-right and back-left.
-   Hang each casement by dropping a **33 mm** pin into the hinge from the top. The casement
+   Hang each casement by dropping a **30 mm** pin into the hinge from the top. The casement
    can also be fitted later.
 3. `partition` (x2), between a side-mid post and a mid post.
 
 ## 5. Stall fronts
 
 1. Swing the stall door open into the aisle.
-2. Slide the stall front down between the jamb post (upper groove) and the mid post:
-   `stall_front_A` at front-left and back-right, `stall_front_B` at front-right and back-left.
-   The raised frame and bars face the aisle.
+2. Slide a `stall_front` down between the two aisle posts of the stall. Its door opening goes
+   to the post that carries the stall door, and its barred section to the other post. The
+   raised frame and bars face the aisle.
 3. Close the stall door. It should **click** into the latch with a light push, and open with
    a light pull.
 
@@ -109,14 +121,26 @@ The roof is six loose units that sit by gravity. Nothing snaps.
    pockets.
 
 **To open:** lift a central unit straight up. With the central unit off, the side units lift
-straight up. With it on, lift a side unit about 5 mm and pull it outward.
+straight up. With it on, lift a side unit about 3 mm and pull it outward.
 
 ![Roof units seated on the posts](images/roof_detail.png)
 
 ## 8. Bolt bar
 
-Slide the bar through the two loops of the right-hand leaf (seen from outside), knob on the
-right. To lock, push it left into the loop of the left leaf. To unlock, slide it right.
+Slide the bar through the long loop of the right-hand leaf (seen from outside), knob on the
+right. To lock, push it left into the loop of the left leaf until the knob stops. To unlock,
+slide it right by about 13 mm.
+
+## Putting horses in and taking them out
+
+* **Through the stall door:** open it and lead the horse in or out head first. The opening
+  leaves about 4-5 mm on each side for the widest figures (53 mm).
+* **From above:** lift off the side roof of that stall. A typical horse (up to about 150 mm
+  long) lifts straight out if it stands back from the stall front. The longest figures
+  (up to 170 mm) nearly fill the stall, and the central eave overhangs their head. Lift the
+  central roof unit too, or tilt the horse tail-first.
+
+![Design-horse proxies in the stalls](images/horses.png)
 
 ## Replacing a part
 

@@ -97,13 +97,15 @@ overhang_gable = 10;
 door_spring_z = 140;
 door_crown_z  = 168;
 // Stall door clear opening (along the stall front) and top edge (Z).
-// Width: about 62 mm passage with the door open (horse_w + 2 x 4.5);
-// top: horse_h + 5 above the 3 mm sill.
-stall_door_w  = 70;
+// Width: about 62 mm passage with the door open (horse_w + 2 x 4.5,
+// measured past the latch stile's stop bevel); top: horse_h + 5 above
+// the 3 mm sill.
+stall_door_w  = 72;
 stall_door_top = 136;
-// Neck yoke (head opening) at the top of the stall door
-yoke_w = 34;
-yoke_d = 20;
+// Neck yoke (head opening) at the top of the stall door; its bottom is at
+// about 97 mm above the floor, so a horse with its head up can look out
+yoke_w = 36;
+yoke_d = 30;
 // Gable-wing window (casement) clear opening
 win_w = 44;
 win_h = 60;

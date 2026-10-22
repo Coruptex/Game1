@@ -36,61 +36,56 @@ Print the test plates **T1/T2 first** (see `TESTING.md`) and adjust `config.scad
 
 | Plate (3MF) | Parts | Colour | Est. time | Est. filament |
 |---|---|---|---|---|
-| `P01_floor_LF.3mf` | floor_LF | grey | 4 h 25 min | 183 g |
-| `P02_floor_AF.3mf` | floor_AF | grey | 3 h 48 min | 124 g |
-| `P03_floor_RF.3mf` | floor_RF | grey | 4 h 26 min | 183 g |
-| `P04_floor_LB.3mf` | floor_LB | grey | 4 h 23 min | 183 g |
-| `P05_floor_AB.3mf` | floor_AB | grey | 3 h 49 min | 124 g |
-| `P06_floor_RB.3mf` | floor_RB | grey | 4 h 25 min | 183 g |
-| `P07_posts_short.3mf` | post_corner, post_corner, post_corner, post_corner, post_sidemid, post_sidemid (upright) | black | 5 h 50 min | 134 g |
-| `P08_posts_tall.3mf` | post_jamb_L, post_jamb_L, post_jamb_R, post_jamb_R, post_mid, post_mid (upright, 240 mm) | black | 11 h 43 min | 259 g |
-| `P09_side_walls.3mf` | side_wall, side_wall | white + black trim (optional) | 3 h 09 min | 97 g |
-| `P10_side_walls.3mf` | side_wall, side_wall | white + black trim (optional) | 3 h 09 min | 97 g |
-| `P11_gable_wing_A.3mf` | gable_wing_A | white + black trim (optional) | 2 h 24 min | 72 g |
-| `P12_gable_wing_A.3mf` | gable_wing_A | white + black trim (optional) | 2 h 24 min | 72 g |
-| `P13_gable_wing_B.3mf` | gable_wing_B | white + black trim (optional) | 2 h 25 min | 72 g |
-| `P14_gable_wing_B.3mf` | gable_wing_B | white + black trim (optional) | 2 h 25 min | 72 g |
-| `P15_partition.3mf` | partition | white + black trim (optional) | 2 h 29 min | 75 g |
-| `P16_partition.3mf` | partition | white + black trim (optional) | 2 h 29 min | 75 g |
-| `P17_stall_front_A.3mf` | stall_front_A | white + black trim (optional) | 1 h 35 min | 52 g |
-| `P18_stall_front_A.3mf` | stall_front_A | white + black trim (optional) | 1 h 35 min | 52 g |
-| `P19_stall_front_B.3mf` | stall_front_B | white + black trim (optional) | 1 h 34 min | 52 g |
-| `P20_stall_front_B.3mf` | stall_front_B | white + black trim (optional) | 1 h 34 min | 52 g |
-| `P21_pediment.3mf` | pediment | white + black trim (optional) | 1 h 34 min | 47 g |
-| `P22_pediment.3mf` | pediment | white + black trim (optional) | 1 h 34 min | 47 g |
-| `P23_doors_1.3mf` | main_leaf_A, main_leaf_B, stall_door_A, casement_A | black | 3 h 02 min | 92 g |
-| `P24_doors_2.3mf` | main_leaf_A, main_leaf_B, stall_door_B, casement_B | black | 3 h 03 min | 92 g |
-| `P25_doors_3.3mf` | stall_door_A, stall_door_B, casement_A, casement_B, bolt_bar, bolt_bar | black | 1 h 46 min | 56 g |
-| `P26_roof_central.3mf` | roof_central | dark grey | 7 h 29 min | 213 g |
-| `P27_roof_central.3mf` | roof_central | dark grey | 7 h 29 min | 213 g |
-| `P28_roof_side_A.3mf` | roof_side_A | dark grey | 4 h 53 min | 117 g |
-| `P29_roof_side_A.3mf` | roof_side_A | dark grey | 4 h 53 min | 117 g |
-| `P30_roof_side_B.3mf` | roof_side_B | dark grey | 4 h 53 min | 118 g |
-| `P31_roof_side_B.3mf` | roof_side_B | dark grey | 4 h 53 min | 118 g |
+| `P01_floor_LF.3mf` | floor_LF | grey | 3 h 04 min | 125 g |
+| `P02_floor_AF.3mf` | floor_AF | grey | 1 h 58 min | 63 g |
+| `P03_floor_RF.3mf` | floor_RF | grey | 3 h 03 min | 124 g |
+| `P04_floor_LB.3mf` | floor_LB | grey | 3 h 04 min | 124 g |
+| `P05_floor_AB.3mf` | floor_AB | grey | 1 h 57 min | 62 g |
+| `P06_floor_RB.3mf` | floor_RB | grey | 3 h 05 min | 124 g |
+| `P07_posts_short.3mf` | post_corner, post_corner, post_corner, post_corner, post_sidemid, post_sidemid (upright) | black | 5 h 13 min | 117 g |
+| `P08_posts_tall.3mf` | post_jamb_L, post_jamb_L, post_jamb_R, post_jamb_R, post_mid, post_mid (upright) | black | 10 h 29 min | 229 g |
+| `P09_walls_1.3mf` | partition | white + black trim (optional) | 2 h 05 min | 63 g |
+| `P10_walls_2.3mf` | partition | white + black trim (optional) | 2 h 05 min | 63 g |
+| `P11_walls_3.3mf` | gable_wing_A | white + black trim (optional) | 1 h 59 min | 59 g |
+| `P12_walls_4.3mf` | gable_wing_A | white + black trim (optional) | 1 h 59 min | 59 g |
+| `P13_walls_5.3mf` | gable_wing_B | white + black trim (optional) | 1 h 59 min | 59 g |
+| `P14_walls_6.3mf` | gable_wing_B | white + black trim (optional) | 1 h 59 min | 59 g |
+| `P15_walls_7.3mf` | stall_front, stall_front | white + black trim (optional) | 1 h 49 min | 58 g |
+| `P16_walls_8.3mf` | stall_front, stall_front | white + black trim (optional) | 1 h 49 min | 58 g |
+| `P17_walls_9.3mf` | pediment, pediment, side_wall, side_wall | white + black trim (optional) | 3 h 34 min | 110 g |
+| `P18_walls_10.3mf` | side_wall, side_wall | white + black trim (optional) | 1 h 51 min | 58 g |
+| `P19_doors_1.3mf` | stall_door, stall_door, stall_door, stall_door, casement_A, casement_A, bolt_bar, bolt_bar | black | 3 h 04 min | 96 g |
+| `P20_doors_2.3mf` | casement_B, casement_B, main_leaf_A, main_leaf_A, main_leaf_B, main_leaf_B | black | 3 h 10 min | 95 g |
+| `P21_roof_central_1.3mf` | roof_central | dark grey | 3 h 57 min | 111 g |
+| `P22_roof_central_2.3mf` | roof_central | dark grey | 3 h 57 min | 111 g |
+| `P23_roof_side_1.3mf` | roof_side_A | dark grey | 3 h 10 min | 76 g |
+| `P24_roof_side_2.3mf` | roof_side_A | dark grey | 3 h 10 min | 76 g |
+| `P25_roof_side_3.3mf` | roof_side_B | dark grey | 3 h 10 min | 76 g |
+| `P26_roof_side_4.3mf` | roof_side_B | dark grey | 3 h 10 min | 76 g |
 | `T1_test_hinges_latches.3mf` | plate_T1 | any | 2 h 58 min | 97 g |
 | `T2_test_fits.3mf` | plate_T2 | any | 1 h 27 min | 43 g |
 
-## Totals for the stable (31 plates, test plates excluded)
+## Totals for the stable (26 plates, test plates excluded)
 
 | Colour | Time | Filament |
 |---|---|---|
-| grey | 25 h 19 min | 0.98 kg |
-| black | 25 h 26 min | 0.63 kg |
-| white | 30 h 26 min | 0.93 kg |
-| dark grey | 34 h 32 min | 0.90 kg |
-| **all** | **115 h 45 min** | **3.44 kg** |
+| grey | 16 h 14 min | 0.62 kg |
+| black | 21 h 58 min | 0.54 kg |
+| white | 21 h 14 min | 0.65 kg |
+| dark grey | 20 h 38 min | 0.53 kg |
+| **all** | **80 h 05 min** | **2.33 kg** |
 
-Buy about 1 kg of each of grey, black, white and dark grey/black. The roof can use the black spool.
-Black then needs about 1.5 kg; add 10 % for purge, brims and failed prints.
+Filament to have on hand (estimate + 10 % for purge, brims and failed prints): grey 0.68 kg, black 0.59 kg, white 0.71 kg, dark grey 0.58 kg.
+The roof can also use the black spool (black then 1.17 kg).
 
 ## Recommended order
 
 1. **T1, T2** test coupons, then evaluate them (TESTING.md).
-2. **P07, P08** posts. The tall posts take longest; let them run overnight.
+2. **P07-P08** posts. The tall posts take longest; let them run overnight.
 3. **P01-P06** floor tiles. Assemble the base as soon as two tiles are done.
-4. **P09-P22** walls, partitions, stall fronts, pediments (white, optional trim change).
-5. **P23-P25** doors and windows (black). PETG optional.
-6. **P26-P31** roof.
+4. **P09-P18** walls, partitions, stall fronts, pediments (white, optional trim change).
+5. **P19-P20** doors and windows (black). PETG optional.
+6. **P21-P26** roof.
 
 ## Orientation notes
 

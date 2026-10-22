@@ -1,6 +1,6 @@
 # Test coupons: print these first
 
-The stable needs about 116 printing hours, so check the fits before committing to it.
+The stable needs about 80 printing hours, so check the fits before committing to it.
 Two small plates reproduce every risky mechanism at **full scale**, each with several
 clearance variants. The value engraved on each variant is the parameter it tests.
 

@@ -6,7 +6,8 @@
 |---|---|
 | Every part is a closed, single-body mesh that fits the A1 build volume | **Digitally**: `tools/validate.py` (trimesh) on the exported STLs |
 | No two assembled parts overlap | **Digitally**: pairwise boolean intersection (manifold3d) of all 54 placed parts |
-| Doors and windows swing without collision | **Digitally**: swept at 15 deg steps. Main doors 0-105 deg, stall doors 0-90 deg (they then meet the closed main leaf), casements 0-150 deg |
+| Doors and windows swing without collision | **Digitally**: swept at 15 deg steps. Main doors 0-105 deg; stall doors 0-90 deg at the gables (they then meet the closed main leaf), 0-105 deg in the middle; casements 0-150 deg. All 14 moving parts open at 90 deg at once: no collision |
+| Horses fit | **Digitally**: a blocky proxy of the design horse (170 x 53 x 120 mm, larger than any real figure) in every stall, both ways round; led through an open stall door and, with an estimated rider, through the main door |
 | Hinge pins pass through all knuckles | **Digitally**: virtual 1.75 mm pins, no contact |
 | Latch engages (barb seated when closed, 0.8 mm interference while passing) | **Digitally**: fine sweep of the stall-door angle |
 | Roof units lift off; panels slide out of their grooves | **Digitally**: translation sweeps |
@@ -21,8 +22,10 @@
 * **Reference dimensions are estimates.** The product page could not be accessed from the
   build environment. Retailer data for the base Schleich set (42195 / 42344) conflicts and
   most likely describes the box. Proportions were taken from the photos (see `SPEC.md`).
-* **Figure sizes** come from retailer listings: horses up to about 17 x 5.5 x 12.5 cm. The
-  mounted-rider height of about 15-16 cm is an estimate.
+* **Figure sizes** come from retailer listings (`DIMENSION_PLAN.md`): horses up to 170 mm long
+  (Shire), 53 mm wide (Friesian) and 120 mm tall (Shire). The ear position (40-50 mm behind
+  the nose) and the mounted-rider height (155 mm used, 145-160 mm likely) are estimates.
+  Figures larger than the design horse may not fit.
 * **Printer behaviour:** a well-calibrated A1 with a 0.4 mm nozzle, PLA at default Bambu
   settings, textured PEI plate. Holes printed flat come out slightly small; this is
   compensated by teardrop bores and the `bore_*` parameters.
@@ -30,22 +33,31 @@
 
 ## Known limitations
 
-* **Size and time.** It is about 57 x 36 x 33 cm, about 3.4 kg of filament, and about 116 h of
-  printing (estimate). That is inherent at this scale. To go faster: 0.28 mm layers for the
-  posts and floor tiles, or a 0.6 mm nozzle for the floor and roof. Neither has been tested
-  with this model.
-* **Tall posts:** the six 240 mm posts print upright, which is the strongest orientation for
+* **Size and time.** The compact version is 49 x 25 x 27.5 cm, about 2.3 kg of filament and
+  about 80 h of printing (estimate). To go faster: 0.28 mm layers for the posts and floor
+  tiles, or a 0.6 mm nozzle for the floor and roof. Neither has been tested with this model.
+* **Tight on purpose:** the stalls are sized to the largest common figures (170 mm long), so
+  the longest horses have only 1.6 mm at each end and must stand straight. Typical horses
+  (130-155 mm) have 9-21 mm at each end.
+* **Taking out the longest horses from above:** the central eave overhangs the front 20 mm of
+  each stall. A 170 mm horse with its head at the stall front cannot be lifted straight up
+  with only the side roof off. Lift the central unit as well, tilt the horse tail-first, or
+  lead it out through the stall door. Typical horses standing back from the stall front lift
+  straight out (checked).
+* **Tall posts:** the six 216 mm posts print upright, which is the strongest orientation for
   their grooves and hinge rings. Very tall, narrow prints need a clean plate and a brim. The
-  plate is staggered so a failure costs one plate, not the whole build.
+  short and tall posts are on separate plates, so a failure costs one plate.
 * **The central roof prints standing on its 5 mm eave strips** with 45 deg slopes. It needs
   good part cooling. If the underside sags on your printer, enable tree supports for that part
   only.
-* **Side-roof removal with the central roof in place:** lift about 5 mm, then pull outward.
-  Removing the central unit first is easier.
+* **Side-roof removal with the central roof in place:** lift about 3 mm, then pull outward
+  (checked: free over 60 mm). Removing the central unit first is easier.
 * **Main doors open to about 105 deg**, then stop against the door post. They do not fold
   flat against the wall.
-* **Stall doors open about 90 deg into the aisle.** Two opposite doors open together block the
-  aisle.
+* **Stall doors open about 90 deg into the aisle.** Facing doors hinge at opposite ends, so
+  they never collide. Open doors do block the aisle for a horse. The two middle doors can
+  swing past 90 deg; if both are pushed beyond about 100 deg they touch each other, which is
+  harmless.
 * **The base can be lifted by its edges** (the floor tiles interlock). The roof is loose by
   design: carry the stable level, or take the roof off first.
 * **No glazing:** the windows and skylights are open. Thin clear PETG could be cut and fitted
@@ -57,6 +69,8 @@
   good upgrade.
 * **OpenSCAD version:** built and tested with OpenSCAD 2021.01 (CGAL). Newer versions should
   work, faster with `--backend manifold`, but that was not tested here.
-* **Small parts:** hinge pins (33-146 mm x 1.75 mm) and the two 63 mm bolt bars are captured
+* **Main door height:** 160 mm clear at the crown. The rider height is an estimate, and a tall
+  rider figure with a raised arm may touch the arch.
+* **Small parts:** hinge pins (30-126 mm x 1.75 mm) and the two 37 mm bolt bars are captured
   when assembled. They are still a hazard for children under 3. This is a printed toy without
   certification; supervise young children.
