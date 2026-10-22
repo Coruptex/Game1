@@ -8,6 +8,7 @@ sf_u0 = Y0 + PW2 - panel_in;          // panel start (in jamb post groove)
 sf_u1 = Y1 - PW2 + panel_in;          // panel end (in mid post groove)
 sf_uh = Y0 + PW2;                     // jamb post face (door hinge side)
 sf_ud = sf_uh + stall_door_w;         // latch stile, door-side edge
+sf_us = sf_uh + 8.5;                  // sill start (beyond the lowest hinge knuckle)
 sf_ul = sf_ud + 8;                    // latch stile, far edge
 sf_um = Y1 - PW2;                     // mid post face
 sf_v0 = floor_top - floor_groove_d + 0.2;
@@ -21,7 +22,7 @@ stop_bevel = 2.4;
 module sf_outline2d() {
     difference() {
         union() {
-            translate([sf_u0, sf_v0]) square([sf_ud - sf_u0, sill_top - sf_v0]);        // sill
+            translate([sf_us, sf_v0]) square([sf_ud - sf_us, sill_top - sf_v0]);  // sill: clear of hinge knuckles + pin
             translate([sf_ud, sf_v0]) square([sf_u1 - sf_ud, stall_door_top - sf_v0]);  // stile + fixed part
             translate([sf_u0, stall_door_top]) square([sf_u1 - sf_u0, sf_vtop - stall_door_top]);
             for (u = [45, sf_u1 - 40]) tab2d(u, sf_vtop, tab_w, tab_h_c);
@@ -58,7 +59,8 @@ module stall_front_local() {
         sf_openings2d();
         difference() { sf_outline2d(); sf_openings2d(); sf_boards2d();      // 2 trims
                        translate([sf_u0 - 1, sf_vtop - 0.5]) square([300, 20]);
-                       no_trim_in_grooves2d(sf_uh, sf_um); }
+                       no_trim_in_grooves2d(sf_uh, sf_um);
+                       translate([sf_ud - 1, 0]) square([3.5, 400]); }  // latch path stays flat
         // 3: stop bevel on the latch stile edge (outside the latch zone)
         for (r = [[sill_top + 2, latch_y0 - 2], [latch_y0 + latch_len + 3, stall_door_top - 2]])
             translate([sf_ud, r[0], 0]) rotate([-90, 0, 0]) linear_extrude(r[1] - r[0])

@@ -78,7 +78,6 @@ module post_jamb_world() {
             post_body(x, y, post_bot, zt);
             post_groove(x, y, "-x", Z_plinth - base_groove_d, zt + 1);
             post_groove(x, y, "+x", door_spring_z - 2, zt + 1);
-            post_groove(x, y, "+y", post_bot - 1, sill_top + 0.5);
             post_groove(x, y, "+y", sd_z[1] + 1, zt + 1);
             cut_above_c_roof(x);
         }

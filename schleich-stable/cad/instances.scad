@@ -46,10 +46,31 @@ instances = [
 function q_of(n) = str(n[len(n) - 2], n[len(n) - 1]);
 function has(n, p) = starts(n, p);
 
+// virtual hinge pins (validation + BOM lengths). Each pin is pin_d thick,
+// from its bottom stop to 0.3 mm below the blind end of the bore.
+pin_md = [floor_top, md_z[1] - 1.6 - 0.3];             // main door: rests on the floor
+pin_sd = [floor_top, sd_z[1] - 1.6 - 0.3];             // stall door
+pin_cs = [cs_seg[0] + 1.4 + 0.3, cs_seg[1] - 0.5];     // casement: rests on blind bottom
+module pin_world(n) {
+    module p(xy, z) translate([xy[0], xy[1], z[0]]) cylinder(d = pin_d, h = z[1] - z[0], $fn = 24);
+    q = q_of(n);
+    if (has(n, "pin_main_")) {
+        if (q == "FL") p(md_ax, pin_md);
+        if (q == "FR") p([2 * XC - md_ax[0], md_ax[1]], pin_md);
+        if (q == "BR") rot180_c() p(md_ax, pin_md);
+        if (q == "BL") rot180_c() p([2 * XC - md_ax[0], md_ax[1]], pin_md);
+    }
+    if (has(n, "pin_stall_")) quad(q) p(sd_ax, pin_sd);
+    if (has(n, "pin_case_")) quad(q)
+        translate([gw_hinge_x, Y0 - wall_t / 2 - cs_lift - kz(dk_win), pin_cs[0]]) cylinder(d = pin_d, h = pin_cs[1] - pin_cs[0], $fn = 24);
+}
+pins = [for (k = ["main", "stall", "case"]) for (q = ["FL", "FR", "BL", "BR"]) str("pin_", k, "_", q)];
+
 // world geometry of one instance. ang = door / window opening angle
 module inst(n, ang = 0) {
     q = q_of(n);
-    if (has(n, "floor_")) floor_tile_world(tail(n, 6));
+    if (has(n, "pin_")) pin_world(n);
+    else if (has(n, "floor_")) floor_tile_world(tail(n, 6));
     else if (has(n, "post_")) post_world(tail(n, 5));
     else if (has(n, "side_wall_")) quad(q) side_wall_place() side_wall_local();
     else if (has(n, "gable_wing_")) quad(q) gable_wing_place() gable_wing_local();

@@ -69,7 +69,8 @@ module knuckles_moving_y(y0, y1, n, d = dk_door, web_dir = 1, web_len = 4) {
     }
 }
 // fixed side on a flat part (window frames): even segments, snug bore,
-// blind at the top (y1) end.
+// blind at the BOTTOM (y0) end, open at the top: the pin is dropped in from
+// above and rests on the blind end.
 // lift: raises the axis above the panel face (the moving knuckle's flat
 // underside must clear the face while it rotates: lift + kz(d) >= d/2 + 0.3)
 module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3, lift = 0) {
@@ -84,7 +85,7 @@ module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3, lift =
                 translate([-d / 2 + 0.6, 0, -0.3]) cube([d - 1.2, s[1] - s[0], lift + 0.6]);
             }
         }
-        translate([0, y0 - 1, lift + kz(d)]) rotate([-90, 0, 0])
+        translate([0, y0 + 1.4, lift + kz(d)]) rotate([-90, 0, 0])
             linear_extrude((y1 - y0) + 1 - 1.4) mirror([0, 1]) teardrop2d(bore_fixed);
     }
 }

@@ -5,6 +5,7 @@
 // straddle the tile joints, so once the posts are in, the joints are pinned.
 
 ext_out  = 10.5;                 // floor/plinth beyond the outer post lines
+tile_gap = 0.15;                 // clearance per side at tile-to-tile joints
 finger_w = 20;
 finger_l = 10;
 finger_h = 3.0;
@@ -43,16 +44,18 @@ function finger_centres(j, n = 4) =
 // the matching notch (with clearance) instead.
 module finger_box(j, c, owner_low, grow = 0) {
     w = finger_w + 2 * grow; l = finger_l + grow; h = finger_h + (grow > 0 ? 0.25 : 0);
-    a = owner_low ? j[1] : j[1] - l;
+    r = grow > 0 ? 0 : 1;          // fingers root 1 mm inside their tile
+    a = owner_low ? j[1] - r : j[1] - l;
     z0 = grow > 0 ? -1 : 0;        // notches open through the bottom
-    if (j[0] == "x") translate([a, c - w / 2, z0]) cube([l, w, h - z0]);
-    else             translate([c - w / 2, a, z0]) cube([w, l, h - z0]);
+    if (j[0] == "x") translate([a, c - w / 2, z0]) cube([l + r, w, h - z0]);
+    else             translate([c - w / 2, a, z0]) cube([w, l + r, h - z0]);
 }
 
 // grooves in the floor for interior panels (stall fronts, partitions)
 module floor_grooves() {
     zb = floor_top - floor_groove_d;
-    for (x = [X1, X2]) translate([x - groove_w / 2, Y0, zb]) cube([groove_w, Y2 - Y0, 10]);
+    // stall-front grooves stop short of the hinge pins (pins rest on solid floor)
+    for (x = [X1, X2]) translate([x - groove_w / 2, Y0 + PW2 + 8, zb]) cube([groove_w, Y2 - Y0 - 2 * (PW2 + 8), 10]);
     for (xr = [[X0, X1], [X2, X3]]) translate([xr[0], Y1 - groove_w / 2, zb]) cube([xr[1] - xr[0], groove_w, 10]);
 }
 
@@ -92,8 +95,13 @@ module plinth_stones() {
     }
 }
 
+// tile rectangle shrunk by tile_gap on edges shared with another tile
+function tile_body(id) =
+    let(r = tile_rect(id), g = tile_gap)
+    [r[0] + (r[0] > X0 ? g : 0), r[1] + (r[1] > Y0 ? g : 0),
+     r[2] - (r[2] < X3 ? g : 0), r[3] - (r[3] < Y2 ? g : 0)];
 module floor_tile_world(id) {
-    r = tile_rect(id);
+    r = tile_body(id);
     xa = r[0]; ya = r[1]; xb = r[2]; yb = r[3];
     aisle = id[0] == "A";
     difference() {

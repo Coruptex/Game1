@@ -16,6 +16,8 @@ import argparse, concurrent.futures as cf, os, re, subprocess, sys, time
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CAD = os.path.join(ROOT, "cad", "stable.scad")
 SWING_ANGLES = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
+LATCH_ANGLES = [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6]          # fine sweep, stall door FL
+PINS = [f"pin_{k}_{q}" for k in ("main", "stall", "case") for q in ("FL", "FR", "BL", "BR")]
 
 
 def read_instances():
@@ -80,6 +82,12 @@ def main():
                 continue
             jobs.append((os.path.join(ROOT, "build", "placed", n + ".stl"),
                          {"part": f'"{n}"', "mode": '"placed"', "door_ang": 0}, a.backend))
+    if a.placed:
+        for n in PINS:
+            if a.only and n not in a.only:
+                continue
+            jobs.append((os.path.join(ROOT, "build", "placed", n + ".stl"),
+                         {"part": f'"{n}"', "mode": '"placed"', "door_ang": 0}, a.backend))
     if a.swing:
         for n, _, _ in insts:
             if not any(n.startswith(k) for k in ("main_leaf_", "stall_door_", "casement_")):
@@ -89,6 +97,10 @@ def main():
             for ang in SWING_ANGLES:
                 jobs.append((os.path.join(ROOT, "build", "swing", f"{n}_{ang:03d}.stl"),
                              {"part": f'"{n}"', "mode": '"placed"', "door_ang": ang}, a.backend))
+    if a.swing and (not a.only or "stall_door_FL" in a.only):
+        for ang in LATCH_ANGLES:
+            jobs.append((os.path.join(ROOT, "build", "latch", f"stall_door_FL_{ang:04.1f}.stl"),
+                         {"part": '"stall_door_FL"', "mode": '"placed"', "door_ang": ang}, a.backend))
     # longest first for better packing
     jobs.sort(key=lambda j: ("floor" not in j[0], "roof" not in j[0]))
     t0 = time.time()
