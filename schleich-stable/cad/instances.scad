@@ -66,19 +66,27 @@ module pin_world(n) {
 }
 pins = [for (k = ["main", "stall", "case"]) for (q = ["FL", "FR", "BL", "BR"]) str("pin_", k, "_", q)];
 
+// split a flat-printed panel (local frame) at the trim layer for two-tone
+// renders: split = "base" keeps z <= wall_t, "trim" keeps z >= wall_t
+split = "none";
+module sp() {
+    if (split == "base") intersection() { children(); translate([-1000, -1000, -10]) cube([2000, 2000, 10 + wall_t]); }
+    else if (split == "trim") intersection() { children(); translate([-1000, -1000, wall_t]) cube([2000, 2000, 100]); }
+    else children();
+}
 // world geometry of one instance. ang = door / window opening angle
 module inst(n, ang = 0) {
     q = q_of(n);
     if (has(n, "pin_")) pin_world(n);
     else if (has(n, "floor_")) floor_tile_world(tail(n, 6));
     else if (has(n, "post_")) post_world(tail(n, 5));
-    else if (has(n, "side_wall_")) quad(q) side_wall_place() side_wall_local();
-    else if (has(n, "gable_wing_")) quad(q) gable_wing_place() gable_wing_local();
-    else if (n == "partition_L") partition_place() partition_local();
-    else if (n == "partition_R") rot180_c() partition_place() partition_local();
-    else if (has(n, "stall_front_")) quad(q) stall_front_place() stall_front_local();
-    else if (n == "pediment_F") pediment_place() pediment_local();
-    else if (n == "pediment_B") rot180_c() pediment_place() pediment_local();
+    else if (has(n, "side_wall_")) quad(q) side_wall_place() sp() side_wall_local();
+    else if (has(n, "gable_wing_")) quad(q) gable_wing_place() sp() gable_wing_local();
+    else if (n == "partition_L") partition_place() sp() partition_local();
+    else if (n == "partition_R") rot180_c() partition_place() sp() partition_local();
+    else if (has(n, "stall_front_")) quad(q) stall_front_place() sp() stall_front_local();
+    else if (n == "pediment_F") pediment_place() sp() pediment_local();
+    else if (n == "pediment_B") rot180_c() pediment_place() sp() pediment_local();
     else if (n == "main_leaf_FL") main_leaf_world(false, ang);
     else if (n == "main_leaf_FR") main_leaf_world(true, ang);
     else if (n == "main_leaf_BR") rot180_c() main_leaf_world(false, ang);

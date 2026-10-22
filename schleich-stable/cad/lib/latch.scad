@@ -25,19 +25,18 @@ module latch_tongue_cut2d(x_edge, y0) {
 }
 
 // Barb on the outer face of the tongue tip; protrudes gap + engage, 45 deg
-module latch_barb(x_edge, y0, t) {
-    p = latch_gap + latch_engage;
+module latch_barb(x_edge, y0, t, e = latch_engage) {
+    p = latch_gap + e;
     yb = y0 + latch_len - latch_barb_l - 1.5;
     translate([x_edge - 0.4, yb, 0]) rotate([90, 0, 0]) mirror([0, 0, 1])
         linear_extrude(latch_barb_l)
-            polygon([[0, 0], [p + 0.4, 0], [0.4 + latch_gap, latch_engage], [0, latch_engage + 0.6]]);
+            polygon([[0, 0], [p + 0.4, 0], [0.4 + latch_gap, e], [0, e + 0.6]]);
 }
 
 // Cutter that shapes the edge of the fixed stile (edge face at x = x_e,
 // stile material on the +x side). Creates: recess (z 0..0.8, 45 deg),
 // crest (z 0.8..1.6) and an entry chamfer (z 1.6..t). Same y0 as the door.
-module latch_notch_cut(x_e, y0, t) {
-    e = latch_engage;
+module latch_notch_cut(x_e, y0, t, e = latch_engage) {
     yb = y0 + latch_len - latch_barb_l - 1.5;
     translate([x_e, yb - 1.5, 0]) rotate([90, 0, 0]) mirror([0, 0, 1])
         linear_extrude(latch_barb_l + 3)

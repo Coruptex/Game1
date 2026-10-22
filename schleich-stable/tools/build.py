@@ -43,9 +43,10 @@ def export(job):
     cmd = ["openscad", "-o", tmp]
     if backend:
         cmd += ["--backend", backend]
+    src = defs.pop("__file", CAD)
     for k, v in defs.items():
         cmd += ["-D", f"{k}={v}"]
-    cmd.append(CAD)
+    cmd.append(src)
     t = time.time()
     r = subprocess.run(cmd, capture_output=True, text=True)
     warn = [l for l in (r.stdout + r.stderr).splitlines() if "WARNING" in l or "ERROR" in l]
@@ -84,6 +85,10 @@ def main():
                 continue
             jobs.append((os.path.join(ROOT, "build", "placed", n + ".stl"),
                          {"part": f'"{n}"', "mode": '"placed"', "door_ang": 0}, a.backend))
+    if not a.no_parts and (not a.only or "tests" in a.only):
+        coupons = os.path.join(ROOT, "cad", "tests", "coupons.scad")
+        for t in ("plate_T1", "plate_T2"):
+            jobs.append((os.path.join(ROOT, "stl", "tests", t + ".stl"), {"part": f'"{t}"', "__file": coupons}, a.backend))
     if a.placed:
         for n in PINS:
             if a.only and n not in a.only:

@@ -21,7 +21,7 @@ function kn_seg(z0, z1, n, i) =
 // Placed with the axis at the origin. web_dir: unit vector (2D) pointing
 // from the axis to the face the knuckles are attached to; web_len: distance
 // from the axis to that face.
-module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5, blind_top = true) {
+module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5, blind_top = true, bore = bore_fixed) {
     difference() {
         union() for (i = [0 : 2 : n - 1]) {
             s = kn_seg(z0, z1, n, i);
@@ -36,7 +36,7 @@ module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5
             }
         }
         // bore: through the whole stack except a 1.6 mm cap on top
-        translate([0, 0, z0 - 1]) cylinder(d = bore_fixed, h = (z1 - z0) + 1 - (blind_top ? 1.6 : -2), $fn = 24);
+        translate([0, 0, z0 - 1]) cylinder(d = bore, h = (z1 - z0) + 1 - (blind_top ? 1.6 : -2), $fn = 24);
     }
 }
 module knuckle_underside_cut(z, web_dir, web_len) {
@@ -55,7 +55,7 @@ module knuckles_clear_z(z0, z1, n, d = dk_door) {
 // ---- knuckles on a part printed FLAT (axis = local Y, x = 0, z = kz(d)) ----
 // moving side: odd segments, free teardrop bore. web_dir = +1/-1: side (x)
 // on which the leaf body lies; web_len = distance from axis to the body.
-module knuckles_moving_y(y0, y1, n, d = dk_door, web_dir = 1, web_len = 4) {
+module knuckles_moving_y(y0, y1, n, d = dk_door, web_dir = 1, web_len = 4, bore = bore_free) {
     difference() {
         union() for (i = [1 : 2 : n - 1]) {
             s = kn_seg(y0, y1, n, i);
@@ -65,7 +65,7 @@ module knuckles_moving_y(y0, y1, n, d = dk_door, web_dir = 1, web_len = 4) {
                     cube([web_len + 0.5, s[1] - s[0], kz(d) + 0.6]);
             }
         }
-        translate([0, (y0 + y1) / 2, kz(d)]) hole_y(bore_free, (y1 - y0) + 2);
+        translate([0, (y0 + y1) / 2, kz(d)]) hole_y(bore, (y1 - y0) + 2);
     }
 }
 // fixed side on a flat part (window frames): even segments, snug bore,
