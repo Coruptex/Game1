@@ -4,8 +4,8 @@
 // y = up (= world Z), z = thickness (0 = interior / bed, wall_t = exterior).
 
 tab_w = 10;           // roof locating tabs
-tab_h_side = 2.2;     // under the side roofs (shallow pockets)
-tab_h_c = 5.0;        // under the central roof eave feet (deep pockets)
+tab_h_side = 1.6;     // under the side roofs (shallow pockets, >=0.65 mm cap above)
+tab_h_c = 3.5;        // on stall-front beams, into the central roof
 
 // Generic board panel. children: 0 outline, 1 openings, 2 raised trims,
 // 3 extra solids, 4 extra cuts (all in the local frame).
@@ -20,7 +20,8 @@ module board_panel(x0, x1, y0, y1, t = wall_t, xc = undef, horiz = false, ge = g
                     else plank_slab(x1 - x0, y1 - y0, t, plank_w, ge, gi, off);
                 translate([0, 0, -1]) linear_extrude(t + 2) children(0);
             }
-            translate([0, 0, t - eps]) linear_extrude(trim_h + eps) children(2);
+            // trims start below the groove depth so no tunnels remain under them
+            translate([0, 0, t - ge - 0.1]) linear_extrude(trim_h + ge + 0.1) children(2);
             children(3);
         }
         translate([0, 0, -1]) linear_extrude(t + trim_h + 10) children(1);
@@ -84,6 +85,7 @@ gw_y0 = Z_plinth - base_groove_d + 0.2;
 gw_win_xc = (X0 + X1) / 2;
 // casement hinge on the corner side (left) of the window
 gw_hinge_x = gw_win_xc - win_w / 2 - 4;
+cs_lift = 0.6;                   // casement axis lift above the wall face
 module gable_wing_outline2d() {
     slope = tan(pitch_side);
     union() {
@@ -105,7 +107,7 @@ module gable_wing_local() {
         }
         // 3: fixed knuckles of the casement hinge (axis along local y)
         translate([gw_hinge_x, 0, wall_t])
-            knuckles_fixed_y(win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2, 3, dk_win, -1, 3);
+            knuckles_fixed_y(win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2, 3, dk_win, -1, 3, cs_lift);
         union() {}
     }
 }

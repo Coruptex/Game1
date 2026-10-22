@@ -66,7 +66,7 @@ module plinth2d() {
         translate([s < 0 ? x - o : x - i, Y0 - o]) square([o + i, Y2 - Y0 + 2 * o]);
     }
     // front / back walls: only the stall bays (door opening in the aisle)
-    for (yw = [[Y0, -1], [Y2, 1]]) for (xr = [[X0 - o, X1 + PW2], [X2 - PW2, X3 + o]]) {
+    for (yw = [[Y0, -1], [Y2, 1]]) for (xr = [[X0 - o, X1 + 2], [X2 - 2, X3 + o]]) {
         y = yw[0]; s = yw[1];
         translate([xr[0], s < 0 ? y - o : y - i]) square([xr[1] - xr[0], o + i]);
     }
@@ -86,7 +86,7 @@ module plinth_stones() {
     L = Y2 - Y0 + 2 * o;
     translate([X0 - o - (1 - d), Y0 - o, 0]) rotate([90, 0, 90]) linear_extrude(1) stone_mortar2d(L, h, seed = 5);
     translate([X3 + o - d, Y0 - o, 0])       rotate([90, 0, 90]) linear_extrude(1) stone_mortar2d(L, h, seed = 3);
-    for (xr = [[X0 - o, X1 + PW2], [X2 - PW2, X3 + o]]) {
+    for (xr = [[X0 - o, X1 + 2], [X2 - 2, X3 + o]]) {
         translate([xr[0], Y0 - o + d, 0])       rotate([90, 0, 0]) linear_extrude(1) stone_mortar2d(xr[1] - xr[0], h, seed = 13);
         translate([xr[0], Y2 + o + (1 - d), 0]) rotate([90, 0, 0]) linear_extrude(1) stone_mortar2d(xr[1] - xr[0], h, seed = 11);
     }

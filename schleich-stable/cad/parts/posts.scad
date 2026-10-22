@@ -28,7 +28,6 @@ sd_ax = [X1 - sd_t / 2 + kz(dk_door), Y0 + PW2 + dk_door / 2 + swing_gap];
 sd_z  = [13, stall_door_top - 4];
 sd_n  = 5;
 sill_top = floor_top + 3;           // top of the stall-front sill
-truss_z0 = Z_c_eave - 34;           // underside of the mid truss tie beam
 
 // post body with a 1 mm lead-in chamfer at the foot (socket entry)
 module post_body(x, y, z0, z1) {
@@ -66,8 +65,14 @@ module post_sidemid_world() {
         post_groove(x, y, "+x", floor_top - floor_groove_d, zt + 1);
     }
 }
+// cut everything above the central roof underside (aisle posts, left side)
+module cut_above_c_roof(x) {
+    translate([x - PW2, -1000, Z_c_eave]) rotate([0, -pitch_c, 0]) translate([-50, 0, -0.3]) cube([200, 2000, 200]);
+}
+zt_aisle = Z_c_eave + post_w * tan(pitch_c) + 1;      // raw height before bevel
+
 module post_jamb_world() {
-    x = X1; y = Y0; zt = Z_c_eave;
+    x = X1; y = Y0; zt = zt_aisle;
     union() {
         difference() {
             post_body(x, y, post_bot, zt);
@@ -75,7 +80,8 @@ module post_jamb_world() {
             post_groove(x, y, "+x", door_spring_z - 2, zt + 1);
             post_groove(x, y, "+y", post_bot - 1, sill_top + 0.5);
             post_groove(x, y, "+y", sd_z[1] + 1, zt + 1);
-            }
+            cut_above_c_roof(x);
+        }
         // main door knuckles on the +X face
         translate([md_ax[0], md_ax[1], 0])
             knuckles_fixed_z(md_z[0], md_z[1], md_n, dk_door, [-1, 0], md_ax[0] - (x + PW2));
@@ -85,13 +91,13 @@ module post_jamb_world() {
     }
 }
 module post_mid_world() {
-    x = X1; y = Y1; zt = Z_c_eave;
+    x = X1; y = Y1; zt = zt_aisle;
     difference() {
         post_body(x, y, post_bot, zt);
         post_groove(x, y, "-y", floor_top - floor_groove_d, zt + 1);
         post_groove(x, y, "+y", floor_top - floor_groove_d, zt + 1);
         post_groove(x, y, "-x", floor_top - floor_groove_d, zt + 1);
-        post_groove(x, y, "+x", truss_z0 - 1, zt + 1);
+        cut_above_c_roof(x);
     }
 }
 

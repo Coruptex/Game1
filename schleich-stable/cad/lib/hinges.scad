@@ -25,14 +25,24 @@ module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5
     difference() {
         union() for (i = [0 : 2 : n - 1]) {
             s = kn_seg(z0, z1, n, i);
-            translate([0, 0, s[0]]) linear_extrude(s[1] - s[0]) hull() {
-                circle(d = d, $fn = 48);
-                translate(web_dir * (web_len + 0.5)) square(d * 0.9, center = true);
+            intersection() {
+                translate([0, 0, s[0]]) linear_extrude(s[1] - s[0]) hull() {
+                    circle(d = d, $fn = 48);
+                    translate(web_dir * (web_len + 0.5)) square(d * 0.9, center = true);
+                }
+                // underside rises at 45 deg away from the post face -> printable
+                // upright without support (the bottom face carries no load)
+                knuckle_underside_cut(s[0], web_dir, web_len);
             }
         }
         // bore: through the whole stack except a 1.6 mm cap on top
         translate([0, 0, z0 - 1]) cylinder(d = bore_fixed, h = (z1 - z0) + 1 - (blind_top ? 1.6 : -2), $fn = 24);
     }
+}
+module knuckle_underside_cut(z, web_dir, web_len) {
+    a = atan2(web_dir[1], web_dir[0]);
+    // keep z >= z + (distance from the post face, outward)
+    rotate([0, 0, a]) translate([web_len, -50, z]) rotate([0, -45, 0]) translate([-100, 0, 0]) cube([200, 100, 200]);
 }
 // clearance cut for the moving knuckles (used on the fixed part)
 module knuckles_clear_z(z0, z1, n, d = dk_door) {
@@ -60,19 +70,21 @@ module knuckles_moving_y(y0, y1, n, d = dk_door, web_dir = 1, web_len = 4) {
 }
 // fixed side on a flat part (window frames): even segments, snug bore,
 // blind at the top (y1) end.
-module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3) {
+// lift: raises the axis above the panel face (the moving knuckle's flat
+// underside must clear the face while it rotates: lift + kz(d) >= d/2 + 0.3)
+module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3, lift = 0) {
     difference() {
         union() for (i = [0 : 2 : n - 1]) {
             s = kn_seg(y0, y1, n, i);
             translate([0, s[0], 0]) {
-                cyl_y_bed(d, s[1] - s[0]);
+                translate([0, 0, lift]) cyl_y_bed(d, s[1] - s[0]);
                 // web sunk 0.3 mm into the panel below so the union fuses
                 translate([web_dir > 0 ? 0 : -web_len - 0.5, 0, -0.3])
-                    cube([web_len + 0.5, s[1] - s[0], kz(d) + 0.9]);
-                translate([-d / 2 + 0.6, 0, -0.3]) cube([d - 1.2, s[1] - s[0], 0.6]);
+                    cube([web_len + 0.5, s[1] - s[0], lift + kz(d) + 0.9]);
+                translate([-d / 2 + 0.6, 0, -0.3]) cube([d - 1.2, s[1] - s[0], lift + 0.6]);
             }
         }
-        translate([0, y0 - 1, kz(d)]) rotate([-90, 0, 0])
+        translate([0, y0 - 1, lift + kz(d)]) rotate([-90, 0, 0])
             linear_extrude((y1 - y0) + 1 - 1.4) mirror([0, 1]) teardrop2d(bore_fixed);
     }
 }

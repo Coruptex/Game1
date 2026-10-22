@@ -63,7 +63,7 @@ z_eave_side = 142;
 // Side (lean-to) roof pitch, degrees
 pitch_side  = 20;
 // Vertical step between side-roof top and central roof seat
-roof_step   = 13.6;
+roof_step   = 19;
 // Central roof pitch, degrees (45 = the central roof prints without support)
 pitch_c     = 45;
 // Roof base thickness (perpendicular to the roof plane)
@@ -71,7 +71,8 @@ roof_t      = 2.4;
 // Extra thickness of the shingle rows
 tile_step   = 1.2;
 // Roof overhang beyond walls (eaves and gables)
-overhang_eave  = 15;
+overhang_eave  = 15;     // side roofs, beyond the exterior walls
+overhang_c     = 12;     // central roof, beyond the aisle posts (horizontal)
 overhang_gable = 12;
 
 /* [Openings] */
@@ -115,8 +116,10 @@ PW2 = post_w / 2;
 Z_plinth   = floor_top + plinth_h;                      // top of plinth
 Z_side_top = z_eave_side + bay_x_stall * tan(pitch_side); // side roof underside at X1
 Z_c_eave   = Z_side_top + roof_step;                    // central roof seat (post tops)
-// central roof underside rises from the outer face of the aisle posts
+// central roof underside passes through the outer faces of the aisle posts
+// at Z_c_eave and rises to the apex; the eaves hang lower by overhang_c
 c_half     = bay_x_aisle / 2 + PW2;
+Z_c_low    = Z_c_eave - overhang_c * tan(pitch_c);   // lowest roof edge (print bed of the central roof)
 Z_c_apex   = Z_c_eave + c_half * tan(pitch_c);
 
 // side roof underside height at world X (left side, X0..X1)
