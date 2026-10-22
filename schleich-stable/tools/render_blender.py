@@ -53,10 +53,12 @@ def colour(name):
 PANELS = ("side_wall", "gable_wing", "partition", "stall_front", "pediment")
 MOVERS = ("main_leaf", "stall_door", "casement", "bolt_bar")
 
-def load_stable(roof=True, door=None, roof_dz=0.0, side_out=0.0, skip=()):
+def load_stable(roof=True, door=None, roof_dz=0.0, side_out=0.0, skip=(), only=None):
     for f in sorted(glob.glob(os.path.join(PL, "*.stl"))):
         n = os.path.basename(f)[:-4]
         if n.startswith("pin_") or any(n.startswith(s) for s in skip):
+            continue
+        if only is not None and n not in only:
             continue
         if n.startswith("roof_"):
             if not roof: continue
@@ -87,14 +89,18 @@ V = {
     "doors_open":  dict(cam=(272, -640, 210), tgt=(272, 150, 140), lens=48,
                         door={"main_leaf": 90, "stall_door": 0, "casement": 90, "bolt_bar": 90}),
     "roof_lifted": dict(cam=(-430, -520, 560), tgt=(282, 168, 170), lens=46, roof_dz=110, side_out=40),
-    "hinge_detail": dict(cam=(255, -95, 120), tgt=(196, 5, 85), lens=55, roof=False,
-                         door={"main_leaf": 70, "stall_door": 70, "casement": 0, "bolt_bar": 70}),
-    "roof_detail": dict(cam=(105, 40, 330), tgt=(190, 168, 235), lens=50, roof_dz=45, side_out=0,
-                        skip=("roof_side", "roof_central_B")),
+    "hinge_detail": dict(cam=(300, 150, 175), tgt=(200, 14, 70), lens=45, roof=False,
+                         door={"stall_door": 90},
+                         only=["post_jamb_FL", "stall_door_FL", "stall_front_FL", "floor_AF", "floor_LF",
+                               "gable_wing_FL", "post_mid_FL", "partition_L", "post_corner_FL", "side_wall_FL"]),
+    "roof_detail": dict(cam=(272, 420, 205), tgt=(272, 168, 238), lens=40, roof_dz=40,
+                        only=["roof_central_F", "post_mid_FL", "post_mid_FR", "stall_front_FL", "stall_front_FR",
+                              "stall_front_BL", "stall_front_BR", "floor_AF", "floor_AB", "partition_L", "partition_R",
+                              "pediment_F", "post_jamb_FL", "post_jamb_FR"]),
 }
 v = V[VIEW]
 load_stable(roof=v.get("roof", True), door=v.get("door"), roof_dz=v.get("roof_dz", 0),
-            side_out=v.get("side_out", 0), skip=v.get("skip", ()))
+            side_out=v.get("side_out", 0), skip=v.get("skip", ()), only=v.get("only"))
 
 # camera
 cam = bpy.data.cameras.new("cam"); cam.lens = v["lens"]; cam.clip_end = 10000

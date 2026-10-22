@@ -271,9 +271,19 @@ def write_md(rep, path):
         L += [f"| {h['a']} | {h['b']} | {h['vol_mm3']} |" for h in rep["interference"]]
     else:
         L.append("No overlapping parts (threshold %.1f mm3)." % TOL)
-    L += ["", "Closest non-overlapping pairs (gap < 1 mm, expected at grooves, sockets, tabs and hinges):", "",
-          "| part A | part B | gap mm |", "|---|---|---|"]
-    L += [f"| {g['a']} | {g['b']} | {g['gap']} |" for g in rep["near_gaps"][:40]]
+    contacts = [g for g in rep["near_gaps"] if g["gap"] <= 0.001]
+    clear = [g for g in rep["near_gaps"] if g["gap"] > 0.001]
+    L += ["", f"Resting contacts (gap 0, by design): {len(contacts)} pairs. These are posts standing on socket floors,",
+          "panels on groove bottoms, roof units on rakes and wall tops, and tile edges.", "",
+          "Designed clearances between neighbouring parts (gap < 1 mm), one row per distinct",
+          "value and pair type:", "",
+          "| gap mm | example pair | pairs with this gap |", "|---|---|---|"]
+    seen = {}
+    for g in clear:
+        key = (round(g["gap"], 2), g["a"].rsplit("_", 1)[0], g["b"].rsplit("_", 1)[0])
+        seen.setdefault(key, []).append(g)
+    for (gap, ta, tb), lst in sorted(seen.items()):
+        L.append(f"| {gap} | {lst[0]['a']} / {lst[0]['b']} | {len(lst)} |")
     if rep.get("swing"):
         L += ["", "## Door and window swing", "",
               "| part | free from 0 deg to | first collision |", "|---|---|---|"]
