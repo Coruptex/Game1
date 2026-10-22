@@ -13,7 +13,8 @@ md_bar_z = 96;                                     // slide-bolt height (world Z
 bolt_s = 6;                                        // bolt bar section
 loop_len = 10;
 
-module md_outline2d(inset = 0) {
+module md_outline2d(inset = 0) { offset(r = 1.2) offset(delta = -1.2) md_outline2d_raw(inset); }
+module md_outline2d_raw(inset = 0) {
     n = 16;
     pts = concat([[dk_door / 2 + swing_gap + inset, md_y0 + inset], [md_w - inset, md_y0 + inset]],
                  [for (i = [0 : n]) let(x = md_w - inset - i * (md_w - dk_door / 2 - swing_gap - 2 * inset) / n)
@@ -94,7 +95,8 @@ sd_w  = (sf_ud - latch_gap) - sd_ax[1];            // axis -> free edge
 sd_y0 = sill_top + 1;
 sd_y1 = stall_door_top - 1;
 yoke_w = 38; yoke_d = 22;
-module sd_outline2d() {
+module sd_outline2d() { offset(r = 1.2) offset(delta = -1.2) sd_outline2d_raw(); }
+module sd_outline2d_raw() {
     xm = (dk_door / 2 + swing_gap + sd_w) / 2;
     difference() {
         translate([dk_door / 2 + swing_gap, sd_y0]) square([sd_w - dk_door / 2 - swing_gap, sd_y1 - sd_y0]);

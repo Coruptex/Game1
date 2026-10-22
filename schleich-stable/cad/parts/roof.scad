@@ -91,6 +91,10 @@ module c_tent_world() {          // front tent, world coordinates
             c_barge();
         }
         c_tab_pockets();
+        // rounded front eave corners (plan view)
+        for (m = [0, 1]) translate([m == 0 ? 0 : 2 * XC, 0, 0]) mirror([m, 0, 0])
+            // outermost eave edge is c_t*sqrt(2) beyond the underside eave point
+            translate([c_xe - c_t * 1.4143, cy0, Z_c_low - 1]) linear_extrude(40) fillet_cutter2d(4);
         // keep the bed face flat
         translate([-500, -500, Z_c_low - 100]) cube([2000, 2000, 100]);
     }
@@ -118,8 +122,14 @@ module s_tab_pockets_world() {
 }
 module side_roof_local() {
     difference() {
-        union() {
+        intersection() {
             shingle_slab(s_len, s_y1 - s_y0, roof_t, tile_step, s_row);
+            // round the exposed eave / verge corners (child safety)
+            translate([0, 0, -1]) linear_extrude(10) union() {
+                translate([0, 0]) rrect(s_len, s_y1 - s_y0, 4);
+                translate([s_len / 2, 0]) square([s_len / 2, s_y1 - s_y0]);
+                translate([0, (s_y1 - s_y0) / 2]) square([s_len, (s_y1 - s_y0) / 2]);
+            }
         }
         shingle_joints(s_len, s_y1 - s_y0, s_row);
         s_unplace() s_tab_pockets_world();

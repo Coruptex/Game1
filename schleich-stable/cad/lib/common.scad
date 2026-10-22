@@ -35,6 +35,13 @@ module round_arch2d(w, h) {
     }
 }
 
+// 2D cutter that rounds a convex 90 deg corner at the origin (material in +x,+y)
+// with radius r. Explicit arc vertices: no tangent circle/square slivers.
+module fillet_cutter2d(r, fn = 24) {
+    polygon(concat([[-1, -1], [r, -1], [r, 0]],
+                   [for (i = [0 : fn]) let(a = 270 - 90 * i / fn) [r + r * cos(a), r + r * sin(a)]],
+                   [[0, r], [-1, r]]));
+}
 // band of width b around a 2D shape (outside)
 module outline_band(b) { difference() { offset(delta = b) children(); children(); } }
 

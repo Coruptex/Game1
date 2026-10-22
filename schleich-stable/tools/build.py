@@ -49,7 +49,9 @@ def export(job):
     t = time.time()
     r = subprocess.run(cmd, capture_output=True, text=True)
     warn = [l for l in (r.stdout + r.stderr).splitlines() if "WARNING" in l or "ERROR" in l]
-    if r.returncode != 0 or not os.path.exists(tmp):
+    # OpenSCAD reports some geometry failures only as ERROR lines (rc 0):
+    # treat them as failures so nothing is dropped silently
+    if r.returncode != 0 or not os.path.exists(tmp) or any("ERROR" in w for w in warn):
         return out, False, time.time() - t, warn or [r.stderr[-400:]]
     # convert to binary STL (much smaller)
     import trimesh

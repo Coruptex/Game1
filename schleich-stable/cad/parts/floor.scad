@@ -100,10 +100,16 @@ function tile_body(id) =
     let(r = tile_rect(id), g = tile_gap)
     [r[0] + (r[0] > X0 ? g : 0), r[1] + (r[1] > Y0 ? g : 0),
      r[2] - (r[2] < X3 ? g : 0), r[3] - (r[3] < Y2 ? g : 0)];
+// whole base footprint with rounded outer corners (child safety)
+module base_footprint2d() {
+    translate([X0 - ext_out, Y0 - ext_out]) rrect(X3 - X0 + 2 * ext_out, Y2 - Y0 + 2 * ext_out, 4);
+}
 module floor_tile_world(id) {
     r = tile_body(id);
     xa = r[0]; ya = r[1]; xb = r[2]; yb = r[3];
     aisle = id[0] == "A";
+    intersection() {
+    translate([0, 0, -1]) linear_extrude(Z_plinth + 2) offset(delta = finger_l + 1) base_footprint2d();
     difference() {
         union() {
             // slab
@@ -147,6 +153,12 @@ module floor_tile_world(id) {
             }
         // soften outer top edges of the plinth
         plinth_edge_chamfer();
+        // rounded outer corners
+        translate([0, 0, -1]) linear_extrude(Z_plinth + 2) difference() {
+            offset(delta = 50) base_footprint2d();
+            base_footprint2d();
+        }
+    }
     }
 }
 
