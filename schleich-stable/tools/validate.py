@@ -11,6 +11,10 @@ Checks
   assembly: pairwise interference of all placed parts, nearest gaps,
             door / window swing range, roof lift-off, vertical extraction
             of panels from their grooves (assembly order)
+  horses:   a proxy of the design horse (config.scad horse_l/w/h) standing
+            in every stall facing both ways, lifted out with the side roof
+            off, led through an open stall door and (with a rider) through
+            the main door
 """
 import glob, json, os, sys, time
 import numpy as np
@@ -25,6 +29,7 @@ TOL = 0.5                    # mm^3 -- intersections below this are numerical no
 
 sys.path.insert(0, os.path.dirname(__file__))
 from build import read_instances, unique_parts  # noqa: E402
+from dims import dims  # noqa: E402
 
 
 def load(path):
@@ -167,6 +172,20 @@ def check_swing(placed, report):
             free_to = ang
         res.append({"part": n, "free_to_deg": free_to, "first_collision": first_hit})
     report["swing"] = res
+    # everything open at 90 deg at the same time (doors, windows, bolts)
+    opened = {}
+    for f in glob.glob(os.path.join(ROOT, "build", "swing", "*_090.stl")):
+        tm = load(f); opened[os.path.basename(f)[:-8]] = (tm, to_mf(tm), tm.bounds)
+    hits = []
+    names = sorted(opened)
+    for i, a in enumerate(names):
+        for b in names[i + 1:] + static:
+            mb = opened[b] if b in opened else placed[b]
+            if bbox_overlap(opened[a][2], mb[2], 0.5):
+                v = inter_vol(opened[a][1], mb[1])
+                if v > TOL:
+                    hits.append({"a": a, "b": b, "vol_mm3": round(v, 1)})
+    report["all_open_90"] = {"movers": len(opened), "collisions": hits}
     return res
 
 
@@ -187,7 +206,19 @@ def check_roof_lift(placed, report):
                     break
             if blocked:
                 break
-        res.append({"part": r, "lifts_12mm_freely": blocked is None, "blocked": blocked})
+        slide = None
+        if r.startswith("roof_side"):
+            # lift 3 mm (off the 1.6 mm tabs), then slide outward 60 mm
+            sx = -1 if r.endswith(("FL", "BL")) else 1
+            for dx in range(0, 65, 5):
+                mt = m.translate((sx * dx, 0, 3)); bbt = bb + np.array([sx * dx, 0, 3])
+                hit = next((s for s in others + [x for x in roofs if x != r]
+                            if bbox_overlap(bbt, placed[s][2], 0.2) and inter_vol(mt, placed[s][1]) > TOL), None)
+                if hit:
+                    slide = {"dx": dx, "by": hit}
+                    break
+        res.append({"part": r, "lifts_12mm_freely": blocked is None, "blocked": blocked,
+                    "slides_out": (slide is None) if r.startswith("roof_side") else None, "slide_blocked": slide})
     report["roof_lift"] = res
     return res
 
@@ -254,6 +285,134 @@ def check_latch(placed, report):
     return res
 
 
+# ------------------------------------------------------------------ horses
+def horse_proxy(L, W, H, rider_h=None):
+    """Blocky stand-in for a horse figure, larger than the real shape:
+    local x from the nose (0) to the tail (L), y centred, z up from the hooves.
+    Proportions (head length, ear position) are estimates from figure photos."""
+    blocks = [((0.20 * L, -W / 2, 0), (0.92 * L, W / 2, 0.68 * H)),          # body and legs
+              ((0.0, -0.25 * W, 0.50 * H), (0.32 * L, 0.25 * W, 0.88 * H)),  # neck and head
+              ((0.17 * L, -0.20 * W, 0.88 * H), (0.30 * L, 0.20 * W, H)),    # poll and ears
+              ((0.92 * L, -0.20 * W, 0.30 * H), (L, 0.20 * W, 0.66 * H))]    # rump and tail
+    if rider_h:
+        blocks += [((0.38 * L, -32, 0.45 * H), (0.58 * L, 32, 0.75 * H)),   # rider's legs
+                   ((0.40 * L, -14, 0.60 * H), (0.56 * L, 14, rider_h - 12)),
+                   ((0.42 * L, -9, rider_h - 14), (0.54 * L, 9, rider_h))]   # head and helmet
+    m = None
+    for lo, hi in blocks:
+        b = mf.Manifold.cube([hi[i] - lo[i] for i in range(3)]).translate(list(lo))
+        m = b if m is None else m + b
+    return m
+
+
+FACING = {"+x": 180, "-x": 0, "+y": -90, "-y": 90}    # rotation that points the nose that way
+
+
+def place_horse(m, nose_xy, z0, facing):
+    return m.rotate([0, 0, FACING[facing]]).translate([nose_xy[0], nose_xy[1], z0])
+
+
+def gaps_to(m, placed, names, search=40.0):
+    """[(gap, name)] for every part within `search`; gap < 0 means overlap"""
+    bb = np.array(m.bounding_box()).reshape(2, 3)
+    out = []
+    for n in names:
+        tm, ms, bs = placed[n]
+        if not bbox_overlap(bb, bs, search):
+            continue
+        v = inter_vol(m, ms)
+        if v > 0.01:
+            out.append((-round(v, 2), n))
+            continue
+        g = m.min_gap(ms, search)
+        if g < search:
+            out.append((round(g, 1), n))
+    return sorted(out)
+
+
+def check_horses(placed, report):
+    d = dims()
+    L, W, H, wt, ft = d["horse_l"], d["horse_w"], d["horse_h"], d["wall_t"], d["floor_top"]
+    horse = horse_proxy(L, W, H)
+    solid = [n for n in placed if not n.startswith(("pin_", "floor_"))]
+    res = {"design_horse": [L, W, H], "rider_h": d["rider_h"], "stalls": [], "passages": []}
+    # stalls: clear box between the board faces, horse centred, both ways round
+    for q in ("FL", "FR", "BL", "BR"):
+        left, front = q[1] == "L", q[0] == "F"
+        xa, xb = (d["X1"] - d["bay_x_stall"], d["X1"]) if left else (d["X2"], d["X3"])
+        xa, xb = xa + wt / 2, xb - wt / 2
+        ya, yb = (0.0, d["Y1"]) if front else (d["Y1"], d["Y2"])
+        ya, yb = ya + wt / 2, yb - wt / 2
+        c = (xb - xa - L) / 2
+        yc = (ya + yb) / 2
+        aisle = "+x" if left else "-x"
+        for facing, label in ((aisle, "facing the aisle"), ("-x" if left else "+x", "facing the outer wall")):
+            nose_x = (xb - c) if facing == "+x" else (xa + c)
+            m = place_horse(horse, (nose_x, yc), ft + 0.05, facing)
+            g = gaps_to(m, placed, solid)
+            res["stalls"].append({"stall": q, "pose": label, "end_clearance_mm": round(c, 1),
+                                  "side_clearance_mm": round((yb - ya - W) / 2, 1),
+                                  "fits": not g or g[0][0] >= 0, "closest": g[:3]})
+    # lift out of stall FL (head at the stall front, the worst place) along a path
+    m0 = place_horse(horse, (d["X1"] - wt / 2 - 1.6, d["Y1"] / 2), ft + 0.05, "+x")
+
+    def path_block(steps, removed):
+        names = [n for n in solid if n not in removed]
+        for dx, dz in steps:
+            g = gaps_to(m0.translate([dx, 0, dz]), placed, names, 0.5)
+            if g and g[0][0] < 0:
+                return {"dx": dx, "dz": dz, "by": g[0][1]}
+        return None
+    up = [(0, z) for z in range(5, 205, 5)]
+    # a typical 150 mm horse standing back against the outer wall
+    typ = place_horse(horse_proxy(150, 45, 110), (d["X1"] - d["bay_x_stall"] + wt / 2 + 1.6 + 150, d["Y1"] / 2), ft + 0.05, "+x")
+    tblock = None
+    for dx, dz in up:
+        g = gaps_to(typ.translate([0, 0, dz]), placed, [n for n in solid if n != "roof_side_FL"], 0.5)
+        if g and g[0][0] < 0:
+            tblock = {"dx": 0, "dz": dz, "by": g[0][1]}
+            break
+    res["lift_out_FL"] = [
+        {"how": "typical horse 150 x 45 x 110 mm standing against the outer wall: straight up, side roof off", "blocked": tblock},
+        {"how": "design horse: straight up, side roof off", "blocked": path_block(up, {"roof_side_FL"})},
+        {"how": "design horse: straight up, side roof and central roof off", "blocked": path_block(up, {"roof_side_FL", "roof_central_F"})}]
+    # led out through the open stall door FL (90 deg), lifted over the 3 mm sill
+    door = os.path.join(ROOT, "build", "swing", "stall_door_FL_090.stl")
+    if os.path.exists(door):
+        tm = load(door)
+        v = tm.vertices[(tm.vertices[:, 0] > d["X1"] + 6)]
+        y0 = float(v[:, 1].max())                      # open leaf, aisle-side face
+        y1 = d["sf_ud"]                                 # latch stile edge
+        pas = dict(placed); pas["stall_door_FL"] = (tm, to_mf(tm), tm.bounds)
+        worst = None
+        # straight out until the nose nearly touches the stall front opposite;
+        # by then the head, ears and body have passed the door
+        for nx in np.arange(d["X1"] - wt / 2 - 2, d["X2"] - wt / 2 - 3, 5.0):
+            m = place_horse(horse, (nx, (y0 + y1) / 2), d["sill_top"] + 1.0, "+x")
+            g = gaps_to(m, pas, solid, 20)
+            if g and (worst is None or g[0][0] < worst[0]):
+                worst = g[0]
+        res["passages"].append({"what": "horse through stall door FL (open 90 deg)",
+                                "opening_mm": round(y1 - y0, 1), "min_gap": worst})
+    # with rider through the open front main door (leaves at 90 deg)
+    rider = horse_proxy(L, W, H, d["rider_h"])
+    files = {n: os.path.join(ROOT, "build", "swing", f"{n}_090.stl") for n in ("main_leaf_FL", "main_leaf_FR", "bolt_bar_F")}
+    if all(os.path.exists(f) for f in files.values()):
+        pas = dict(placed)
+        for n, f in files.items():
+            tm = load(f); pas[n] = (tm, to_mf(tm), tm.bounds)
+        worst = None
+        for ny in np.arange(20.0, -L - 30, -5.0):      # nose 20 mm inside -> tail 30 mm outside
+            m = place_horse(rider, (d["XC"], ny), ft + 0.2, "-y")
+            g = gaps_to(m, pas, solid, 20)
+            if g and (worst is None or g[0][0] < worst[0]):
+                worst = g[0]
+        res["passages"].append({"what": "horse with rider through the front main door (open 90 deg)",
+                                "opening_mm": round(2 * (d["XC"] - d["md_ax_x"]) - 7.0, 1), "min_gap": worst})
+    report["horses"] = res
+    return res
+
+
 def write_md(rep, path):
     L = ["# Digital validation report", "",
          f"Generated by `tools/validate.py` on {time.strftime('%Y-%m-%d %H:%M')} from the exported STL files.",
@@ -290,6 +449,10 @@ def write_md(rep, path):
         for s in rep["swing"]:
             fc = s["first_collision"]
             L.append(f"| {s['part']} | {s['free_to_deg']} deg | " + (f"{fc['angle']} deg with {fc['with']} ({fc['vol_mm3']} mm3)" if fc else "none up to the last tested angle") + " |")
+    ao = rep.get("all_open_90")
+    if ao:
+        L += ["", f"All {ao['movers']} moving parts open at 90 deg at the same time: " +
+              ("no collisions." if not ao["collisions"] else f"**collisions** {ao['collisions']}")]
     if rep.get("pins"):
         L += ["", "## Hinge pins (virtual, 1.75 mm) through all knuckles", "",
               "| pin | length mm | passes freely | touches |", "|---|---|---|---|"]
@@ -303,9 +466,36 @@ def write_md(rep, path):
               "| door angle deg | overlap mm3 | overlap extent mm |", "|---|---|---|"]
         for r in rep["latch"]:
             L.append(f"| {r['angle']} | {r['overlap_mm3']} | {r['overlap_extent_mm']} |")
-    L += ["", "## Roof lift-off (vertical, others in place)", "", "| roof unit | lifts 12 mm freely | blocked |", "|---|---|---|"]
+    h = rep.get("horses")
+    if h:
+        L += ["", "## Horse fit (design horse %g x %g x %g mm)" % tuple(h["design_horse"]), "",
+              "A blocky proxy of the design horse (`horse_l/w/h` in `config.scad`) is placed in every stall,",
+              "centred, both ways round. It is larger than a real figure (no tapering legs, neck or head).",
+              "Gaps are the nearest distances to any part; negative = overlap in mm3.", "",
+              "| stall | pose | room at each end mm | room at each side mm | fits | closest parts (gap mm) |", "|---|---|---|---|---|---|"]
+        for r in h["stalls"]:
+            cl = ", ".join(f"{n} {g}" for g, n in r["closest"])
+            L.append(f"| {r['stall']} | {r['pose']} | {r['end_clearance_mm']} | {r['side_clearance_mm']} | {'yes' if r['fits'] else '**NO**'} | {cl} |")
+        L += ["", "Taking a horse out of stall FL from above (design horse: head at the stall front, the worst place):", "",
+              "| path | result |", "|---|---|"]
+        for r in h["lift_out_FL"]:
+            bl = r["blocked"]
+            L.append(f"| {r['how']} | " + ("free (to 200 mm up)" if not bl else
+                     f"stops after {bl['dz']} mm up / {abs(bl['dx'])} mm out at {bl['by']}") + " |")
+        L += ["", "Led through the doors (horse lifted 1 mm over the 3 mm sill):", ""]
+        L += ["| passage | clear opening mm | smallest gap on the way (mm, part) |", "|---|---|---|"]
+        for p in h["passages"]:
+            g = p["min_gap"]
+            L.append(f"| {p['what']} | {p['opening_mm']} | " + (f"{g[0]} ({g[1]})" if g else "> 20") + " |")
+        L.append(f"\nThe rider height ({h['rider_h']:g} mm above the floor) is an estimate.")
+    L += ["", "## Roof lift-off (others in place)", "",
+          "Central units lift straight up. Side units lift a few mm (off their 1.6 mm tabs) under the",
+          "central eave, then slide outward (checked: 3 mm up, then 60 mm out).", "",
+          "| roof unit | lifts 12 mm straight up | first contact going up | 3 mm up + slides 60 mm out |", "|---|---|---|---|"]
     for r in rep["roof_lift"]:
-        L.append(f"| {r['part']} | {'yes' if r['lifts_12mm_freely'] else '**no**'} | {r['blocked'] or ''} |")
+        so = "" if r.get("slides_out") is None else ("yes" if r["slides_out"] else f"**no** {r['slide_blocked']}")
+        L.append(f"| {r['part']} | {'yes' if r['lifts_12mm_freely'] else 'no'} | "
+                 f"{(str(r['blocked']['dz']) + ' mm, ' + r['blocked']['by']) if r['blocked'] else ''} | {so} |")
     L += ["", "## Panel extraction (slide straight up, roof off)", "", "| panel | slides out | blocked |", "|---|---|---|"]
     for r in rep["extraction"]:
         L.append(f"| {r['part']} | {'yes' if r['slides_out'] else '**no**'} | {r['blocked'] or ''} |")
@@ -322,6 +512,7 @@ def main():
     print("pins / latch ...", flush=True)
     pins_placed = {k: v for k, v in placed.items()}
     check_pins(pins_placed, rep); check_latch(placed, rep)
+    print("horses ...", flush=True); check_horses(placed, rep)
     print("roof lift ...", flush=True); check_roof_lift(placed, rep)
     print("extraction ...", flush=True); check_extraction(placed, rep)
     os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
@@ -334,10 +525,17 @@ def main():
         print("   ", h)
     for s in rep.get("swing", []):
         print("   swing", s)
+    print("   all open at 90:", rep.get("all_open_90"))
     for p in rep.get("pins", []):
         print("   pin", p)
     for r in rep.get("latch", []):
         print("   latch", r)
+    for r in rep["horses"]["stalls"]:
+        print("   horse", r)
+    for r in rep["horses"]["lift_out_FL"]:
+        print("   horse lift-out FL:", r)
+    for r in rep["horses"]["passages"]:
+        print("   passage", r)
     for r in rep["roof_lift"]:
         print("   roof", r)
     for r in rep["extraction"]:

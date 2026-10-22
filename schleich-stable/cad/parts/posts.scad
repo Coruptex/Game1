@@ -1,15 +1,17 @@
 // POSTS (12) -- black. Printed UPRIGHT: grooves and hinge bores are
 // in-layer features (round, accurate, strong rings).
-// Four base types are modelled in the front-left quadrant; all others are
-// mirrored copies (see post_world()).
+// The base types are modelled on the left aisle line; the others are
+// mirrored or rotated copies (see post_world()).
 //
 //  corner    (X0,Y0)  grooves +X (gable wing), +Y (side wall)
 //  sidemid   (X0,Y1)  grooves -Y, +Y (side walls), +X (partition)
 //  jamb      (X1,Y0)  groove -X (gable wing), +X upper (pediment),
-//                     +Y lower sill + upper (stall front);
-//                     knuckles +X (main door leaf), +Y (stall door)
-//  mid       (X1,Y1)  grooves -Y, +Y (stall fronts), -X (partition),
-//                     +X upper (truss)
+//                     +Y upper (stall front); knuckles +X (main door
+//                     leaf), +Y (stall door FL). Copy at BR (rotated).
+//  jamb, no stall door (FR, BL: mirrored): +Y groove full height
+//  mid       (X1,Y1)  grooves -Y (stall front FL), +Y upper (stall front
+//                     BL), -X (partition); knuckles +Y (stall door BL).
+//                     Copy at (X2,Y1) rotated 180 deg (stall door FR).
 
 post_bot = 2;                       // posts rest on the socket floor
 post_chamfer = 1.2;
@@ -71,50 +73,58 @@ module cut_above_c_roof(x) {
 }
 zt_aisle = Z_c_eave + post_w * tan(pitch_c) + 1;      // raw height before bevel
 
-module post_jamb_world() {
+// stall = true: carries the hinge of the stall door beside it (+Y face)
+module post_jamb_world(stall = true) {
     x = X1; y = Y0; zt = zt_aisle;
     union() {
         difference() {
             post_body(x, y, post_bot, zt);
             post_groove(x, y, "-x", Z_plinth - base_groove_d, zt + 1);
             post_groove(x, y, "+x", door_spring_z - 2, zt + 1);
-            post_groove(x, y, "+y", sd_z[1] + 1, zt + 1);
+            post_groove(x, y, "+y", stall ? sd_z[1] + 1 : floor_top - floor_groove_d, zt + 1);
             cut_above_c_roof(x);
         }
         // main door knuckles on the +X face
         translate([md_ax[0], md_ax[1], 0])
             knuckles_fixed_z(md_z[0], md_z[1], md_n, dk_door, [-1, 0], md_ax[0] - (x + PW2));
         // stall door knuckles on the +Y face
-        translate([sd_ax[0], sd_ax[1], 0])
+        if (stall) translate([sd_ax[0], sd_ax[1], 0])
             knuckles_fixed_z(sd_z[0], sd_z[1], sd_n, dk_door, [0, -1], sd_ax[1] - (y + PW2));
     }
 }
 module post_mid_world() {
     x = X1; y = Y1; zt = zt_aisle;
-    difference() {
-        post_body(x, y, post_bot, zt);
-        post_groove(x, y, "-y", floor_top - floor_groove_d, zt + 1);
-        post_groove(x, y, "+y", floor_top - floor_groove_d, zt + 1);
-        post_groove(x, y, "-x", floor_top - floor_groove_d, zt + 1);
-        cut_above_c_roof(x);
+    ax = sd_ax + [0, bay_y];            // hinge of stall door BL
+    union() {
+        difference() {
+            post_body(x, y, post_bot, zt);
+            post_groove(x, y, "-y", floor_top - floor_groove_d, zt + 1);
+            post_groove(x, y, "+y", sd_z[1] + 1, zt + 1);
+            post_groove(x, y, "-x", floor_top - floor_groove_d, zt + 1);
+            cut_above_c_roof(x);
+        }
+        translate([ax[0], ax[1], 0])
+            knuckles_fixed_z(sd_z[0], sd_z[1], sd_n, dk_door, [0, -1], ax[1] - (y + PW2));
     }
 }
 
 // mirror helpers about the building centre lines
 module mirror_x_c() { translate([XC, 0, 0]) mirror([1, 0, 0]) translate([-XC, 0, 0]) children(); }
 module mirror_y_c() { translate([0, Y1, 0]) mirror([0, 1, 0]) translate([0, -Y1, 0]) children(); }
+module rot180_c() { translate([XC, Y1, 0]) rotate([0, 0, 180]) translate([-XC, -Y1, 0]) children(); }
 
 // name: <type>_<quadrant>, quadrant in FL, FR, BL, BR
 module post_world(name) {
     t = post_type(name); q = post_quad(name);
+    // jambs FR / BL have no stall door beside them (alternating doors)
     module base() {
         if (t == "corner") post_corner_world();
         if (t == "sidemid") post_sidemid_world();
-        if (t == "jamb") post_jamb_world();
+        if (t == "jamb") post_jamb_world(q == "FL" || q == "BR");
         if (t == "mid") post_mid_world();
     }
     if (q == "FL") base();
-    if (q == "FR") mirror_x_c() base();
+    if (q == "FR") { if (t == "mid") rot180_c() base(); else mirror_x_c() base(); }
     if (q == "BL") mirror_y_c() base();
     if (q == "BR") mirror_x_c() mirror_y_c() base();
 }

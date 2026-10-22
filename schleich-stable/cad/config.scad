@@ -8,7 +8,19 @@
 //
 //  The building is a timber-frame grid: posts stand on the post lines
 //  X0..X3 / Y0..Y2, panels slide down into grooves in the posts.
+//
+//  COMPACT VERSION: the grid, heights and openings are derived from the
+//  horse figures (see docs/DIMENSION_PLAN.md), not scaled from the big
+//  version. Sections, fits, hinges and latch are unchanged.
 // =====================================================================
+
+/* [Design horse (fit checks in tools/validate.py)] */
+// Longest / widest / tallest Schleich figure considered (mm)
+horse_l = 170;
+horse_w = 53;
+horse_h = 120;
+// Mounted rider, top of helmet above the floor (estimate, no published value)
+rider_h = 155;
 
 /* [Fits and tolerances] */
 // Clearance per side for panels sliding into post / floor grooves
@@ -33,12 +45,13 @@ bore_fixed = 1.85;
 bore_free  = 2.30;
 
 /* [Grid: post centre lines] */
-// Post centre-to-centre: exterior wall -> aisle line
-bay_x_stall = 188;
+// Post centre-to-centre: exterior wall -> aisle line (stall depth;
+// clear depth = bay_x_stall - wall_t >= horse_l + 3)
+bay_x_stall = 176;
 // Post centre-to-centre across the aisle
-bay_x_aisle = 168;
-// Post centre-to-centre along the aisle (one stall)
-bay_y       = 168;
+bay_x_aisle = 116;
+// Post centre-to-centre along the aisle (stall width; clear = bay_y - wall_t)
+bay_y       = 116;
 
 /* [Section sizes] */
 // Square post section
@@ -50,7 +63,7 @@ post_groove_d = 5.0;
 // Floor tile thickness (top of floor above the table)
 floor_top   = 8;
 // Stone plinth height above the floor
-plinth_h    = 22;
+plinth_h    = 18;
 // Plinth width (centred on the wall line)
 plinth_w    = 9;
 // Depth of the groove in the plinth / floor that holds panel bottoms
@@ -58,12 +71,15 @@ base_groove_d  = 4.0;
 floor_groove_d = 3.0;
 
 /* [Heights and roof] */
-// Underside of side roof above the exterior wall line
-z_eave_side = 142;
+// Underside of side roof above the exterior wall line (Z, world).
+// Rule: a horse facing the outer wall has its ears ~45 mm from the wall;
+// the roof there must clear horse_h + 10.
+z_eave_side = 124;
 // Side (lean-to) roof pitch, degrees
 pitch_side  = 20;
 // Vertical step between side-roof top and central roof seat
-roof_step   = 19;
+// (the side roof lifts about roof_step - overhang_c - 2 mm, then slides out)
+roof_step   = 14;
 // Central roof pitch, degrees (45 = the central roof prints without support)
 pitch_c     = 45;
 // Roof base thickness (perpendicular to the roof plane)
@@ -71,25 +87,31 @@ roof_t      = 2.4;
 // Extra thickness of the shingle rows
 tile_step   = 1.2;
 // Roof overhang beyond walls (eaves and gables)
-overhang_eave  = 15;     // side roofs, beyond the exterior walls
-overhang_c     = 12;     // central roof, beyond the aisle posts (horizontal)
-overhang_gable = 12;
+overhang_eave  = 12;     // side roofs, beyond the exterior walls
+overhang_c     = 9;      // central roof, beyond the aisle posts (horizontal)
+overhang_gable = 10;
 
 /* [Openings] */
-// Main entrance: arch spring height and crown height (Z, world)
-door_spring_z = 160;
-door_crown_z  = 190;
-// Stall door clear opening (along the stall front) and top edge (Z)
-stall_door_w  = 74;
+// Main entrance: arch spring height and crown height (Z, world).
+// Crown 160 mm above the floor: a mounted rider (about 145-160 mm) passes.
+door_spring_z = 140;
+door_crown_z  = 168;
+// Stall door clear opening (along the stall front) and top edge (Z).
+// Width: about 62 mm passage with the door open (horse_w + 2 x 4.5);
+// top: horse_h + 5 above the 3 mm sill.
+stall_door_w  = 70;
 stall_door_top = 136;
+// Neck yoke (head opening) at the top of the stall door
+yoke_w = 34;
+yoke_d = 20;
 // Gable-wing window (casement) clear opening
-win_w = 46;
-win_h = 64;
-win_sill_z = 72;      // above table
+win_w = 44;
+win_h = 60;
+win_sill_z = 70;      // above table
 // Side-wall barred window
-swin_w = 44;
-swin_h = 58;
-swin_sill_z = 66;
+swin_w = 36;
+swin_h = 48;
+swin_sill_z = 60;
 
 /* [Texture] */
 plank_w     = 10;     // board width

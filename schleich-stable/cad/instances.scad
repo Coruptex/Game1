@@ -3,7 +3,6 @@
 // Instances map onto a smaller set of unique printable parts (mirror pairs
 // "A"/"B"; parts identical by rotation are printed several times).
 
-module rot180_c() { translate([XC, Y1, 0]) rotate([0, 0, 180]) translate([-XC, -Y1, 0]) children(); }
 
 // quadrant transform: FL as modelled, FR = mirror X, BL = mirror Y, BR = rotation
 module quad(q) {
@@ -11,6 +10,16 @@ module quad(q) {
     if (q == "FR") mirror_x_c() children();
     if (q == "BL") mirror_y_c() children();
     if (q == "BR") rot180_c() children();
+}
+// stall fronts and stall doors: no mirrors. FL as modelled, BL one bay
+// further back, BR = FL and FR = BL rotated 180 deg about the centre. Seen
+// from the aisle every door hinges on its left, so the doors of facing
+// stalls sit at opposite ends and never meet in the narrow aisle.
+module stall_quad(q) {
+    if (q == "FL") children();
+    if (q == "BL") translate([0, bay_y, 0]) children();
+    if (q == "BR") rot180_c() children();
+    if (q == "FR") rot180_c() translate([0, bay_y, 0]) children();
 }
 
 // [instance, print part, colour]
@@ -28,14 +37,14 @@ instances = [
     ["gable_wing_FL", "gable_wing_A", "wall"], ["gable_wing_BR", "gable_wing_A", "wall"],
     ["gable_wing_FR", "gable_wing_B", "wall"], ["gable_wing_BL", "gable_wing_B", "wall"],
     ["partition_L", "partition", "wall"], ["partition_R", "partition", "wall"],
-    ["stall_front_FL", "stall_front_A", "wall"], ["stall_front_BR", "stall_front_A", "wall"],
-    ["stall_front_FR", "stall_front_B", "wall"], ["stall_front_BL", "stall_front_B", "wall"],
+    ["stall_front_FL", "stall_front", "wall"], ["stall_front_BR", "stall_front", "wall"],
+    ["stall_front_FR", "stall_front", "wall"], ["stall_front_BL", "stall_front", "wall"],
     ["pediment_F", "pediment", "wall"], ["pediment_B", "pediment", "wall"],
     ["main_leaf_FL", "main_leaf_A", "door"], ["main_leaf_BR", "main_leaf_A", "door"],
     ["main_leaf_FR", "main_leaf_B", "door"], ["main_leaf_BL", "main_leaf_B", "door"],
     ["bolt_bar_F", "bolt_bar", "door"], ["bolt_bar_B", "bolt_bar", "door"],
-    ["stall_door_FL", "stall_door_A", "door"], ["stall_door_BR", "stall_door_A", "door"],
-    ["stall_door_FR", "stall_door_B", "door"], ["stall_door_BL", "stall_door_B", "door"],
+    ["stall_door_FL", "stall_door", "door"], ["stall_door_BR", "stall_door", "door"],
+    ["stall_door_FR", "stall_door", "door"], ["stall_door_BL", "stall_door", "door"],
     ["casement_FL", "casement_A", "door"], ["casement_BR", "casement_A", "door"],
     ["casement_FR", "casement_B", "door"], ["casement_BL", "casement_B", "door"],
     ["roof_central_F", "roof_central", "roof"], ["roof_central_B", "roof_central", "roof"],
@@ -60,7 +69,7 @@ module pin_world(n) {
         if (q == "BR") rot180_c() p(md_ax, pin_md);
         if (q == "BL") rot180_c() p([2 * XC - md_ax[0], md_ax[1]], pin_md);
     }
-    if (has(n, "pin_stall_")) quad(q) p(sd_ax, pin_sd);
+    if (has(n, "pin_stall_")) stall_quad(q) p(sd_ax, pin_sd);
     if (has(n, "pin_case_")) quad(q)
         translate([gw_hinge_x, Y0 - wall_t / 2 - cs_lift - kz(dk_win), pin_cs[0]]) cylinder(d = pin_d, h = pin_cs[1] - pin_cs[0], $fn = 24);
 }
@@ -84,7 +93,7 @@ module inst(n, ang = 0) {
     else if (has(n, "gable_wing_")) quad(q) gable_wing_place() sp() gable_wing_local();
     else if (n == "partition_L") partition_place() sp() partition_local();
     else if (n == "partition_R") rot180_c() partition_place() sp() partition_local();
-    else if (has(n, "stall_front_")) quad(q) stall_front_place() sp() stall_front_local();
+    else if (has(n, "stall_front_")) stall_quad(q) stall_front_place() sp() stall_front_local();
     else if (n == "pediment_F") pediment_place() sp() pediment_local();
     else if (n == "pediment_B") rot180_c() pediment_place() sp() pediment_local();
     else if (n == "main_leaf_FL") main_leaf_world(false, ang);
@@ -93,7 +102,7 @@ module inst(n, ang = 0) {
     else if (n == "main_leaf_BL") rot180_c() main_leaf_world(true, ang);
     else if (n == "bolt_bar_F") bolt_bar_world(ang);
     else if (n == "bolt_bar_B") rot180_c() bolt_bar_world(ang);
-    else if (has(n, "stall_door_")) quad(q) stall_door_world(ang);
+    else if (has(n, "stall_door_")) stall_quad(q) stall_door_world(ang);
     else if (has(n, "casement_")) quad(q) casement_world(ang);
     else if (n == "roof_central_F") c_tent_world();
     else if (n == "roof_central_B") c_tent_back_world();
@@ -112,14 +121,12 @@ module print_part(p) {
     else if (p == "gable_wing_A") gable_wing_local();
     else if (p == "gable_wing_B") mirror([1, 0, 0]) gable_wing_local();
     else if (p == "partition") partition_local();
-    else if (p == "stall_front_A") stall_front_local();
-    else if (p == "stall_front_B") mirror([1, 0, 0]) stall_front_local();
+    else if (p == "stall_front") stall_front_local();
     else if (p == "pediment") pediment_local();
     else if (p == "main_leaf_A") main_leaf_print(false);
     else if (p == "main_leaf_B") main_leaf_print(true);
     else if (p == "bolt_bar") bolt_bar_print();
-    else if (p == "stall_door_A") stall_door_print(false);
-    else if (p == "stall_door_B") stall_door_print(true);
+    else if (p == "stall_door") stall_door_print(false);
     else if (p == "casement_A") casement_print(false);
     else if (p == "casement_B") casement_print(true);
     else if (p == "roof_central") c_tent_print();

@@ -6,7 +6,7 @@
                                     # position -> build/placed/ (validation)
   python3 tools/build.py --swing    # also doors/windows at several opening
                                     # angles -> build/swing/
-  python3 tools/build.py --only stall_door_A --jobs 4
+  python3 tools/build.py --only stall_door --jobs 4
 
 Works with OpenSCAD 2021.01 (CGAL); with a 2023+ snapshot add
 --backend manifold for a large speed-up.
@@ -97,7 +97,7 @@ def main():
                          {"part": f'"{n}"', "mode": '"placed"', "door_ang": 0}, a.backend))
     if a.swing:
         for n, _, _ in insts:
-            if not any(n.startswith(k) for k in ("main_leaf_", "stall_door_", "casement_")):
+            if not any(n.startswith(k) for k in ("main_leaf_", "stall_door_", "casement_", "bolt_bar_")):
                 continue
             if a.only and n not in a.only:
                 continue

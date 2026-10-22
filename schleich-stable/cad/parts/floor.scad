@@ -35,8 +35,10 @@ tile_joints = [
 function joint_posts(j) =
     j[0] == "x" ? [j[2] < Y0 ? Y0 : j[2], j[3] > Y2 ? Y2 : j[3]]
                 : [j[2] < X0 ? X0 : j[2], j[3] > X3 ? X3 : j[3]];
-function finger_centres(j, n = 4) =
-    let(p = joint_posts(j), lo = p[0] + PW2 + 3, hi = p[1] - PW2 - 3, s = (hi - lo) / n)
+// about one finger per 32 mm of joint between the posts (at least 2)
+function finger_centres(j) =
+    let(p = joint_posts(j), lo = p[0] + PW2 + 3, hi = p[1] - PW2 - 3,
+        n = max(2, round((hi - lo) / 32)), s = (hi - lo) / n)
     [for (k = [0 : n - 1]) lo + s * (k + 0.5)];
 
 // one finger as a world-space box. owner_low: owned by the tile on the low
@@ -52,10 +54,14 @@ module finger_box(j, c, owner_low, grow = 0) {
 }
 
 // grooves in the floor for interior panels (stall fronts, partitions)
+// Stall fronts: the door end of each groove stops PW2 + 8 short of the post
+// centre, so the stall-door hinge pin stands on solid floor. Door ends
+// alternate (left doors at the gables, right doors at the middle posts).
+sf_groove_spans = [[X1, Y0 + PW2 + 8, Y1], [X1, Y1 + PW2 + 8, Y2],
+                   [X2, Y0, Y1 - PW2 - 8], [X2, Y1, Y2 - PW2 - 8]];
 module floor_grooves() {
     zb = floor_top - floor_groove_d;
-    // stall-front grooves stop short of the hinge pins (pins rest on solid floor)
-    for (x = [X1, X2]) translate([x - groove_w / 2, Y0 + PW2 + 8, zb]) cube([groove_w, Y2 - Y0 - 2 * (PW2 + 8), 10]);
+    for (g = sf_groove_spans) translate([g[0] - groove_w / 2, g[1], zb]) cube([groove_w, g[2] - g[1], 10]);
     for (xr = [[X0, X1], [X2, X3]]) translate([xr[0], Y1 - groove_w / 2, zb]) cube([xr[1] - xr[0], groove_w, 10]);
 }
 

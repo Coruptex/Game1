@@ -17,6 +17,7 @@ cy1     = Y1;                                  // rear end (meets the other tent
 c_xe    = X1 - PW2 - overhang_c;               // eave point of the underside (left)
 c_len   = (XC - c_xe) / cos(pitch_c) + 8;      // slab length along the slope
 frame_t = 2.4;                                 // end-frame thickness
+ridge_d = 7;                                   // ridge roll
 
 // one slope (left), world coordinates, unclipped
 module c_slope_raw() {
@@ -27,7 +28,7 @@ module c_slope_raw() {
         }
 }
 // skylight on the left slope: opening + raised frame (local slope frame)
-sky_w = 30; sky_h = 40; sky_s = 64;            // size, position along slope
+sky_w = 26; sky_h = 32; sky_s = 0.45 * c_len;  // size, position along slope
 module c_skylight(cut = true) {
     translate([c_xe, (cy0 + cy1) / 2, Z_c_low]) rotate([0, -pitch_c, 0])
         translate([sky_s, 0, 0])
@@ -70,7 +71,7 @@ module c_barge() {
 }
 // pockets for the stall-front beam tabs
 module c_tab_pockets() {
-    for (x = [X1, X2]) for (u = [45, sf_u1 - 40])
+    for (x = [X1, X2]) for (u = sf_tabs)
         translate([x - wall_t / 2 - fit_tab, u - tab_w / 2 - fit_tab, sf_vtop - 1])
             cube([wall_t + 2 * fit_tab, tab_w + 2 * fit_tab, tab_h_c + 1.3]);
 }
@@ -86,7 +87,7 @@ module c_tent_world() {          // front tent, world coordinates
                 translate(m == 0 ? [-500, -500, Z_c_low] : [XC, -500, Z_c_low]) cube([500 + (m == 0 ? XC : 0), 1000, 500]);
             }
             // ridge roll
-            translate([XC, cy0, Z_c_apex + c_t / cos(pitch_c) - 1.2]) rotate([-90, 0, 0]) cylinder(d = 8, h = cy1 - cy0, $fn = 40);
+            translate([XC, cy0, Z_c_apex + c_t / cos(pitch_c) - 1.2]) rotate([-90, 0, 0]) cylinder(d = ridge_d, h = cy1 - cy0, $fn = 40);
             c_end_frame();
             c_barge();
         }
@@ -116,7 +117,7 @@ module s_unplace() { rotate([0, pitch_side, 0]) translate([-s_xe, -s_y0, -z_side
 // world pockets for the rake tabs (gable wing at Y0, partition at Y1)
 module s_tab_pockets_world() {
     slope = tan(pitch_side);
-    for (yt = [Y0, Y1]) for (xt = [gw_x0 + 45, gw_x1 - 45])
+    for (yt = [Y0, Y1]) for (xt = rake_tabs)
         translate([xt, yt, z_side_roof(xt)]) multmatrix([[1, 0, 0, 0], [0, 1, 0, 0], [slope, 0, 1, 0], [0, 0, 0, 1]])
             translate([-tab_w / 2 - fit_tab, -wall_t / 2 - fit_tab, -2]) cube([tab_w + 2 * fit_tab, wall_t + 2 * fit_tab, 2 + tab_h_side + 0.3]);
 }

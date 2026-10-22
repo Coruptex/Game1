@@ -85,12 +85,14 @@ gw_y0 = Z_plinth - base_groove_d + 0.2;
 gw_win_xc = (X0 + X1) / 2;
 // casement hinge on the corner side (left) of the window
 gw_hinge_x = gw_win_xc - win_w / 2 - 4;
+// side-roof locating tabs on the rakes of gable wings and partitions
+rake_tabs = [gw_x0 + 45, gw_x1 - 45];
 cs_lift = 0.6;                   // casement axis lift above the wall face
 module gable_wing_outline2d() {
     slope = tan(pitch_side);
     union() {
         polygon([[gw_x0, 0], [gw_x1, 0], [gw_x1, z_side_roof(gw_x1)], [gw_x0, z_side_roof(gw_x0)]]);
-        for (xc = [gw_x0 + 45, gw_x1 - 45]) tab2d_on_slope(xc, z_side_roof(xc), slope);
+        for (xc = rake_tabs) tab2d_on_slope(xc, z_side_roof(xc), slope);
     }
 }
 module gable_wing_local() {
@@ -116,13 +118,13 @@ module gable_wing_place() { translate([0, Y0 + wall_t / 2, 0]) panel_to_world() 
 // ---------------------------------------------------------------- partition
 // Left instance: at Y = Y1 from X0 to X1 (interior; "exterior" = front face).
 pt_y0 = floor_top - floor_groove_d + 0.2;
-pt_bars = [80, 132];          // bar zone (world Z)
+pt_bars = [72, 114];          // bar zone (world Z), at horse-head height
 module partition_local() {
     x0 = gw_x0; x1 = gw_x1; slope = tan(pitch_side);
     board_panel(x0, x1, pt_y0, Z_c_apex, horiz = true) {
         union() {
             polygon([[x0, 0], [x1, 0], [x1, z_side_roof(x1)], [x0, z_side_roof(x0)]]);
-            for (xc = [x0 + 45, x1 - 45]) tab2d_on_slope(xc, z_side_roof(xc), slope);
+            for (xc = rake_tabs) tab2d_on_slope(xc, z_side_roof(xc), slope);
         }
         // bar window: openings between vertical bars
         intersection() {

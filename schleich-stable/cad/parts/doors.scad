@@ -9,9 +9,18 @@ md_w  = XC - 0.75 - md_ax[0];                      // axis -> free edge
 md_R  = arch_R(bay_x_aisle - post_w, door_crown_z - door_spring_z);
 function arch_y(X) = door_crown_z - md_R + sqrt(max(0, md_R * md_R - (X - XC) * (X - XC)));
 function md_top(x) = arch_y(md_ax[0] + x) + 4;     // leaf overlaps the pediment by 4
-md_bar_z = 96;                                     // slide-bolt height (world Z)
+md_bar_z = 92;                                     // slide-bolt height (world Z)
 bolt_s = 6;                                        // bolt bar section
-loop_len = 10;
+// slide bolt (world X, locked): one loop on the left leaf, one long loop on
+// the right leaf; the knob stops the bar at the right loop. Unlocking slides
+// the bar right by bolt_travel so it clears the left leaf; the knob then
+// still stays clear of the hinge knuckles.
+loop_L = [XC - 6, 10];                             // [centre, length]
+loop_R = [XC + 11, 18];
+bolt_x0 = XC - 11.5;                               // bar left end, locked
+bolt_x1 = loop_R[0] + loop_R[1] / 2 + 0.5;         // bar right end = knob face
+bolt_knob = 5;
+bolt_travel = 13;
 
 module md_outline2d(inset = 0) { offset(r = 1.2) offset(delta = -1.2) md_outline2d_raw(inset); }
 module md_outline2d_raw(inset = 0) {
@@ -22,7 +31,7 @@ module md_outline2d_raw(inset = 0) {
     polygon(pts);
 }
 module md_window2d() {
-    x0 = 13; x1 = md_w - 10; y0 = 104;
+    x0 = 0.2 * md_w; x1 = md_w - 7; y0 = md_bar_z + 8;
     difference() {
         intersection() {
             md_outline2d(10);
@@ -41,22 +50,22 @@ module md_trims2d() {
             hull() { translate([10, 32]) square([7, 1]); translate([md_w - 15, 85]) square([7, 1]); }
             // strap hinges at the moving knuckles
             for (i = [1 : 2 : md_n - 1]) let(s = kn_seg(md_z[0], md_z[1], md_n, i))
-                hull() { translate([3, (s[0] + s[1]) / 2 - 4]) square([2, 8]); translate([46, (s[0] + s[1]) / 2 - 1.5]) circle(d = 3, $fn = 16); }
+                hull() { translate([3, (s[0] + s[1]) / 2 - 4]) square([2, 8]); translate([0.62 * md_w, (s[0] + s[1]) / 2 - 1.5]) circle(d = 3, $fn = 16); }
         }
         md_window2d();
     }
 }
 // slide-bolt loop (tunnel along x) on the exterior face, centred at x
-// tunnel floor sits trim_h + 0.3 above the leaf face so the bar clears the trims
-module bolt_loop(x) {
+// tunnel floor sits trim_h + 0.6 above the leaf face so the bar clears the trims
+module bolt_loop(x, len) {
     h = bolt_s + 0.6; f = trim_h + 0.6;
-    translate([x - loop_len / 2, md_bar_z - h / 2 - 2.5, md_t - 0.3]) difference() {
-        cube([loop_len, h + 5, f + h + 2]);
-        translate([-1, 2.5, f]) cube([loop_len + 2, h, h]);
+    translate([x - len / 2, md_bar_z - h / 2 - 2.5, md_t - 0.3]) difference() {
+        cube([len, h + 5, f + h + 2]);
+        translate([-1, 2.5, f]) cube([len + 2, h, h]);
     }
 }
 module main_leaf_axis(right = false) {
-    loops = right ? [XC + 12, XC + 30] : [XC - 13];
+    lp = right ? loop_R : loop_L;
     module body() {
         board_panel(0, md_w + 1, md_y0, 200, md_t, xc = md_w / 2) {
             md_outline2d();
@@ -66,8 +75,8 @@ module main_leaf_axis(right = false) {
             union() {}
         }
     }
-    if (right) mirror([1, 0, 0]) union() { body(); for (x = [for (X = loops) (2 * XC - md_ax[0]) - X]) bolt_loop(x); }
-    else union() { body(); for (X = loops) bolt_loop(X - md_ax[0]); }
+    if (right) mirror([1, 0, 0]) union() { body(); bolt_loop((2 * XC - md_ax[0]) - lp[0], lp[1]); }
+    else union() { body(); bolt_loop(lp[0] - md_ax[0], lp[1]); }
 }
 // world placement (closed = 0 deg, opening outward = positive angle)
 module main_leaf_world(right = false, ang = 0) {
@@ -77,19 +86,18 @@ module main_leaf_world(right = false, ang = 0) {
 }
 module main_leaf_print(right = false) { translate([right ? md_w : 0, 0, 0]) main_leaf_axis(right); }
 
-// slide-bolt bar (loose part, 63 mm -- keep away from small children)
-bolt_x0 = XC - 21; bolt_x1 = XC + 36;
+// slide-bolt bar (loose part, about 37 mm -- keep away from small children)
 module bolt_bar_print() {
     c = 0.8;
     translate([0, 0, 0]) linear_extrude(bolt_s) crect(bolt_x1 - bolt_x0, bolt_s, c);
-    translate([bolt_x1 - bolt_x0 - 0.5, -2, 0]) linear_extrude(bolt_s + 4) crect(6.5, bolt_s + 4, 1.2);
+    translate([bolt_x1 - bolt_x0 - 0.5, -2, 0]) linear_extrude(bolt_s + 4) crect(bolt_knob + 0.5, bolt_s + 4, 1.2);
 }
 // ang > 0: bolt unlocked (slid right) and riding on the opened right leaf
 module bolt_bar_world(ang = 0) {
     ax = [2 * XC - md_ax[0], md_ax[1]];
     translate([ax[0], ax[1], 0]) rotate([0, 0, ang]) translate([-ax[0], -ax[1], 0])
     // centred in the loop tunnels: 0.3 mm clearance each side
-    translate([bolt_x0 + (ang > 0 ? 23 : 0), Y0 - md_face_off - trim_h - 0.6 - bolt_s, md_bar_z - bolt_s / 2])
+    translate([bolt_x0 + (ang > 0 ? bolt_travel : 0), Y0 - md_face_off - trim_h - 0.6 - bolt_s, md_bar_z - bolt_s / 2])
         rotate([90, 0, 0]) translate([0, 0, -bolt_s]) bolt_bar_print();
 }
 
@@ -97,7 +105,6 @@ module bolt_bar_world(ang = 0) {
 sd_w  = (sf_ud - latch_gap) - sd_ax[1];            // axis -> free edge
 sd_y0 = sill_top + 1;
 sd_y1 = stall_door_top - 1;
-yoke_w = 38; yoke_d = 22;
 module sd_outline2d() { offset(r = 1.2) offset(delta = -1.2) sd_outline2d_raw(); }
 module sd_outline2d_raw() {
     xm = (dk_door / 2 + swing_gap + sd_w) / 2;
