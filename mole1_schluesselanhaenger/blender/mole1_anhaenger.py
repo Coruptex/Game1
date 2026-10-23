@@ -16,7 +16,6 @@ Was das Skript tut
 3. Baut jedes Bauteil als eigenes, geschlossenes Objekt (Collection "01_Bauteile").
 4. Vereinigt alle Bauteile per Boolean (UNION, Solver MANIFOLD) zu EINEM Volumenkörper.
 5. Speichert eine editierbare .blend-Datei und exportiert die STL in Millimetern.
-6. Optional (--relief): erzeugt Variante B (Halbrelief mit flacher Rückseite) zum Vergleich.
 
 Ausführen
 ---------
@@ -26,8 +25,8 @@ Nur in einer neuen, leeren Datei oder in der mitgelieferten .blend ausführen.
 * Blender-Oberfläche: Arbeitsbereich "Scripting" → Text → Öffnen → diese Datei → "Run Script".
   Ausgabeordner ist "export" neben der Skriptdatei bzw. neben der gespeicherten .blend
   (liegt die .blend bereits in einem Ordner "export", wird dieser verwendet).
-* Konsole:                 blender -b -P mole1_anhaenger.py -- --out ./export --relief
-* Python mit pip-Paket bpy: python mole1_anhaenger.py --out ./export --relief
+* Konsole:                 blender -b -P mole1_anhaenger.py -- --out ./export
+* Python mit pip-Paket bpy: python mole1_anhaenger.py --out ./export
 
 Koordinaten: z = 0 ist die Unterseite des Granitsockels (= Molendeck), z zeigt nach oben,
 die "Vorderseite" (eine Achteckfläche und die Öffnung der Öse) zeigt nach −Y.
@@ -98,8 +97,6 @@ P = {
     "UEBERLAPPUNG_MM":     0.10,   # Bauteile greifen ineinander → sichere Vereinigung
     "INSCHRIFT_1":         False,  # optional: gravierte "1" (Lage am Original nicht belegt)
     "INSCHRIFT_TIEFE_MM":  0.25,
-    # Variante B (Halbrelief)
-    "RELIEF_TIEFENFAKTOR": 0.75,   # Stauchung der Tiefe der vorderen Hälfte
 }
 
 OKT = math.pi / 8.0          # halber Mittelpunktswinkel des Achtecks (22,5°)
@@ -583,7 +580,7 @@ def stl_export(obj, pfad):
                           forward_axis="Y", up_axis="Z")
 
 
-def main(out_dir, relief=False, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
+def main(out_dir, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
     os.makedirs(out_dir, exist_ok=True)
     sc = szene_vorbereiten()
     m = berechne_masse()
@@ -662,36 +659,6 @@ def main(out_dir, relief=False, blend_name="Mole1_Brunsbuettel_Anhaenger.blend")
     stl_export(final, stl_a)
     ergebnis["dateien"]["stl_A"] = os.path.basename(stl_a)
 
-    # --- Variante B: Halbrelief (Vergleich) ---------------------------------
-    if relief:
-        c_rel = collection("04_Variante_B_Relief")
-        c_rel_hilf = collection("Hilf_Relief", c_hilf, versteckt=True)
-        b = bpy.data.objects.new("Mole1_Anhaenger_B_Relief", final.data.copy())
-        c_rel.objects.link(b)
-        groesse = 100.0
-        quader("Hilf_Relief_Hinterseite", (0.0, groesse / 2.0, groesse / 4.0),
-               (groesse, groesse, groesse), 0.0, c_rel_hilf)
-        boolean_anwenden(b, c_rel_hilf, "DIFFERENCE")          # hintere Hälfte (y > 0) entfernen
-        k = P["RELIEF_TIEFENFAKTOR"]
-        for v in b.data.vertices:
-            v.co.y *= k
-        c_rel_oese = collection("Hilf_Relief_Oese", c_hilf, versteckt=True)
-        b_oese = oese("Hilf_Relief_Oese_voll", m["z_oese_mitte"], m["oese_R"],
-                      P["OESE_RING_RADIAL_MM"] / 2.0, P["OESE_RING_AXIAL_MM"] / 2.0, c_rel_oese)
-        for v in b_oese.data.vertices:                          # volle Ösenstärke vor der Rückseite
-            v.co.y -= P["OESE_RING_AXIAL_MM"] / 2.0
-        boolean_anwenden(b, c_rel_oese, "UNION")
-        material_setzen(b, mats["silber"])
-        b.location.x = 15.0                                     # nur zur Ansicht neben Variante A
-        ergebnis["relief_geschlossen"] = ist_geschlossen(b)
-        ergebnis["relief_netz"] = netz_statistik(b)
-        stl_b = os.path.join(out_dir, "Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl")
-        loc = b.location.copy()
-        b.location = (0.0, 0.0, 0.0)
-        stl_export(b, stl_b)
-        b.location = loc
-        ergebnis["dateien"]["stl_B"] = os.path.basename(stl_b)
-
     # Skript als Textblock in die .blend legen (dort erneut ausführbar)
     try:
         with open(os.path.abspath(__file__), encoding="utf-8") as f:
@@ -712,14 +679,12 @@ def main(out_dir, relief=False, blend_name="Mole1_Brunsbuettel_Anhaenger.blend")
 
 def _argumente():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
-    out, relief = None, False
+    out = None
     i = 0
     while i < len(argv):
         if argv[i] == "--out" and i + 1 < len(argv):
             out = argv[i + 1]
             i += 1
-        elif argv[i] == "--relief":
-            relief = True
         elif argv[i] == "--hoehe" and i + 1 < len(argv):
             P["GESAMTHOEHE_MM"] = float(argv[i + 1])
             i += 1
@@ -736,9 +701,8 @@ def _argumente():
             except NameError:
                 basis = os.getcwd()
         out = basis if os.path.basename(basis) == "export" else os.path.join(basis, "export")
-    return os.path.abspath(out), relief
+    return os.path.abspath(out)
 
 
 if __name__ == "__main__":
-    ziel, mit_relief = _argumente()
-    main(ziel, relief=mit_relief)
+    main(_argumente())

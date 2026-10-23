@@ -168,9 +168,8 @@ def main():
     with open(os.path.join(a["export"], "modell_parameter.json"), encoding="utf-8") as f:
         dateien = json.load(f)["dateien"]
     stl_a = os.path.join(a["export"], dateien["stl_A"])
-    stl_b = os.path.join(a["export"], dateien.get("stl_B", ""))
 
-    # --- 1) Variante A in Silber und als PLA-Prototyp ------------------------
+    # --- 1) Anhänger in Silber und als PLA-Prototyp ------------------------
     for stil in ("silber", "pla"):
         sc = szene_leeren()
         studio(sc)
@@ -191,19 +190,7 @@ def main():
             aufl = (1000, 1000) if name.startswith("detail") or name == "draufsicht" else (800, 1400)
             rendern(sc, cam, os.path.join(a["bilder"], f"A_{stil}_{name}.png"), aufl, smp)
 
-    # --- 2) Variante A und B nebeneinander -----------------------------------
-    if os.path.isfile(stl_b):
-        sc = szene_leeren()
-        studio(sc)
-        boden()
-        stl_laden(stl_a, mat_silber(), (-6.5, 0, 0))
-        stl_laden(stl_b, mat_silber(), (6.5, 0, 0))
-        rendern(sc, kamera("vb", (0, 0, 17.5), -62, 18, 150, brennweite=110),
-                os.path.join(a["bilder"], "Vergleich_A_3D_vs_B_Relief.png"), (1400, 1300), smp)
-        rendern(sc, kamera("vb2", (0, 0, 17.5), 35, 15, 150, brennweite=110),
-                os.path.join(a["bilder"], "Vergleich_A_3D_vs_B_Relief_hinten.png"), (1400, 1300), smp)
-
-    # --- 3) Farbige Rekonstruktion (Bauteile aus der .blend) -----------------
+    # --- 2) Farbige Rekonstruktion (Bauteile aus der .blend) -----------------
     blend = os.path.join(a["export"], "Mole1_Brunsbuettel_Anhaenger.blend")
     if os.path.exists(blend):
         bpy.ops.wm.open_mainfile(filepath=blend)

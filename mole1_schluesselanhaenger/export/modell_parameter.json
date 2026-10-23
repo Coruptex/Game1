@@ -64,8 +64,7 @@
     "SEGMENTE": 96,
     "UEBERLAPPUNG_MM": 0.1,
     "INSCHRIFT_1": false,
-    "INSCHRIFT_TIEFE_MM": 0.25,
-    "RELIEF_TIEFENFAKTOR": 0.75
+    "INSCHRIFT_TIEFE_MM": 0.25
   },
   "realmasse": {
     "H_GESAMT": {
@@ -151,12 +150,6 @@
   },
   "dateien": {
     "stl_A": "Mole1_Brunsbuettel_Anhaenger_A_35mm.stl",
-    "stl_B": "Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl",
     "blend": "Mole1_Brunsbuettel_Anhaenger.blend"
-  },
-  "relief_geschlossen": true,
-  "relief_netz": {
-    "nicht_manifold_kanten": 0,
-    "entartete_flaechen": 0
   }
 }

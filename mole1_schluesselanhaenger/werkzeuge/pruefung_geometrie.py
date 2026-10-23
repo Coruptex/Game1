@@ -277,8 +277,6 @@ def main():
 
     bericht = {"quelle": par["dateien"], "massstab": par["massstab"]}
     dateien = {"A": par["dateien"]["stl_A"]}
-    if "stl_B" in par["dateien"]:
-        dateien["B"] = par["dateien"]["stl_B"]
 
     for var, datei in dateien.items():
         m = lade(os.path.join(a["export"], datei))

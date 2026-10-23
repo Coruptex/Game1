@@ -9,7 +9,7 @@ Bericht mit Bildern als Webseite: https://claude.ai/artifact/3NZxJzazqYaVMLd9e9q
 | | |
 |---|---|
 | **Ergebnis** | STL-Datei `export/Mole1_Brunsbuettel_Anhaenger_A_35mm.stl`, Gesamthöhe **35,00 mm** inkl. Öse, Maßstab **1 : 457**, in Blender 5.2.3 erzeugt und unabhängig geprüft: geschlossen, ein einziger Körper, keine Fehlkanten. |
-| **Gewählte Ausführung** | Variante A, dreidimensionale Miniatur (Begründung in Abschnitt 4). Variante B (Halbrelief) liegt zum Vergleich bei. |
+| **Ausführung** | Dreidimensionale Miniatur (Begründung in Abschnitt 4). Die zum Vergleich gebaute Relief-Variante wurde auf Wunsch entfernt. |
 | **Belegt** | Gesamthöhe 13,40 m über Molendeck, achteckiger Granitsockel, achteckiger, sich verjüngender Turm aus vernieteten Gussplatten, zwei offene Galerien auf gusseisernen Kragarmen, runde Laterne, helmförmiges Kupferdach, Wetterfahne von 1895. |
 | **Wichtigste Einschränkung** | Ich konnte **keine Fotos ansehen**. Diese Arbeitsumgebung lässt nur Paketquellen und GitHub zu, und die Websuche liefert nur Text. Die Bauteile sind durch Textquellen belegt, **die Proportionen sind Schätzungen** und vor dem Guss an Fotos zu prüfen (Abschnitt 2.5). |
 | **Nicht durchgeführt** | Kein Testdruck (kein Drucker verfügbar), kein Lauf in Bambu Studio. Durchgeführt wurde eine Slicer-Prüfung mit PrusaSlicer 2.7.2 und einem A1-ähnlichen 0,2-mm-Profil. |
@@ -19,8 +19,7 @@ Bericht mit Bildern als Webseite: https://claude.ai/artifact/3NZxJzazqYaVMLd9e9q
 | Datei | Inhalt |
 |---|---|
 | `export/Mole1_Brunsbuettel_Anhaenger_A_35mm.stl` | **Finale STL**, binär, Einheit mm, Z nach oben, Sockel auf z = 0 |
-| `export/Mole1_Brunsbuettel_Anhaenger.blend` | Editierbare Blender-Datei: Einzelbauteile (Collection `01_Bauteile`), Endkörper (`03_Export_Anhaenger`), Variante B (`04_Variante_B_Relief`), Skript als Textblock |
-| `export/Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl` | Variante B, nur zum Vergleich |
+| `export/Mole1_Brunsbuettel_Anhaenger.blend` | Editierbare Blender-Datei: Einzelbauteile (Collection `01_Bauteile`), Endkörper (`03_Export_Anhaenger`), Skript als Textblock |
 | `export/modell_parameter.json` | Alle Real- und Modellmaße mit Status |
 | `blender/mole1_anhaenger.py` | Parametrisches Blender-Python-Skript (baut, vereinigt, exportiert) |
 | `pruefung/pruefbericht.json` | Maschinenlesbarer Prüfbericht |
@@ -122,24 +121,9 @@ Bezugshöhe z = 0 ist das Molendeck (Unterseite Granitsockel). Modellmaße bei 3
 | Traufkante | 0,40 mm (dünnste Stelle) |
 | Sockelfasen | 0,25 mm unten, 0,15 mm oben |
 
-## 4. Variante A (3D-Miniatur) oder Variante B (Halbrelief)?
+## 4. 3D-Miniatur oder Relief?
 
-Beide Varianten wurden tatsächlich gebaut und mit denselben Werkzeugen geprüft. Variante B ist die vordere Hälfte von A mit flacher Rückseite, in der Tiefe auf 75 % gestaucht, mit voll starker Öse.
-
-| Kriterium | A: 3D-Miniatur | B: Halbrelief |
-|---|---|---|
-| Abmessungen | 8,07 × 8,07 × 35,00 mm | 8,07 × 3,03 × 35,00 mm |
-| Volumen | 628,7 mm³ | 257,3 mm³ |
-| Gewicht Silber 925 / Gold 750 (Rohguss, ca.) | 6,5 g / 9,7 g | 2,7 g / 4,0 g |
-| Dünnste Wand | 0,40 mm (Traufe, geplant) | 0,32 mm (durch die Stauchung) |
-| Engster Spalt | 1,01 mm | 0,59 mm |
-| Detailtreue | Achteckiger Turm, Galerien rundum, runde Laterne, alles räumlich | nur Vorderhälfte, Proportionen in der Tiefe verfälscht |
-| Wiedererkennbarkeit | von allen Seiten | nur von vorn |
-| FDM-Druck | aufrecht, ohne Stützen; Galerieunterseiten als Überhang | liegend, nahezu ohne Überhänge |
-| Alltag | 8 mm stark, rundum geschlossen | flach, leichter |
-| Guss | massiv, mehr Metall, Hinterschnitte an den Galerien | weniger Metall, flache Rückseite erleichtert Anguss und Nacharbeit |
-
-**Entscheidung: Variante A.** Das Motiv ist ein frei stehender, achsensymmetrischer Turm. Seine Erkennungsmerkmale sind der verjüngte Achteckschaft, die zwei umlaufenden Galerien und die runde Laterne mit Kuppel, und die wirken nur räumlich. Ein Schlüsselanhänger hängt frei und wird von allen Seiten gesehen. Mit 8 mm Breite bleibt A trotzdem schlank, und 6,5 g Silber sind für einen Schlüsselanhänger üblich. B ist leichter und einfacher zu gießen, hat aber dünnere Stellen und verliert die Raumwirkung. Wenn Gewicht oder Goldpreis entscheiden, ist B die sinnvolle Alternative und liegt fertig bei.
+Beide Ausführungen wurden gebaut und mit denselben Werkzeugen geprüft. Das Halbrelief (vordere Hälfte mit flacher Rückseite) war leichter (2,7 statt 6,5 g Silber), hatte aber dünnere Stellen (0,32 statt 0,40 mm) und verlor die Raumwirkung. **Gewählt wurde die 3D-Miniatur**: Der Turm ist frei stehend und achsensymmetrisch, seine Merkmale (verjüngter Achteckschaft, zwei umlaufende Galerien, runde Laterne) wirken nur räumlich, und ein Schlüsselanhänger wird von allen Seiten gesehen. Die Relief-Variante wurde danach auf Wunsch vollständig entfernt.
 
 ## 5. Öse
 
@@ -201,7 +185,7 @@ Das Modell ist **massiv** und schreibt **kein Gussverfahren** vor. Ich lege bewu
 7. **Materialanhäufung.** Sockel und Turmschaft sind massiv (bis 6,6 mm stark), die Details nur 0,4–0,6 mm. Das bedeutet ungleichmäßige Abkühlung und Schwindung und mögliche Porosität. Ob und wie ausgehöhlt wird (etwa von unten), entscheidet die Gießerei.
 8. **Anguss.** Die flache Sockelunterseite (≈ 31 mm²) ist unauffällig und gut zugänglich. Die Entscheidung liegt bei der Gießerei.
 9. **Schwindmaß.** Die STL hat **Endmaß**. Eine Schwindungszugabe muss je nach Verfahren aufgeschlagen werden.
-10. **Formteilung bei Gummi- oder Silikonformen.** Rundum laufende, durchbrochene Galerien erschweren das Schneiden der Form. Variante B oder `--blind` wären hier einfacher.
+10. **Formteilung bei Gummi- oder Silikonformen.** Rundum laufende, durchbrochene Galerien erschweren das Schneiden der Form. Die Option `--blind` (geschlossene Felder) wäre hier einfacher.
 
 ## 8. Prüfbericht
 
@@ -227,7 +211,6 @@ SHA-256-Prüfsummen zur Kontrolle der Dateien:
 
 ```
 e98ea318f724d3d1a3bae07cf9b8256144695d2b0be3df6683b4b468c04cd312  Mole1_Brunsbuettel_Anhaenger_A_35mm.stl
-2963e4ad18e5e6f632e6b887b72fff0f40c64ca8825040f0a4e0f96b12e440cb  Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl
 ```
 
 ## 9. Arbeitsweise und Ausführung
@@ -236,7 +219,7 @@ Alles in diesem Ordner wurde in dieser Arbeitsumgebung tatsächlich erzeugt. Ble
 
 - **STL drucken:** Die STL in Bambu Studio (Windows/macOS/Linux) öffnen. Ob die eigene Bambu-Handy-Version lokale STL-Dateien slicen kann, bitte in der App prüfen.
 - **Maße ändern in Blender (Computer):** `export/Mole1_Brunsbuettel_Anhaenger.blend` öffnen, im Arbeitsbereich „Scripting“ den Textblock `mole1_anhaenger.py` wählen, die Werte in `REAL` (Realmaße) oder `P` (Modellmaße) ändern, „Run Script“ ausführen. Die neuen Dateien landen im Ordner `export` neben der .blend.
-- **Kommandozeile:** `blender -b -P blender/mole1_anhaenger.py -- --out export --relief`, mit den Optionen `--hoehe 40`, `--blind` und `--inschrift`.
+- **Kommandozeile:** `blender -b -P blender/mole1_anhaenger.py -- --out export`, mit den Optionen `--hoehe 40`, `--blind` und `--inschrift`.
 - **Gesamte Kette** (Modell, Prüfung, Slicer, Bilder): `werkzeuge/alles_erzeugen.sh`.
 - Alternativ in dieser Sitzung: die gewünschte Änderung beschreiben; ich passe die Parameter an und erzeuge alles neu.
 
