@@ -126,13 +126,14 @@ def zone(p, mm):
     x, y, z = p
     r = math.hypot(x, y)
     s = mm["s"]
-    if mm["galerie1_ok"] < z < mm["galerie1_ok"] + 0.95 * s and r > mm["galerie1_d"] / 2 - 0.5:
+    if mm["galerie1_ok"] < z < mm["galerie1_ok"] + 0.92 * s and r > mm["galerie1_d"] / 2 - 0.5:
         return "Geländer unten"
-    if mm["galerie2_ok"] < z < mm["galerie2_ok"] + 0.85 * s and r > mm["galerie2_d"] / 2 - 0.5:
+    if mm["galerie2_ok"] < z < mm["galerie2_ok"] + 0.82 * s and r > mm["galerie2_d"] / 2 - 0.5:
         return "Geländer oben"
     grenzen = [
-        (-1.0, mm["sockel_h"], "Granitsockel (Mauerwerk, Tür)"),
-        (mm["sockel_h"], mm["kappe_ok"], "Abdeckplatte"),
+        (-1.0, mm["sockel_uk"], "Sockelfuß (2 Stufen)"),
+        (mm["sockel_uk"], mm["sockel_ok"], "Granitsockel (Mauerwerk, Tür)"),
+        (mm["sockel_ok"], mm["kappe_ok"], "Abdeckplatte"),
         (mm["kappe_ok"], mm["trichter_u"], "Unterbau (Leiter, Fenster)"),
         (mm["trichter_u"], mm["galerie1_uk"], "Trichter"),
         (mm["galerie1_uk"], mm["galerie1_ok"], "Galerieboden unten"),

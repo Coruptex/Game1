@@ -237,12 +237,12 @@ def main():
         r["filament_mm"] = meta.get("filament used [mm]")
         if mm:
             s = mm["s"]
-            zonen = [("Sockel+Platte", 0, mm["kappe_ok"]),
+            zonen = [("Fuß+Sockel+Platte", 0, mm["kappe_ok"]),
                      ("Unterbau", mm["kappe_ok"], mm["trichter_u"]),
-                     ("Trichter+Galerie unten", mm["trichter_u"], mm["galerie1_ok"] + 0.9 * s),
-                     ("Turm", mm["galerie1_ok"] + 0.9 * s, mm["turm_ok"]),
-                     ("Konsolen+Galerie oben", mm["turm_ok"], mm["galerie2_ok"] + 0.8 * s),
-                     ("Laterne+Dach", mm["galerie2_ok"] + 0.8 * s, mm["dach_spitze"]),
+                     ("Trichter+Galerie unten", mm["trichter_u"], mm["galerie1_ok"] + 0.87 * s),
+                     ("Turm", mm["galerie1_ok"] + 0.87 * s, mm["turm_ok"]),
+                     ("Konsolen+Galerie oben", mm["turm_ok"], mm["galerie2_ok"] + 0.77 * s),
+                     ("Laterne+Dach", mm["galerie2_ok"] + 0.77 * s, mm["dach_spitze"]),
                      ("Knauf+Öse", mm["dach_spitze"], 99)]
             r["bahnen_nach_zone_mm"] = zone_typen(bahnen, zonen)
             # Feinteile: Werden Holme, Pfosten und Konsolen überhaupt als Bahnen erzeugt?
@@ -250,19 +250,19 @@ def main():
             r["feinteile_bahnlaenge_je_schicht_mm"] = {
                 f"{titel} (z={z_ist})": laenge for titel, z_ist, laenge in (
                     (t,) + ring_bahnen(bahnen, z, a0, a1) for t, z, a0, a1 in (
-                        ("Geländer unten: Holm 2", mm["galerie1_ok"] + 0.50 * s, ru - 0.5, ru + 0.3),
-                        ("Geländer unten: nur Pfosten (zwischen Holmen)", mm["galerie1_ok"] + 0.36 * s, ru - 0.5,
+                        ("Geländer unten: Holm 2", mm["galerie1_ok"] + 0.483 * s, ru - 0.5, ru + 0.3),
+                        ("Geländer unten: nur Pfosten (zwischen Holmen)", mm["galerie1_ok"] + 0.35 * s, ru - 0.5,
                          ru + 0.3),
-                        ("Geländer oben: Holm 3", mm["galerie2_ok"] + 0.50 * s, ro - 0.5, ro + 0.3),
-                        ("Geländer oben: nur Pfosten (zwischen Holmen)", mm["galerie2_ok"] + 0.40 * s, ro - 0.5,
+                        ("Geländer oben: Holm 3", mm["galerie2_ok"] + 0.483 * s, ro - 0.5, ro + 0.3),
+                        ("Geländer oben: nur Pfosten (zwischen Holmen)", mm["galerie2_ok"] + 0.386 * s, ro - 0.5,
                          ro + 0.3),
-                        ("Konsolenkranz (32 Konsolen)", mm["turm_ok"] + 0.40 * s, mm["turm_sw_o"] / 2 + 0.05,
+                        ("Konsolenkranz (32 Konsolen)", mm["turm_ok"] + 0.386 * s, mm["turm_sw_o"] / 2 + 0.05,
                          ro - 0.1)))}
             if name.startswith("ohne_stuetzen"):
-                ziele = [("Holm unten", mm["galerie1_ok"] + 0.50 * s),
-                         ("Pfosten unten (zw. Holmen)", mm["galerie1_ok"] + 0.36 * s),
-                         ("Konsolen", mm["turm_ok"] + 0.4 * s),
-                         ("Holm oben", mm["galerie2_ok"] + 0.50 * s),
+                ziele = [("Holm unten", mm["galerie1_ok"] + 0.483 * s),
+                         ("Pfosten unten (zw. Holmen)", mm["galerie1_ok"] + 0.35 * s),
+                         ("Konsolen", mm["turm_ok"] + 0.386 * s),
+                         ("Holm oben", mm["galerie2_ok"] + 0.483 * s),
                          ("Laternensprossen", (mm["glas_uk"] + mm["glas_ok"]) / 2),
                          ("Ösenmitte", mm["z_oese_mitte"])]
                 gen = "Arachne" if name == "ohne_stuetzen" else "Classic"

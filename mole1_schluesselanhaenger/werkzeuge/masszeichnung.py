@@ -88,8 +88,9 @@ def main():
     zeichne_flaeche(ax1, sil, facecolor="#d9dde2", edgecolor="#222222", linewidth=0.5)
     ax1.set_title("Ansicht von vorne (Türseite) – Maße in mm", fontsize=10)
     stufen = [
-        (0.0, mm["sockel_h"], "Sockel"),
-        (mm["sockel_h"], mm["kappe_ok"], "Platte"),
+        (0.0, mm["sockel_uk"], "Fuß"),
+        (mm["sockel_uk"], mm["sockel_ok"], "Sockel"),
+        (mm["sockel_ok"], mm["kappe_ok"], "Platte"),
         (mm["kappe_ok"], mm["trichter_u"], "Unterbau"),
         (mm["trichter_u"], mm["galerie1_uk"], "Trichter"),
         (mm["galerie1_ok"], mm["turm_ok"], "Turm"),
@@ -109,7 +110,10 @@ def main():
                  (mm["glas_uk"], "UK Glasband Laterne")):
         ax1.text(7.2, z, f"{t}\nz = {z:.2f}", fontsize=5.6, va="center", color="#444444")
         hilfslinie(ax1, z, 0, 7.1)
-    breitenmass(ax1, -0.8, -mm["sockel_sw"] / 2, mm["sockel_sw"] / 2, f"Sockel SW {mm['sockel_sw']:.2f}", oben=False)
+    sw_fuss = mm["sockel_sw"] + 2 * mm["fuss_u_vor"]
+    breitenmass(ax1, -0.8, -sw_fuss / 2, sw_fuss / 2, f"Fuß SW {sw_fuss:.2f}", oben=False)
+    breitenmass(ax1, mm["sockel_ok"] - 0.9, -mm["sockel_sw"] / 2, mm["sockel_sw"] / 2,
+                f"Sockel SW {mm['sockel_sw']:.2f}")
     breitenmass(ax1, mm["galerie1_uk"] - 0.7, -mm["galerie1_d"] / 2, mm["galerie1_d"] / 2,
                 f"Galerie unten Ø {mm['galerie1_d']:.2f}", oben=False)
     breitenmass(ax1, mm["turm_ok"] - 1.2, -mm["turm_sw_o"] / 2, mm["turm_sw_o"] / 2, f"SW {mm['turm_sw_o']:.2f}")
@@ -140,6 +144,11 @@ def main():
         ("Maßstab", f"1 : {mm['massstab']:.0f}", f"{s:.3f} mm je m"),
         ("Gesamthöhe / größte Breite", f"{mm['z_oben']:.2f} / {breite:.2f}", "inkl. Öse"),
     ]
+    fuss_h = R["FUSS_U_H"]["wert_m"] + R["FUSS_O_H"]["wert_m"]
+    zeilen.append(("Sockelfuß Höhe (2 Stufen)", f"{mm['sockel_uk']:.2f}", f"{fuss_h:.2f} m (F)"))
+    for titel, vor in (("Fuß unten SW", "FUSS_U_VOR"), ("Fuß oben SW", "FUSS_O_VOR")):
+        sw_m = R["SOCKEL_SW"]["wert_m"] + 2 * R[vor]["wert_m"]
+        zeilen.append((titel, f"{sw_m * s:.2f}", f"{sw_m:.2f} m (F)"))
     for titel, k_mm, k_real in (("Sockel Höhe", "sockel_h", "SOCKEL_H"), ("Sockel SW", "sockel_sw", "SOCKEL_SW"),
                                 ("Unterbau SW unten", "unterbau_sw_u", "UNTERBAU_SW_U"),
                                 ("Galerie unten Ø", "galerie1_d", "GALERIE1_D"),
@@ -173,7 +182,7 @@ def main():
     ax3.text(0.50, y, "Modell [mm]", fontsize=7.5, weight="bold", transform=ax3.transAxes)
     ax3.text(0.75, y, "Original", fontsize=7.5, weight="bold", transform=ax3.transAxes)
     for (t1, t2, t3) in zeilen:
-        y -= 0.034
+        y -= 0.031
         fett = t2 == "" and t3 == ""
         if fett:
             y -= 0.012
@@ -181,7 +190,7 @@ def main():
         ax3.text(0.50, y, t2, fontsize=7, transform=ax3.transAxes)
         ax3.text(0.75, y, t3, fontsize=6.6, transform=ax3.transAxes, color="#444444")
     y -= 0.06
-    ax3.text(0.0, y, "(F) = an Referenzfotos gemessen (Maßstab über 13,40 m Höhe),\n"
+    ax3.text(0.0, y, "(F) = an Referenzfotos gemessen (Maßstab: 13,40 m über Molendeck),\n"
                      "(B) = belegt, (S) = Schätzung. SW = Schlüsselweite des Achtecks.\n"
                      "Ausrichtung: Tür vorne (−Y), „1“ rechts und links (±X), Leiter +45°.",
              fontsize=6.6, transform=ax3.transAxes, va="top", color="#333333")

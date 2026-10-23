@@ -1,30 +1,30 @@
 {
   "datei": "Mole1_Brunsbuettel_Anhaenger_35mm.stl",
   "variante": "Gussvorlage",
-  "massstab": "1:384",
+  "massstab": "1:387",
   "grund": {
-    "dreiecke": 44004,
-    "punkte": 21906,
+    "dreiecke": 44328,
+    "punkte": 22068,
     "bbox_min_mm": [
-      -6.988,
-      -6.988,
+      -6.703,
+      -6.703,
       0.0
     ],
     "bbox_max_mm": [
-      6.988,
-      6.988,
+      6.703,
+      6.703,
       35.0
     ],
     "abmessungen_mm": [
-      13.977,
-      13.977,
+      13.405,
+      13.405,
       35.0
     ],
     "wasserdicht": true,
     "orientierung_konsistent": true,
     "gueltiges_volumen": true,
     "kanten_nutzung": {
-      "2": 66006
+      "2": 66492
     },
     "nicht_manifold_kanten": 0,
     "entartete_dreiecke": 0,
@@ -32,274 +32,282 @@
     "euler_charakteristik": -96,
     "geschlecht_genus": 49,
     "anzahl_koerper": 1,
-    "volumen_mm3": 917.233,
-    "oberflaeche_mm2": 1293.76,
+    "volumen_mm3": 906.718,
+    "oberflaeche_mm2": 1346.24,
     "schwerpunkt_mm": [
-      -0.021,
-      -0.001,
-      10.882
+      -0.018,
+      -0.0,
+      10.574
     ]
   },
   "gewicht_g": {
-    "PLA (Prototyp)": 1.14,
-    "Gusswachs/Resin (Modell)": 1.01,
-    "Sterlingsilber 925": 9.5,
-    "Gelbgold 585 (14 kt)": 12.02,
-    "Gelbgold 750 (18 kt)": 14.22
+    "PLA (Prototyp)": 1.12,
+    "Gusswachs/Resin (Modell)": 1.0,
+    "Sterlingsilber 925": 9.39,
+    "Gelbgold 585 (14 kt)": 11.88,
+    "Gelbgold 750 (18 kt)": 14.05
   },
   "strahl_backend": "trimesh.ray.ray_pyembree",
   "wandstaerke": {
     "methode": "Raycasting nach innen, nur gegenüberliegende Austrittsfläche (±45°) gewertet",
-    "min_mm": 0.061,
+    "min_mm": 0.007,
     "p01_mm": 0.22,
     "p05_mm": 0.22,
-    "median_mm": 1.633,
-    "gewertete_messpunkte": 55442,
-    "kantenartefakte_verworfen": 4557,
-    "roh_min_mm_inkl_kanten": 0.008,
+    "median_mm": 1.363,
+    "gewertete_messpunkte": 55894,
+    "kantenartefakte_verworfen": 4106,
+    "roh_min_mm_inkl_kanten": 0.007,
     "nach_zone": {
-      "weißer Turm": {
-        "n": 5473,
-        "min": 0.061,
-        "anteil_unter_0.25": 0.0013,
-        "anteil_unter_0.3": 0.0022,
-        "anteil_unter_0.4": 0.0024,
-        "anteil_unter_0.5": 0.0048
+      "Galerieboden unten": {
+        "n": 7367,
+        "min": 0.3,
+        "anteil_unter_0.25": 0.0,
+        "anteil_unter_0.3": 0.0037,
+        "anteil_unter_0.4": 0.3129,
+        "anteil_unter_0.5": 0.3459
       },
-      "Geländer unten": {
-        "n": 6507,
+      "Sockelfuß (2 Stufen)": {
+        "n": 8034,
+        "min": 0.53,
+        "anteil_unter_0.25": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.0,
+        "anteil_unter_0.5": 0.0
+      },
+      "Geländer oben": {
+        "n": 4378,
         "min": 0.22,
-        "anteil_unter_0.25": 0.3164,
-        "anteil_unter_0.3": 0.9951,
-        "anteil_unter_0.4": 0.9951,
-        "anteil_unter_0.5": 0.9951
-      },
-      "Trichter": {
-        "n": 5759,
-        "min": 0.2,
-        "anteil_unter_0.25": 0.0238,
-        "anteil_unter_0.3": 0.0238,
-        "anteil_unter_0.4": 0.0238,
-        "anteil_unter_0.5": 0.2488
+        "anteil_unter_0.25": 0.2106,
+        "anteil_unter_0.3": 0.9221,
+        "anteil_unter_0.4": 0.9408,
+        "anteil_unter_0.5": 0.9408
       },
       "Granitsockel (Mauerwerk, Tür)": {
-        "n": 8245,
-        "min": 0.15,
-        "anteil_unter_0.25": 0.0017,
-        "anteil_unter_0.3": 0.0017,
-        "anteil_unter_0.4": 0.0068,
-        "anteil_unter_0.5": 0.0075
+        "n": 5914,
+        "min": 0.149,
+        "anteil_unter_0.25": 0.0014,
+        "anteil_unter_0.3": 0.0083,
+        "anteil_unter_0.4": 0.009,
+        "anteil_unter_0.5": 0.0367
+      },
+      "Konsolenkranz": {
+        "n": 2943,
+        "min": 0.25,
+        "anteil_unter_0.25": 0.3605,
+        "anteil_unter_0.3": 0.5467,
+        "anteil_unter_0.4": 0.5736,
+        "anteil_unter_0.5": 0.5957
+      },
+      "Geländer unten": {
+        "n": 5964,
+        "min": 0.22,
+        "anteil_unter_0.25": 0.3147,
+        "anteil_unter_0.3": 0.9948,
+        "anteil_unter_0.4": 0.9948,
+        "anteil_unter_0.5": 0.9948
+      },
+      "Trichter": {
+        "n": 3922,
+        "min": 0.2,
+        "anteil_unter_0.25": 0.0329,
+        "anteil_unter_0.3": 0.0329,
+        "anteil_unter_0.4": 0.0329,
+        "anteil_unter_0.5": 0.0367
+      },
+      "weißer Turm": {
+        "n": 4805,
+        "min": 0.007,
+        "anteil_unter_0.25": 0.0021,
+        "anteil_unter_0.3": 0.0021,
+        "anteil_unter_0.4": 0.0027,
+        "anteil_unter_0.5": 0.0065
       },
       "Öse": {
-        "n": 3599,
+        "n": 3504,
         "min": 1.26,
         "anteil_unter_0.25": 0.0,
         "anteil_unter_0.3": 0.0,
         "anteil_unter_0.4": 0.0,
         "anteil_unter_0.5": 0.0
       },
-      "Galerieboden unten": {
-        "n": 6963,
-        "min": 0.3,
-        "anteil_unter_0.25": 0.0,
-        "anteil_unter_0.3": 0.003,
-        "anteil_unter_0.4": 0.003,
-        "anteil_unter_0.5": 0.2167
+      "Laterne Glasband (Sprossen)": {
+        "n": 1397,
+        "min": 0.2,
+        "anteil_unter_0.25": 0.1067,
+        "anteil_unter_0.3": 0.1067,
+        "anteil_unter_0.4": 0.1067,
+        "anteil_unter_0.5": 0.1453
       },
-      "Knauf": {
-        "n": 393,
-        "min": 0.227,
-        "anteil_unter_0.25": 0.0509,
-        "anteil_unter_0.3": 0.1501,
-        "anteil_unter_0.4": 0.1654,
-        "anteil_unter_0.5": 0.1654
+      "Unterbau (Leiter, Fenster)": {
+        "n": 2382,
+        "min": 0.2,
+        "anteil_unter_0.25": 0.068,
+        "anteil_unter_0.3": 0.068,
+        "anteil_unter_0.4": 0.068,
+        "anteil_unter_0.5": 0.068
+      },
+      "Laterne unten": {
+        "n": 1938,
+        "min": 0.2,
+        "anteil_unter_0.25": 0.0212,
+        "anteil_unter_0.3": 0.209,
+        "anteil_unter_0.4": 0.2172,
+        "anteil_unter_0.5": 0.2523
       },
       "Glockenhaube": {
-        "n": 1349,
-        "min": 0.429,
+        "n": 1033,
+        "min": 1.727,
         "anteil_unter_0.25": 0.0,
         "anteil_unter_0.3": 0.0,
         "anteil_unter_0.4": 0.0,
-        "anteil_unter_0.5": 0.0482
-      },
-      "Laterne unten": {
-        "n": 2320,
-        "min": 0.2,
-        "anteil_unter_0.25": 0.0358,
-        "anteil_unter_0.3": 0.2336,
-        "anteil_unter_0.4": 0.2388,
-        "anteil_unter_0.5": 0.272
+        "anteil_unter_0.5": 0.0
       },
       "Abdeckplatte": {
-        "n": 2194,
+        "n": 1682,
         "min": 0.22,
-        "anteil_unter_0.25": 0.0009,
-        "anteil_unter_0.3": 0.0009,
-        "anteil_unter_0.4": 0.0009,
-        "anteil_unter_0.5": 0.0374
-      },
-      "Konsolenkranz": {
-        "n": 3390,
-        "min": 0.25,
-        "anteil_unter_0.25": 0.372,
-        "anteil_unter_0.3": 0.5543,
-        "anteil_unter_0.4": 0.5841,
-        "anteil_unter_0.5": 0.6009
-      },
-      "Unterbau (Leiter, Fenster)": {
-        "n": 2714,
-        "min": 0.2,
-        "anteil_unter_0.25": 0.0578,
-        "anteil_unter_0.3": 0.0578,
-        "anteil_unter_0.4": 0.0578,
-        "anteil_unter_0.5": 0.0578
-      },
-      "Geländer oben": {
-        "n": 4837,
-        "min": 0.22,
-        "anteil_unter_0.25": 0.2001,
-        "anteil_unter_0.3": 0.9175,
-        "anteil_unter_0.4": 0.9392,
-        "anteil_unter_0.5": 0.9392
-      },
-      "Laterne Glasband (Sprossen)": {
-        "n": 1352,
-        "min": 0.2,
-        "anteil_unter_0.25": 0.0939,
-        "anteil_unter_0.3": 0.0939,
-        "anteil_unter_0.4": 0.0939,
-        "anteil_unter_0.5": 0.0939
+        "anteil_unter_0.25": 0.0006,
+        "anteil_unter_0.3": 0.0006,
+        "anteil_unter_0.4": 0.0006,
+        "anteil_unter_0.5": 0.0018
       },
       "Galerieboden oben": {
-        "n": 347,
+        "n": 309,
         "min": 0.28,
         "anteil_unter_0.25": 0.0,
-        "anteil_unter_0.3": 0.0029,
-        "anteil_unter_0.4": 0.0029,
-        "anteil_unter_0.5": 0.0029
+        "anteil_unter_0.3": 0.0129,
+        "anteil_unter_0.4": 0.0129,
+        "anteil_unter_0.5": 0.0129
+      },
+      "Knauf": {
+        "n": 322,
+        "min": 0.218,
+        "anteil_unter_0.25": 0.0901,
+        "anteil_unter_0.3": 0.1491,
+        "anteil_unter_0.4": 0.1491,
+        "anteil_unter_0.5": 0.1522
       }
     }
   },
   "spalte": {
     "methode": "Raycasting nach außen, nur gegenüberliegende Fläche (±45°) gewertet",
-    "min_mm": 0.005,
-    "roh_min_mm_inkl_innenecken": 0.001,
+    "min_mm": 0.003,
+    "roh_min_mm_inkl_innenecken": 0.0,
     "nach_zone": {
-      "Trichter": {
-        "n": 667,
-        "min": 0.364,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0,
-        "anteil_unter_0.4": 0.1859,
-        "anteil_unter_0.5": 0.2414
-      },
-      "Konsolenkranz": {
-        "n": 2128,
-        "min": 0.221,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.3144,
-        "anteil_unter_0.4": 0.5056,
-        "anteil_unter_0.5": 0.5338
-      },
-      "Galerieboden unten": {
-        "n": 1556,
-        "min": 0.489,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0,
-        "anteil_unter_0.4": 0.0,
-        "anteil_unter_0.5": 0.2185
-      },
       "Geländer unten": {
-        "n": 3874,
-        "min": 0.481,
+        "n": 3573,
+        "min": 0.45,
         "anteil_unter_0.2": 0.0,
         "anteil_unter_0.3": 0.0,
         "anteil_unter_0.4": 0.0,
-        "anteil_unter_0.5": 0.6159
-      },
-      "weißer Turm": {
-        "n": 829,
-        "min": 0.104,
-        "anteil_unter_0.2": 0.006,
-        "anteil_unter_0.3": 0.0097,
-        "anteil_unter_0.4": 0.0121,
-        "anteil_unter_0.5": 0.0543
-      },
-      "Knauf": {
-        "n": 102,
-        "min": 0.18,
-        "anteil_unter_0.2": 0.1667,
-        "anteil_unter_0.3": 0.3137,
-        "anteil_unter_0.4": 0.3431,
-        "anteil_unter_0.5": 0.3922
-      },
-      "Geländer oben": {
-        "n": 2773,
-        "min": 0.299,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.189,
-        "anteil_unter_0.4": 0.56,
-        "anteil_unter_0.5": 0.56
-      },
-      "Laterne unten": {
-        "n": 1172,
-        "min": 1.305,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0,
-        "anteil_unter_0.4": 0.0,
-        "anteil_unter_0.5": 0.0
-      },
-      "Glockenhaube": {
-        "n": 244,
-        "min": 0.304,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0,
-        "anteil_unter_0.4": 0.0041,
-        "anteil_unter_0.5": 0.0041
-      },
-      "Unterbau (Leiter, Fenster)": {
-        "n": 147,
-        "min": 0.269,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0136,
-        "anteil_unter_0.4": 0.0612,
-        "anteil_unter_0.5": 0.6122
-      },
-      "Abdeckplatte": {
-        "n": 696,
-        "min": 6.029,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0,
-        "anteil_unter_0.4": 0.0,
-        "anteil_unter_0.5": 0.0
+        "anteil_unter_0.5": 0.6127
       },
       "Granitsockel (Mauerwerk, Tür)": {
-        "n": 1079,
-        "min": 0.005,
-        "anteil_unter_0.2": 0.7516,
-        "anteil_unter_0.3": 0.7516,
-        "anteil_unter_0.4": 0.7516,
-        "anteil_unter_0.5": 0.7516
+        "n": 1272,
+        "min": 0.007,
+        "anteil_unter_0.2": 0.5786,
+        "anteil_unter_0.3": 0.5786,
+        "anteil_unter_0.4": 0.5786,
+        "anteil_unter_0.5": 0.5786
       },
-      "Öse": {
-        "n": 231,
-        "min": 0.344,
-        "anteil_unter_0.2": 0.0,
-        "anteil_unter_0.3": 0.0,
-        "anteil_unter_0.4": 0.0087,
-        "anteil_unter_0.5": 0.0087
-      },
-      "Laterne Glasband (Sprossen)": {
-        "n": 34,
-        "min": 1.536,
+      "Sockelfuß (2 Stufen)": {
+        "n": 2364,
+        "min": 0.782,
         "anteil_unter_0.2": 0.0,
         "anteil_unter_0.3": 0.0,
         "anteil_unter_0.4": 0.0,
         "anteil_unter_0.5": 0.0
       },
+      "Laterne unten": {
+        "n": 971,
+        "min": 1.24,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.0,
+        "anteil_unter_0.5": 0.0
+      },
+      "Abdeckplatte": {
+        "n": 631,
+        "min": 5.769,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.0,
+        "anteil_unter_0.5": 0.0
+      },
+      "weißer Turm": {
+        "n": 751,
+        "min": 0.003,
+        "anteil_unter_0.2": 0.004,
+        "anteil_unter_0.3": 0.0093,
+        "anteil_unter_0.4": 0.028,
+        "anteil_unter_0.5": 0.0586
+      },
+      "Geländer oben": {
+        "n": 2483,
+        "min": 0.275,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.555,
+        "anteil_unter_0.4": 0.555,
+        "anteil_unter_0.5": 0.555
+      },
+      "Laterne Glasband (Sprossen)": {
+        "n": 305,
+        "min": 1.473,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.0,
+        "anteil_unter_0.5": 0.0
+      },
+      "Galerieboden unten": {
+        "n": 1534,
+        "min": 0.464,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.0,
+        "anteil_unter_0.5": 0.1969
+      },
+      "Konsolenkranz": {
+        "n": 1874,
+        "min": 0.202,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.3965,
+        "anteil_unter_0.4": 0.539,
+        "anteil_unter_0.5": 0.5566
+      },
+      "Öse": {
+        "n": 223,
+        "min": 3.631,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.0,
+        "anteil_unter_0.5": 0.0
+      },
+      "Trichter": {
+        "n": 509,
+        "min": 0.35,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0,
+        "anteil_unter_0.4": 0.2377,
+        "anteil_unter_0.5": 0.3084
+      },
+      "Unterbau (Leiter, Fenster)": {
+        "n": 134,
+        "min": 0.249,
+        "anteil_unter_0.2": 0.0,
+        "anteil_unter_0.3": 0.0373,
+        "anteil_unter_0.4": 0.0896,
+        "anteil_unter_0.5": 0.5522
+      },
+      "Knauf": {
+        "n": 76,
+        "min": 0.18,
+        "anteil_unter_0.2": 0.25,
+        "anteil_unter_0.3": 0.4605,
+        "anteil_unter_0.4": 0.4605,
+        "anteil_unter_0.5": 0.4605
+      },
       "Galerieboden oben": {
-        "n": 73,
-        "min": 8.432,
+        "n": 67,
+        "min": 8.082,
         "anteil_unter_0.2": 0.0,
         "anteil_unter_0.3": 0.0,
         "anteil_unter_0.4": 0.0,
@@ -308,24 +316,22 @@
     }
   },
   "ueberhaenge_aufrecht_45grad": {
-    "flaeche_mm2": 257.749,
-    "anteil_an_oberflaeche": 0.1992,
+    "flaeche_mm2": 239.702,
+    "anteil_an_oberflaeche": 0.1781,
     "nach_zone": {
-      "Trichter": 146.035,
-      "Geländer unten": 34.123,
-      "Konsolenkranz": 25.582,
-      "Geländer oben": 16.822,
+      "Trichter": 108.454,
+      "Geländer unten": 32.615,
+      "Galerieboden unten": 25.983,
+      "Konsolenkranz": 23.412,
+      "Geländer oben": 16.039,
+      "Granitsockel (Mauerwerk, Tür)": 11.609,
       "Öse": 9.81,
-      "Granitsockel (Mauerwerk, Tür)": 7.051,
-      "Glockenhaube": 5.417,
-      "Abdeckplatte": 5.347,
-      "Galerieboden oben": 1.975,
-      "Knauf": 1.526,
-      "Laterne Glasband (Sprossen)": 1.434,
-      "Laterne unten": 1.158,
-      "Unterbau (Leiter, Fenster)": 0.77,
-      "weißer Turm": 0.456,
-      "Galerieboden unten": 0.243
+      "Laterne Glasband (Sprossen)": 6.331,
+      "Galerieboden oben": 1.895,
+      "Knauf": 1.289,
+      "Laterne unten": 1.111,
+      "Unterbau (Leiter, Fenster)": 0.717,
+      "weißer Turm": 0.436
     }
   },
   "schwebende_inseln_aufrecht": {
@@ -342,7 +348,7 @@
     "ring_radial_mm": 1.3,
     "ring_axial_mm": 1.9,
     "querschnitt_kraftfluss_min_mm2": 1.369,
-    "z_querschnitt_min_mm": 28.152,
+    "z_querschnitt_min_mm": 28.008,
     "querschnitt_kraftfluss_kreis_aequivalent_d_mm": 1.32,
     "querschnitt_ringflanken_gesamt_mm2": 3.855,
     "ringflanken_anzahl": 2,
@@ -354,8 +360,8 @@
     "Konsolenzwischenräume (32) frei": true,
     "Ösenloch frei": true
   },
-  "druck_standflaeche_mm2": 52.52,
-  "schlankheit_hoehe_zu_fussbreite": 4.83,
+  "druck_standflaeche_mm2": 99.905,
+  "schlankheit_hoehe_zu_fussbreite": 3.5,
   "vollstaendigkeit_bauteile": {
     "Dach_Glockenhaube": {
       "stichproben": 200,
@@ -433,17 +439,17 @@
       "stichproben_in_gravur_verworfen": 0
     },
     "Galerie_unten_Holm_1": {
-      "stichproben": 182,
+      "stichproben": 194,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
     "Galerie_unten_Holm_2": {
-      "stichproben": 197,
+      "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
     "Galerie_unten_Holm_3": {
-      "stichproben": 162,
+      "stichproben": 170,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
@@ -490,7 +496,7 @@
     "Knauf": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 15
+      "stichproben_in_gravur_verworfen": 13
     },
     "Konsole_01": {
       "stichproben": 200,
@@ -678,12 +684,12 @@
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_03": {
-      "stichproben": 122,
+      "stichproben": 134,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_04": {
-      "stichproben": 152,
+      "stichproben": 160,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
@@ -698,12 +704,12 @@
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_07": {
-      "stichproben": 133,
+      "stichproben": 142,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_08": {
-      "stichproben": 151,
+      "stichproben": 155,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
@@ -718,12 +724,12 @@
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_11": {
-      "stichproben": 131,
+      "stichproben": 140,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_12": {
-      "stichproben": 132,
+      "stichproben": 141,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
@@ -738,12 +744,12 @@
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_15": {
-      "stichproben": 149,
+      "stichproben": 161,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
     "Laterne_Sprosse_16": {
-      "stichproben": 154,
+      "stichproben": 161,
       "anteil_im_endkoerper": 1.0,
       "stichproben_in_gravur_verworfen": 0
     },
@@ -815,7 +821,17 @@
     "Sockel_Granit": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 68
+      "stichproben_in_gravur_verworfen": 67
+    },
+    "Sockelfuss_Stufe_oben": {
+      "stichproben": 200,
+      "anteil_im_endkoerper": 1.0,
+      "stichproben_in_gravur_verworfen": 3
+    },
+    "Sockelfuss_Stufe_unten": {
+      "stichproben": 200,
+      "anteil_im_endkoerper": 1.0,
+      "stichproben_in_gravur_verworfen": 0
     },
     "Trichter": {
       "stichproben": 200,
@@ -825,47 +841,47 @@
     "Tuer_Band_1": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1600
+      "stichproben_in_gravur_verworfen": 1594
     },
     "Tuer_Band_1_Kloben": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1365
+      "stichproben_in_gravur_verworfen": 1381
     },
     "Tuer_Band_1_Zierring": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1153
+      "stichproben_in_gravur_verworfen": 1138
     },
     "Tuer_Band_2": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1587
+      "stichproben_in_gravur_verworfen": 1567
     },
     "Tuer_Band_2_Kloben": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1339
+      "stichproben_in_gravur_verworfen": 1337
     },
     "Tuer_Band_2_Zierring": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1141
+      "stichproben_in_gravur_verworfen": 1176
     },
     "Tuer_Riegel": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1706
+      "stichproben_in_gravur_verworfen": 1712
     },
     "Turm_weiss": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 13
+      "stichproben_in_gravur_verworfen": 23
     },
     "Unterbau_schwarz": {
       "stichproben": 200,
       "anteil_im_endkoerper": 1.0,
-      "stichproben_in_gravur_verworfen": 1
+      "stichproben_in_gravur_verworfen": 4
     }
   }
 }

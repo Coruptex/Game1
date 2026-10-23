@@ -47,14 +47,14 @@
     "schichten": 437,
     "z_max_mm": 34.98,
     "bahnlaenge_mm_nach_typ": {
-      "Solid infill": 37865.5,
-      "External perimeter": 9113.5,
-      "Perimeter": 6710.2,
-      "Top solid infill": 759.5,
-      "Bridge infill": 732.5,
-      "Skirt/Brim": 665.8,
-      "Internal infill": 548.2,
-      "Overhang perimeter": 474.3
+      "Solid infill": 38189.4,
+      "External perimeter": 8915.2,
+      "Perimeter": 6637.5,
+      "Top solid infill": 934.0,
+      "Skirt/Brim": 824.9,
+      "Bridge infill": 650.4,
+      "Overhang perimeter": 451.9,
+      "Internal infill": 345.0
     },
     "schwebende_bahninseln": {
       "anzahl": 0,
@@ -63,69 +63,70 @@
       "befunde": [],
       "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"
     },
-    "druckzeit": "1h 8m 14s",
+    "druckzeit": "1h 9m 49s",
     "filament_g": "1.18",
-    "filament_mm": "395.13",
+    "filament_mm": "395.72",
     "bahnen_nach_zone_mm": {
-      "Sockel+Platte": {
-        "Solid infill": 13556.9,
-        "External perimeter": 1822.3,
-        "Perimeter": 1697.1,
-        "Skirt/Brim": 665.8,
-        "Bridge infill": 10.0,
-        "Overhang perimeter": 4.1
+      "Fuß+Sockel+Platte": {
+        "Solid infill": 16363.0,
+        "External perimeter": 2128.6,
+        "Perimeter": 2016.7,
+        "Skirt/Brim": 824.9,
+        "Top solid infill": 239.9,
+        "Bridge infill": 9.5,
+        "Overhang perimeter": 3.9
       },
       "Unterbau": {
-        "Solid infill": 4008.8,
-        "External perimeter": 715.1,
-        "Perimeter": 653.2,
+        "Solid infill": 3547.3,
+        "External perimeter": 666.6,
+        "Perimeter": 607.1,
         "Overhang perimeter": 1.2
       },
       "Trichter+Galerie unten": {
-        "Solid infill": 9838.7,
-        "External perimeter": 2603.1,
-        "Perimeter": 1585.8,
-        "Top solid infill": 592.9,
-        "Bridge infill": 577.6,
-        "Internal infill": 548.2,
-        "Overhang perimeter": 302.9
+        "Solid infill": 9177.0,
+        "External perimeter": 2412.0,
+        "Perimeter": 1443.2,
+        "Top solid infill": 543.9,
+        "Bridge infill": 523.1,
+        "Internal infill": 345.0,
+        "Overhang perimeter": 288.6
       },
       "Turm": {
-        "Solid infill": 3762.6,
-        "External perimeter": 900.6,
-        "Perimeter": 805.1,
-        "Overhang perimeter": 1.0
+        "Solid infill": 3212.3,
+        "External perimeter": 818.4,
+        "Perimeter": 727.3,
+        "Overhang perimeter": 0.9
       },
       "Konsolen+Galerie oben": {
-        "Solid infill": 3316.0,
-        "External perimeter": 1534.9,
-        "Perimeter": 705.9,
-        "Top solid infill": 163.5,
-        "Overhang perimeter": 144.0,
-        "Bridge infill": 110.0
+        "Solid infill": 2889.9,
+        "External perimeter": 1429.6,
+        "Perimeter": 649.8,
+        "Top solid infill": 147.1,
+        "Overhang perimeter": 136.8,
+        "Bridge infill": 96.4
       },
       "Laterne+Dach": {
-        "Solid infill": 2683.2,
-        "External perimeter": 775.9,
-        "Perimeter": 688.7,
-        "Bridge infill": 32.5,
-        "Overhang perimeter": 15.8
+        "Solid infill": 2307.7,
+        "External perimeter": 705.6,
+        "Perimeter": 623.8,
+        "Bridge infill": 18.9,
+        "Overhang perimeter": 15.1
       },
       "Knauf+Öse": {
-        "External perimeter": 761.7,
-        "Solid infill": 699.5,
-        "Perimeter": 574.3,
+        "External perimeter": 754.4,
+        "Solid infill": 692.3,
+        "Perimeter": 569.5,
         "Overhang perimeter": 5.3,
         "Top solid infill": 3.1,
         "Bridge infill": 2.5
       }
     },
     "feinteile_bahnlaenge_je_schicht_mm": {
-      "Geländer unten: Holm 2 (z=12.42)": 85.93,
-      "Geländer unten: nur Pfosten (zwischen Holmen) (z=12.02)": 7.16,
-      "Geländer oben: Holm 3 (z=21.06)": 47.43,
-      "Geländer oben: nur Pfosten (zwischen Holmen) (z=20.82)": 6.52,
-      "Konsolenkranz (32 Konsolen) (z=18.9)": 12.56
+      "Geländer unten: Holm 2 (z=13.06)": 82.34,
+      "Geländer unten: nur Pfosten (zwischen Holmen) (z=12.74)": 7.17,
+      "Geländer oben: Holm 3 (z=21.38)": 45.44,
+      "Geländer oben: nur Pfosten (zwischen Holmen) (z=21.14)": 6.53,
+      "Konsolenkranz (32 Konsolen) (z=19.3)": 16.84
     }
   },
   "ohne_stuetzen_classic": {
@@ -133,15 +134,15 @@
     "schichten": 437,
     "z_max_mm": 34.98,
     "bahnlaenge_mm_nach_typ": {
-      "Solid infill": 37493.4,
-      "External perimeter": 9329.0,
-      "Perimeter": 6823.1,
-      "Top solid infill": 759.4,
-      "Bridge infill": 730.1,
-      "Skirt/Brim": 665.8,
-      "Internal infill": 548.8,
-      "Overhang perimeter": 474.6,
-      "Gap fill": 72.1
+      "Solid infill": 37821.8,
+      "External perimeter": 9131.8,
+      "Perimeter": 6743.1,
+      "Top solid infill": 931.8,
+      "Skirt/Brim": 824.9,
+      "Bridge infill": 653.6,
+      "Overhang perimeter": 451.7,
+      "Internal infill": 344.9,
+      "Gap fill": 98.0
     },
     "schwebende_bahninseln": {
       "anzahl": 0,
@@ -150,63 +151,63 @@
       "befunde": [],
       "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"
     },
-    "druckzeit": "1h 9m 14s",
+    "druckzeit": "1h 10m 28s",
     "filament_g": "1.18",
-    "filament_mm": "394.72",
+    "filament_mm": "394.90",
     "bahnen_nach_zone_mm": {
-      "Sockel+Platte": {
-        "Solid infill": 13324.7,
-        "External perimeter": 1928.2,
-        "Perimeter": 1786.7,
-        "Skirt/Brim": 665.8,
-        "Gap fill": 45.9,
-        "Bridge infill": 9.8,
-        "Overhang perimeter": 4.1
+      "Fuß+Sockel+Platte": {
+        "Solid infill": 16134.0,
+        "External perimeter": 2227.1,
+        "Perimeter": 2094.3,
+        "Skirt/Brim": 824.9,
+        "Top solid infill": 239.9,
+        "Gap fill": 70.5,
+        "Bridge infill": 9.4,
+        "Overhang perimeter": 3.9
       },
       "Unterbau": {
-        "Solid infill": 3995.1,
-        "External perimeter": 708.1,
-        "Perimeter": 658.8,
+        "Solid infill": 3529.5,
+        "External perimeter": 660.8,
+        "Perimeter": 613.0,
         "Overhang perimeter": 1.2
       },
       "Trichter+Galerie unten": {
-        "Solid infill": 9804.0,
-        "External perimeter": 2626.8,
-        "Perimeter": 1601.3,
-        "Top solid infill": 593.9,
-        "Bridge infill": 575.7,
-        "Internal infill": 548.8,
-        "Overhang perimeter": 303.5,
-        "Gap fill": 12.9
+        "Solid infill": 9147.2,
+        "External perimeter": 2433.9,
+        "Perimeter": 1458.0,
+        "Top solid infill": 542.8,
+        "Bridge infill": 522.1,
+        "Internal infill": 344.9,
+        "Overhang perimeter": 289.5,
+        "Gap fill": 17.8
       },
       "Turm": {
-        "Solid infill": 3733.7,
-        "External perimeter": 911.8,
-        "Perimeter": 843.2,
-        "Gap fill": 5.2,
-        "Overhang perimeter": 1.0
+        "Solid infill": 3168.3,
+        "External perimeter": 829.4,
+        "Perimeter": 761.6,
+        "Gap fill": 2.8,
+        "Overhang perimeter": 0.9
       },
       "Konsolen+Galerie oben": {
-        "Solid infill": 3269.6,
-        "External perimeter": 1577.6,
-        "Perimeter": 670.2,
-        "Top solid infill": 163.5,
-        "Overhang perimeter": 144.1,
-        "Bridge infill": 110.1,
-        "Gap fill": 2.9
+        "Solid infill": 2862.0,
+        "External perimeter": 1463.1,
+        "Perimeter": 622.2,
+        "Top solid infill": 147.1,
+        "Overhang perimeter": 136.0,
+        "Bridge infill": 96.8
       },
       "Laterne+Dach": {
-        "Solid infill": 2669.2,
-        "External perimeter": 802.5,
-        "Perimeter": 679.1,
-        "Bridge infill": 32.2,
-        "Overhang perimeter": 15.9,
-        "Gap fill": 4.2
+        "Solid infill": 2291.4,
+        "External perimeter": 752.0,
+        "Perimeter": 615.3,
+        "Bridge infill": 22.9,
+        "Overhang perimeter": 15.2,
+        "Gap fill": 6.0
       },
       "Knauf+Öse": {
-        "External perimeter": 774.0,
-        "Solid infill": 697.2,
-        "Perimeter": 583.7,
+        "External perimeter": 765.6,
+        "Solid infill": 689.4,
+        "Perimeter": 578.8,
         "Overhang perimeter": 4.8,
         "Bridge infill": 2.4,
         "Top solid infill": 2.0,
@@ -214,28 +215,28 @@
       }
     },
     "feinteile_bahnlaenge_je_schicht_mm": {
-      "Geländer unten: Holm 2 (z=12.42)": 88.58,
-      "Geländer unten: nur Pfosten (zwischen Holmen) (z=12.02)": 8.06,
-      "Geländer oben: Holm 3 (z=21.06)": 48.24,
-      "Geländer oben: nur Pfosten (zwischen Holmen) (z=20.82)": 6.77,
-      "Konsolenkranz (32 Konsolen) (z=18.9)": 5.73
+      "Geländer unten: Holm 2 (z=13.06)": 84.82,
+      "Geländer unten: nur Pfosten (zwischen Holmen) (z=12.74)": 8.08,
+      "Geländer oben: Holm 3 (z=21.38)": 46.24,
+      "Geländer oben: nur Pfosten (zwischen Holmen) (z=21.14)": 6.78,
+      "Konsolenkranz (32 Konsolen) (z=19.3)": 18.89
     }
   },
   "stuetzbedarf_45grad": {
     "returncode": 0,
-    "schichten": 652,
+    "schichten": 655,
     "z_max_mm": 34.98,
     "bahnlaenge_mm_nach_typ": {
-      "Solid infill": 37865.5,
-      "Support material": 26183.9,
-      "Support material interface": 21610.9,
-      "External perimeter": 9113.5,
-      "Perimeter": 6710.2,
-      "Top solid infill": 759.5,
-      "Bridge infill": 732.5,
-      "Skirt/Brim": 665.8,
-      "Internal infill": 548.2,
-      "Overhang perimeter": 474.3
+      "Solid infill": 38189.4,
+      "Support material": 25892.4,
+      "Support material interface": 22118.0,
+      "External perimeter": 8915.2,
+      "Perimeter": 6637.5,
+      "Top solid infill": 934.0,
+      "Skirt/Brim": 824.9,
+      "Bridge infill": 650.4,
+      "Overhang perimeter": 451.9,
+      "Internal infill": 345.0
     },
     "schwebende_bahninseln": {
       "anzahl": 0,
@@ -244,83 +245,84 @@
       "befunde": [],
       "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"
     },
-    "druckzeit": "1h 33m 13s",
-    "filament_g": "2.49",
-    "filament_mm": "836.45",
+    "druckzeit": "1h 34m 28s",
+    "filament_g": "2.52",
+    "filament_mm": "845.91",
     "bahnen_nach_zone_mm": {
-      "Sockel+Platte": {
-        "Solid infill": 13556.9,
-        "Support material": 7911.2,
-        "Support material interface": 2538.7,
-        "External perimeter": 1822.3,
-        "Perimeter": 1697.1,
-        "Skirt/Brim": 665.8,
-        "Bridge infill": 10.0,
-        "Overhang perimeter": 4.1
+      "Fuß+Sockel+Platte": {
+        "Solid infill": 16363.0,
+        "Support material": 8199.7,
+        "Support material interface": 3606.1,
+        "External perimeter": 2128.6,
+        "Perimeter": 2016.7,
+        "Skirt/Brim": 824.9,
+        "Top solid infill": 239.9,
+        "Bridge infill": 9.5,
+        "Overhang perimeter": 3.9
       },
       "Unterbau": {
-        "Support material": 4380.0,
-        "Solid infill": 4008.8,
-        "External perimeter": 715.1,
-        "Perimeter": 653.2,
-        "Support material interface": 439.9,
+        "Support material": 4049.2,
+        "Solid infill": 3547.3,
+        "External perimeter": 666.6,
+        "Perimeter": 607.1,
+        "Support material interface": 414.4,
         "Overhang perimeter": 1.2
       },
       "Trichter+Galerie unten": {
-        "Solid infill": 9838.7,
-        "Support material interface": 9573.0,
-        "Support material": 6541.9,
-        "External perimeter": 2603.1,
-        "Perimeter": 1585.8,
-        "Top solid infill": 592.9,
-        "Bridge infill": 577.6,
-        "Internal infill": 548.2,
-        "Overhang perimeter": 302.9
+        "Solid infill": 9177.0,
+        "Support material interface": 9171.1,
+        "Support material": 6342.0,
+        "External perimeter": 2412.0,
+        "Perimeter": 1443.2,
+        "Top solid infill": 543.9,
+        "Bridge infill": 523.1,
+        "Internal infill": 345.0,
+        "Overhang perimeter": 288.6
       },
       "Turm": {
-        "Solid infill": 3762.6,
-        "Support material": 3250.4,
-        "External perimeter": 900.6,
-        "Perimeter": 805.1,
-        "Support material interface": 220.3,
-        "Overhang perimeter": 1.0
+        "Solid infill": 3212.3,
+        "Support material": 3110.3,
+        "External perimeter": 818.4,
+        "Perimeter": 727.3,
+        "Support material interface": 175.2,
+        "Overhang perimeter": 0.9
       },
       "Konsolen+Galerie oben": {
-        "Support material interface": 6167.2,
-        "Solid infill": 3316.0,
-        "Support material": 1548.8,
-        "External perimeter": 1534.9,
-        "Perimeter": 705.9,
-        "Top solid infill": 163.5,
-        "Overhang perimeter": 144.0,
-        "Bridge infill": 110.0
+        "Support material interface": 6040.0,
+        "Solid infill": 2889.9,
+        "Support material": 1595.6,
+        "External perimeter": 1429.6,
+        "Perimeter": 649.8,
+        "Top solid infill": 147.1,
+        "Overhang perimeter": 136.8,
+        "Bridge infill": 96.4
       },
       "Laterne+Dach": {
-        "Solid infill": 2683.2,
-        "Support material": 1131.7,
-        "External perimeter": 775.9,
-        "Perimeter": 688.7,
-        "Support material interface": 579.8,
-        "Bridge infill": 32.5,
-        "Overhang perimeter": 15.8
+        "Solid infill": 2307.7,
+        "Support material": 1176.7,
+        "External perimeter": 705.6,
+        "Perimeter": 623.8,
+        "Support material interface": 619.4,
+        "Bridge infill": 18.9,
+        "Overhang perimeter": 15.1
       },
       "Knauf+Öse": {
-        "Support material interface": 2091.9,
-        "Support material": 1419.8,
-        "External perimeter": 761.7,
-        "Solid infill": 699.5,
-        "Perimeter": 574.3,
+        "Support material interface": 2091.8,
+        "Support material": 1418.9,
+        "External perimeter": 754.4,
+        "Solid infill": 692.3,
+        "Perimeter": 569.5,
         "Overhang perimeter": 5.3,
         "Top solid infill": 3.1,
         "Bridge infill": 2.5
       }
     },
     "feinteile_bahnlaenge_je_schicht_mm": {
-      "Geländer unten: Holm 2 (z=12.4)": 0.0,
-      "Geländer unten: nur Pfosten (zwischen Holmen) (z=12.02)": 7.16,
-      "Geländer oben: Holm 3 (z=21.06)": 47.43,
-      "Geländer oben: nur Pfosten (zwischen Holmen) (z=20.82)": 27.6,
-      "Konsolenkranz (32 Konsolen) (z=18.9)": 12.56
+      "Geländer unten: Holm 2 (z=13.12)": 0.0,
+      "Geländer unten: nur Pfosten (zwischen Holmen) (z=12.74)": 7.17,
+      "Geländer oben: Holm 3 (z=21.38)": 50.52,
+      "Geländer oben: nur Pfosten (zwischen Holmen) (z=21.14)": 6.53,
+      "Konsolenkranz (32 Konsolen) (z=19.34)": 32.52
     }
   }
 }

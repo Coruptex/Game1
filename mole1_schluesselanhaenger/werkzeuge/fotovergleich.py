@@ -22,8 +22,10 @@ from PIL import Image, ImageDraw, ImageFont
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
 
-FOTO4 = {"breite_px": 960, "hoehe_px": 1628, "px_pro_m": 94.25, "achse_x": 463.5, "y_sockel": 1305,
-         "abstand_m": 90.0, "augenhoehe_m": 1.2}
+# Kamera F4: 97,65 px/m in der Turmachse (13,40 m vom Molendeck, Zeile 1350,5, bis Spitze Wetterfahne, Zeile 42),
+# Abstand ≈ 87 m, Augenhöhe ≈ 1,62 m über dem Molendeck (wie render_vorschau.py).
+FOTO4 = {"breite_px": 960, "hoehe_px": 1628, "px_pro_m": 97.65, "achse_x": 463.5, "y_molendeck": 1350.5,
+         "abstand_m": 86.87, "augenhoehe_m": 1.624}
 
 
 def argumente():
@@ -42,7 +44,7 @@ def projektion(punkte_mm, s):
     tiefe = p[..., 1] + f["abstand_m"]
     k = f["abstand_m"] / tiefe
     x = f["achse_x"] + f["px_pro_m"] * p[..., 0] * k
-    y_h = f["y_sockel"] - f["px_pro_m"] * f["augenhoehe_m"]
+    y_h = f["y_molendeck"] - f["px_pro_m"] * f["augenhoehe_m"]
     y = y_h - f["px_pro_m"] * (p[..., 2] - f["augenhoehe_m"]) * k
     return np.stack([x, y], axis=-1)
 

@@ -4,11 +4,12 @@
 Molenfeuer Mole 1, Brunsbüttel – detailgetreues Modell für einen Schmuck-Schlüsselanhänger
 ==========================================================================================
 
-Version 2: vollständig neu aufgebaut nach vier Referenzfotos (F1–F4, Messwerte und Quellen in REAL).
+Version 2: vollständig neu aufgebaut nach fünf Referenzfotos (F1–F5, Messwerte und Quellen in REAL).
 Getestet mit Blender 5.2.3 LTS (pip-Paket "bpy" 5.2.3); benötigt Blender >= 4.5
 (Boolean-Solver "MANIFOLD").
 
 Aufbau von unten nach oben:
+  Sockelfuß (zwei achteckige Stufen, die untere deutlich breiter) –
   Granitsockel (4 Steinlagen im Läuferverband, Tür in Laibung mit Brettern und Bändern) –
   Abdeckplatte mit Schräge – schwarzer achteckiger Unterbau (Bogenfenster, Steigleiter) –
   achteckiger Trichter mit Leiteraussparung – runde untere Galerie (8 Pfosten, 3 Holme) –
@@ -29,7 +30,7 @@ Nur in einer neuen, leeren Datei oder in der mitgelieferten .blend ausführen.
   --prototyp erzeugt die verstärkte Variante für den FDM-Probedruck (Bambu Lab A1, 0,2-mm-Düse)
   mit eigenen Dateinamen (…_Prototyp_A1.stl/.blend, modell_parameter_prototyp_a1.json).
 
-Koordinaten: z = 0 ist die Unterkante des Granitsockels, z zeigt nach oben.
+Koordinaten: z = 0 ist das Molendeck (Unterkante des Sockelfußes), z zeigt nach oben.
 Vorderseite (−Y, Azimut 270°) = Tür, Blickrichtung wie Foto F4 vom Molenweg.
 Die große "1" steht zweimal am Turm: auf der Fläche +X (Azimut 0°, von vorne gesehen rechts) und auf der
 Gegenfläche −X (180°), also auf beiden Seiten quer zur Mole.
@@ -44,74 +45,85 @@ import sys
 import json
 
 # ---------------------------------------------------------------------------
-# 1) REALMASSE  (Meter, z = 0 Sockelunterkante)
-#    Status: "Foto"      = an den Referenzfotos gemessen (Maßstab F4: 94,25 px/m über 13,40 m)
+# 1) REALMASSE  (Meter)
+#    Höhenlagen (…_UK, …_OK, Traufe, Spitze, Fenster) über dem Molendeck (z = 0); Maße im Sockel
+#    (SOCKEL_H, Lagenfugen, Tür) über der Unterkante des Mauerwerks, Fußmaße je Stufe.
+#    Maßstab F4: 97,65 px/m = 13,40 m (WSA) vom Molendeck (Bildzeile 1350,5) bis zur Spitze der
+#    Wetterfahne (Zeile 42).
+#    Status: "Foto"      = an den Referenzfotos gemessen
 #            "belegt"    = aus schriftlicher Quelle
 #            "Schätzung" = auf den Fotos nicht eindeutig messbar
 #    F1 = Wasserseite (Blick auf "1" und Leiter), F2 = von der Elbe, F3 = erhöht, F4 = frontal Molenweg,
 #    F5 = vom Wasser auf die andere Seite der Mole (Flächen 90°–180°, zweite "1", Funkmast dahinter)
 # ---------------------------------------------------------------------------
 REAL = {
-    "H_GESAMT":         (13.40, "belegt", "Höhe bis Spitze der Wetterfahne (WSA); Maßstabsbezug für F4"),
+    "H_GESAMT":         (13.40, "belegt", "über Molendeck bis Spitze Wetterfahne (WSA); Maßstabsbezug F4"),
+    # Sockelfuß: zwei achteckige Stufen unter dem Mauerwerk (F4 unter der Tür; F3 von oben, untere Stufe
+    # ≈ 0,6 m breiter je Seite). Vorsprung aus der Lage der Ecke der Vorderfläche: Mauerwerk x 519,0,
+    # obere Stufe x 525,7, untere Stufe x 544,4 (Versatz = Vorsprung × tan 22,5°). Rückseite verdeckt.
+    "FUSS_U_H":         (0.205, "Foto", "F4: untere Stufe y 1350,5→1330,5"),
+    "FUSS_U_VOR":       (0.628, "Foto", "F4: Ecke 25,4 px weiter außen als am Mauerwerk; F3 ≈ 0,6 m"),
+    "FUSS_O_H":         (0.261, "Foto", "F4: obere Stufe y 1330,5→1305"),
+    "FUSS_O_VOR":       (0.166, "Foto", "F4: Ecke 6,7 px weiter außen als am Mauerwerk"),
     # Granitsockel
-    "SOCKEL_SW":        (3.10, "Foto", "F4: 292 px Schlüsselweite"),
-    "SOCKEL_H":         (1.645, "Foto", "F4: y 1305→1150"),
-    "LAGEN_FUGEN":      ((0.50, 0.88, 1.24), "Foto", "F4: Lagerfugen y 1258/1222/1188"),
-    "TUER_B":           (0.86, "Foto", "F4: Nische x 420–500"),
-    "TUER_H":           (1.57, "Foto", "F4: Sturz y 1157"),
-    "TUER_U":           (-0.04, "Foto", "F4: Nischenmitte x 460 (Achse 463,5)"),
-    "TUER_LAIBUNG":     (0.22, "Schätzung", "Tiefe der Nische, aus dem Schattenwurf abgeschätzt"),
-    "TUER_BAENDER":     ((0.39, 1.135), "Foto", "F4: Mitten der Bandringe y 1268/1198"),
-    "TUER_RIEGEL":      (0.73, "Foto", "F4: Riegel y 1232–1242"),
-    "KAPPE_SW":         (3.25, "Foto", "F4: 305 px"),
-    "KAPPE_KANTE":      (0.18, "Foto", "F4: senkrechte Kante y 1150→1133"),
-    "KAPPE_OK":         (2.016, "Foto", "F4: y 1115 (Schräge trifft Unterbau)"),
+    "SOCKEL_SW":        (2.992, "Foto", "F4: 292 px Schlüsselweite"),
+    "SOCKEL_H":         (1.588, "Foto", "F4: y 1305→1150"),
+    "LAGEN_FUGEN":      ((0.483, 0.849, 1.197), "Foto", "F4: Lagerfugen y 1258/1222/1188"),
+    "TUER_B":           (0.830, "Foto", "F4: Nische x 420–500"),
+    "TUER_H":           (1.515, "Foto", "F4: Sturz y 1157"),
+    "TUER_U":           (-0.039, "Foto", "F4: Nischenmitte x 460 (Achse 463,5)"),
+    "TUER_LAIBUNG":     (0.212, "Schätzung", "Tiefe der Nische, aus dem Schattenwurf abgeschätzt"),
+    "TUER_BAENDER":     ((0.376, 1.095), "Foto", "F4: Mitten der Bandringe y 1268/1198"),
+    "TUER_RIEGEL":      (0.705, "Foto", "F4: Riegel y 1232–1242"),
+    "KAPPE_SW":         (3.137, "Foto", "F4: 305 px"),
+    "KAPPE_KANTE":      (0.174, "Foto", "F4: senkrechte Kante y 1150→1133"),
+    "KAPPE_OK":         (2.412, "Foto", "F4: y 1115 (Schräge trifft Unterbau)"),
     # schwarzer Unterbau, Trichter, untere Galerie
-    "UNTERBAU_SW_U":    (2.32, "Foto", "F4: 218 px"),
-    "UNTERBAU_SW_O":    (2.17, "Foto", "F4: 204 px"),
-    "TRICHTER_U":       (3.16, "Foto", "F4: y 1007 (Knick Unterbau/Trichter)"),
-    "GALERIE1_UK":      (4.106, "Foto", "F4: y 918"),
-    "GALERIE1_OK":      (4.265, "Foto", "F4: y 903 (weißer Bodenrand 0,16 m)"),
-    "GALERIE1_D":       (5.30, "Foto", "F4: 500 px; Trichter oben = Achteck im Bodenkreis"),
-    "GELAENDER1_HOLME": ((0.23, 0.50, 0.78), "Foto",
+    "UNTERBAU_SW_U":    (2.239, "Foto", "F4: 218 px"),
+    "UNTERBAU_SW_O":    (2.094, "Foto", "F4: 204 px"),
+    "TRICHTER_U":       (3.516, "Foto", "F4: y 1007 (Knick Unterbau/Trichter)"),
+    "GALERIE1_UK":      (4.429, "Foto", "F4: y 918"),
+    "GALERIE1_OK":      (4.583, "Foto", "F4: y 903 (weißer Bodenrand 0,15 m)"),
+    "GALERIE1_D":       (5.116, "Foto", "F4: 500 px; Trichter oben = Achteck im Bodenkreis"),
+    "GELAENDER1_HOLME": ((0.222, 0.483, 0.753), "Foto",
                          "F4: 3 Holme (Handlauf + 2); Mittel aus vorderem und hinterem Holm, x 330/680"),
-    "LEITER_B":         (0.42, "Foto", "F1: 13 px"),
-    "LEITER_SPROSSE":   (0.24, "Foto", "F1: Sprossenteilung 7,5 px"),
-    "LEITER_AUSSPARUNG": (0.70, "Foto", "F1: helle Aussparung im Trichter 21 px"),
+    "LEITER_B":         (0.405, "Foto", "F1: 13 px"),
+    "LEITER_SPROSSE":   (0.232, "Foto", "F1: Sprossenteilung 7,5 px"),
+    "LEITER_AUSSPARUNG": (0.676, "Foto", "F1: helle Aussparung im Trichter 21 px"),
     # weißer Turm, Konsolen, obere Galerie
-    "TURM_SW_U":        (1.93, "Foto", "F4: 182 px"),
-    "TURM_SW_O":        (1.83, "Foto", "F4: 172 px"),
-    "TURM_OK":          (6.865, "Foto", "F4: y 658 (Beginn Konsolenkranz)"),
-    "EINS_UK":          (4.70, "Foto", "F1/F3: 0,44 m über Galerieboden; F5: 4,66 m"),
-    "EINS_OK":          (6.44, "Foto", "F1/F3: 0,42 m unter dem Konsolenkranz; F5: 6,41 m"),
-    "EINS_STAMM":       (0.26, "Foto", "F1: 7,5 px, F3: 6 px"),
-    "KONSOLE_R0":       (0.90, "Foto", "F4: Fußpunkt der Hohlkehle am Turm"),
-    "KONSOLE_RADIUS":   (0.62, "Foto", "F4: Außenkante = Viertelkreis-Hohlkehle R 0,62 (9 Punkte, ±2 cm)"),
-    "GALERIE2_OK":      (7.586, "Foto", "F4: y 590"),
-    "GALERIE2_D":       (2.95, "Foto", "F4: 283 px"),
-    "GELAENDER2_HOLME": ((0.10, 0.30, 0.50, 0.71), "Foto",
+    "TURM_SW_U":        (1.863, "Foto", "F4: 182 px"),
+    "TURM_SW_O":        (1.766, "Foto", "F4: 172 px"),
+    "TURM_OK":          (7.092, "Foto", "F4: y 658 (Beginn Konsolenkranz)"),
+    "EINS_UK":          (5.002, "Foto", "F1/F3: 0,42 m über Galerieboden; F5: 4,96 m"),
+    "EINS_OK":          (6.682, "Foto", "F1/F3: 0,41 m unter dem Konsolenkranz; F5: 6,65 m"),
+    "EINS_STAMM":       (0.251, "Foto", "F1: 7,5 px, F3: 6 px"),
+    "KONSOLE_R0":       (0.869, "Foto", "F4: Fußpunkt der Hohlkehle am Turm"),
+    "KONSOLE_RADIUS":   (0.598, "Foto", "F4: Außenkante = Viertelkreis-Hohlkehle R 0,60 (9 Punkte, ±2 cm)"),
+    "GALERIE2_OK":      (7.788, "Foto", "F4: y 590"),
+    "GALERIE2_D":       (2.847, "Foto", "F4: 283 px"),
+    "GELAENDER2_HOLME": ((0.097, 0.290, 0.483, 0.685), "Foto",
                          "F4: 4 Holme; Mittel aus vorderem und hinterem Holm, x 350/565"),
     # Laterne, Dach, Knauf
-    "LATERNE_D":        (1.74, "Foto", "F4: 165 px"),
-    "GLAS_UK":          (8.38, "Foto", "F4: y 510 (Fußpunkte der Sprossen), perspektivisch korrigiert"),
-    "GLAS_OK":          (8.97, "Foto", "F4: y 453 (Spitzen an den Ecken), perspektivisch korrigiert"),
-    "TRAUFE":           (9.10, "Foto", "F4: y 447"),
-    "DACH_SPITZE":      (10.43, "Foto", "F4: y 322"),
-    "KNAUF_OK":         (11.14, "Foto", "F4: y 255 (darüber Wetterfahne bis 13,40 m)"),
+    "LATERNE_D":        (1.679, "Foto", "F4: 165 px"),
+    "GLAS_UK":          (8.554, "Foto", "F4: y 510 (Fußpunkte der Sprossen), perspektivisch korrigiert"),
+    "GLAS_OK":          (9.124, "Foto", "F4: y 453 (Spitzen an den Ecken), perspektivisch korrigiert"),
+    "TRAUFE":           (9.249, "Foto", "F4: y 447"),
+    "DACH_SPITZE":      (10.533, "Foto", "F4: y 322"),
+    "KNAUF_OK":         (11.218, "Foto", "F4: y 255 (darüber Wetterfahne bis 13,40 m)"),
 }
 
 # Dachprofil: (Höhe über Traufe [m], Radius in Segmentmitte [m]) – F4 zeilenweise gemessen.
 # Die senkrechte Traufkante (F4 ≈ 0,04 m) wird im Modell mit TRAUFKANTE_MM ausgeführt (gießbar),
 # der Schwung darüber beginnt entsprechend höher.
-DACH_PROFIL = [(0.000, 1.020), (0.074, 0.980), (0.180, 0.865), (0.290, 0.810),
-               (0.390, 0.780), (0.500, 0.750), (0.600, 0.716), (0.710, 0.684), (0.820, 0.652),
-               (0.920, 0.610), (1.030, 0.557), (1.135, 0.450), (1.240, 0.220), (1.330, 0.170)]
+DACH_PROFIL = [(0.000, 0.984), (0.071, 0.946), (0.174, 0.835), (0.280, 0.782),
+               (0.376, 0.753), (0.483, 0.724), (0.579, 0.691), (0.685, 0.660), (0.791, 0.629),
+               (0.888, 0.589), (0.994, 0.538), (1.095, 0.434), (1.197, 0.212), (1.284, 0.164)]
 
 # Knauf: (Höhe über Dachspitze [m], Radius [m]) – F4: Kragen, Ring, Lüfter mit Schlitzen, Kappe, Spitze
 #   Wülste (Ring, Kappe) im Modell ≥ 0,2 mm hoch (real 0,06/0,04 m) → gießbar.
-KNAUF_PROFIL = [(0.00, 0.18), (0.11, 0.16), (0.15, 0.16), (0.165, 0.19), (0.245, 0.19), (0.26, 0.15),
-                (0.29, 0.14), (0.44, 0.14), (0.455, 0.16), (0.535, 0.16), (0.55, 0.12), (0.71, 0.03)]
-KNAUF_SCHLITZE_Z = (0.31, 0.42)      # Lüftungsschlitze, Höhe über Dachspitze [m]
+KNAUF_PROFIL = [(0.000, 0.174), (0.106, 0.154), (0.145, 0.154), (0.159, 0.183), (0.236, 0.183), (0.251, 0.145),
+                (0.280, 0.135), (0.425, 0.135), (0.439, 0.154), (0.516, 0.154), (0.531, 0.116), (0.685, 0.029)]
+KNAUF_SCHLITZE_Z = (0.299, 0.405)      # Lüftungsschlitze, Höhe über Dachspitze [m]
 
 # Ausrichtung (Azimut der Achteckflächen in Grad)
 #   Tür 270° (F4 frontal). Die "1": F1–F3 zeigen den Molenweg – und damit die Tür – links neben
@@ -123,14 +135,15 @@ AZ_EINS = (0, 180)
 
 # Fenster: (Bauteil, Azimut, Breite, Unterkante, Oberkante [m], Rundbogen, seitlicher Versatz u [m], Quelle)
 #   u > 0 = von außen gesehen nach rechts. Die vier Turmfenster steigen wie bei einer Wendeltreppe an
-#   (≈ 0,33 m je Achteckfläche); auf 180° sitzt statt eines Fensters die zweite "1".
-#   Höhen der Turmfenster perspektivisch korrigiert (Kamera F4 ≈ 90 m entfernt, Augenhöhe ≈ 1,2 m).
+#   (≈ 0,32 m je Achteckfläche); auf 180° sitzt statt eines Fensters die zweite "1".
+#   Höhen der Turmfenster perspektivisch korrigiert (Kamera F4 ≈ 87 m entfernt, Augenhöhe ≈ 1,6 m über
+#   dem Molendeck).
 FENSTER = [
-    ("Unterbau", 225, 0.18, 2.13, 3.12, True, 0.10, "F4: x 390–401, y 1008–1104"),
-    ("Turm", 135, 0.17, 4.55, 4.90, False, 0.12, "F5: x 808–820, y 1563–1588; seitlicher Versatz geschätzt"),
-    ("Turm", 225, 0.17, 5.26, 5.61, True, 0.04, "F4: x 398–409, y 773–806"),
-    ("Turm", 270, 0.16, 5.57, 5.90, False, 0.00, "F4: x 456–471, y 744–775"),
-    ("Turm", 315, 0.17, 5.89, 6.23, True, -0.06, "F4: x 516–527, y 715–746; in F2/F3 links neben der „1“"),
+    ("Unterbau", 225, 0.174, 2.522, 3.477, True, 0.097, "F4: x 390–401, y 1008–1104"),
+    ("Turm", 135, 0.164, 4.858, 5.195, False, 0.116, "F5: x 808–820, y 1563–1588; seitlicher Versatz geschätzt"),
+    ("Turm", 225, 0.164, 5.543, 5.881, True, 0.039, "F4: x 398–409, y 773–806"),
+    ("Turm", 270, 0.154, 5.842, 6.161, False, 0.000, "F4: x 456–471, y 744–775"),
+    ("Turm", 315, 0.164, 6.151, 6.479, True, -0.058, "F4: x 516–527, y 715–746; in F2/F3 links neben der „1“"),
 ]
 
 # Stoßfugen je Steinlage als Bruchteile der Flächenbreite (F4, linke Schrägfläche; Läuferverband)
@@ -183,7 +196,7 @@ P = {
     "DACH_WOELBUNG":         0.045,  # Segmente bauchig, Rippen 4,5 % weiter innen (F4: Kehlen an den Rippen)
     "DACH_NAHT_MM":          0.06,   # Falzgrat auf den Rippen
     "TRAUFKANTE_MM":         0.25,   # senkrechte Traufkante (real ≈ 0,04 m = 0,10 mm → für den Guss verstärkt)
-    # Knauf und Öse (Öse ersetzt die 2,26 m hohe Wetterfahne)
+    # Knauf und Öse (Öse ersetzt die 2,18 m hohe Wetterfahne)
     "KNAUF_FAKTOR":          1.92,   # Knauf radial verstärkt (Kraftfluss Öse → Dach), Proportionen wie F4
     "KNAUF_R_MIN_MM":        0.70,   # tragender Mindestquerschnitt Ø 1,4 mm (mit Schlitzen ≈ 1,37 mm²)
     "KNAUF_SCHLITZE":        8,
@@ -231,6 +244,9 @@ def berechne_masse():
     for k, (v, _, _) in REAL.items():
         if isinstance(v, (int, float)):
             m[k.lower()] = v * s
+    m["fuss_stufe_ok"] = r_("FUSS_U_H") * s                      # Oberkante untere Stufe
+    m["sockel_uk"] = (r_("FUSS_U_H") + r_("FUSS_O_H")) * s       # Unterkante Mauerwerk = Oberkante Fuß
+    m["sockel_ok"] = m["sockel_uk"] + m["sockel_h"]
     m["galerie2_uk"] = (r_("TURM_OK") + r_("KONSOLE_RADIUS")) * s
     m["z_oese_unten"] = m["knauf_ok"] - P["OESE_EINGRIFF_MM"]
     m["oese_R"] = P["OESE_INNEN_D_MM"] / 2.0 + P["OESE_RING_RADIAL_MM"] / 2.0
@@ -628,60 +644,74 @@ class Bau:
             self.einlagen.append((name + "_Farbe", umriss, fl, -tiefe - 0.01, -tiefe + 0.03, farbgruppe))
 
 
+def baue_sockelfuss(b):
+    """Zwei achteckige Stufen unter dem Mauerwerk (F4), gleich ausgerichtet wie der Sockel."""
+    m, ov = b.m, b.ov
+    sw = m["sockel_sw"]
+    sw_u, sw_o = sw + 2.0 * m["fuss_u_vor"], sw + 2.0 * m["fuss_o_vor"]
+    z1, z2 = m["fuss_stufe_ok"], m["sockel_uk"]
+    b.plus(loft("Sockelfuss_Stufe_unten", [(umkreis(sw_u), 0.0), (umkreis(sw_u), z1)], 8, OKT, b.c_teile),
+           "Sockelfuss_unten")
+    b.plus(loft("Sockelfuss_Stufe_oben", [(umkreis(sw_o), z1 - ov), (umkreis(sw_o), z2)], 8, OKT, b.c_teile),
+           "Sockelfuss_oben")
+
+
 def baue_sockel(b):
     m, s, ov = b.m, b.s, b.ov
     sw, h = m["sockel_sw"], m["sockel_h"]
-    b.plus(loft("Sockel_Granit", [(umkreis(sw), 0.0), (umkreis(sw), h + ov)], 8, OKT, b.c_teile), "Sockel")
+    z_u, z_o = m["sockel_uk"], m["sockel_ok"]
+    b.plus(loft("Sockel_Granit", [(umkreis(sw), z_u - ov), (umkreis(sw), z_o + ov)], 8, OKT, b.c_teile), "Sockel")
     # Abdeckplatte: senkrechte Kante, dann Schräge bis an den Unterbau (F4)
-    b.plus(loft("Sockel_Abdeckplatte", [(umkreis(m["kappe_sw"]), h), (umkreis(m["kappe_sw"]), h + m["kappe_kante"]),
+    b.plus(loft("Sockel_Abdeckplatte", [(umkreis(m["kappe_sw"]), z_o), (umkreis(m["kappe_sw"]), z_o + m["kappe_kante"]),
                                         (umkreis(m["unterbau_sw_u"]) - 0.02, m["kappe_ok"] + ov)], 8, OKT, b.c_teile),
            "Sockel")
-    # Lagerfugen ringsum
+    # Lagerfugen ringsum (Höhen über der Unterkante des Mauerwerks)
     fb, ft = P["FUGE_BREITE_MM"], P["FUGE_TIEFE_MM"]
     lagen = [0.0] + [z * s for z in r_("LAGEN_FUGEN")] + [h]
     for i, zf in enumerate(lagen[1:-1], 1):
-        ring_prisma(f"Fuge_Lager_{i}", umkreis(sw) + 0.5, umkreis(sw - 2 * ft), zf - fb / 2, zf + fb / 2,
+        ring_prisma(f"Fuge_Lager_{i}", umkreis(sw) + 0.5, umkreis(sw - 2 * ft), z_u + zf - fb / 2, z_u + zf + fb / 2,
                     8, OKT, b.c_minus)
-    # Stoßfugen im Läuferverband (F4), Türbereich ausgespart
+    # Stoßfugen im Läuferverband (F4), Türbereich ausgespart; unten und oben 0,04 mm Abstand zu Fuß und Platte
     tb, th, tu = m["tuer_b"], m["tuer_h"], m["tuer_u"]
     fw = sw * math.tan(OKT)
     for lage, kennung in enumerate(LAGEN_MUSTER):
-        z0 = lagen[lage] if lage > 0 else -0.3
+        z0 = lagen[lage] if lage > 0 else 0.04
         z1 = lagen[lage + 1] if lage < 3 else h - 0.04
         for k in range(8):
             az = k * 45
-            fl = Flaeche(az, sw, 0.0, sw, h, 0.0)
+            fl = Flaeche(az, sw, z_u, sw, z_o, z_u)
             for f in STOSSFUGEN[kennung]:
                 u = (f - 0.5) * fw
                 if az == AZ_TUER and abs(u - tu) < tb / 2 + fb and lagen[lage] < th:
                     continue
                 flaechen_prisma(f"Fuge_Stoss_L{lage + 1}_{az:03d}_{f:.2f}", rechteck(u - fb / 2, u + fb / 2, z0, z1),
                                 fl, -ft, 0.5, b.c_minus)
-    # Tür in Laibung (F4): Nische, Brettfugen, Bänder mit Zierring, Riegel
-    fl = Flaeche(AZ_TUER, sw, 0.0, sw, h, 0.0)
+    # Tür in Laibung (F4): Nische, Brettfugen, Bänder mit Zierring, Riegel. Die Nische endet auf der oberen
+    # Fußstufe (Schwelle, F4 y ≈ 1309); 0,02 mm tiefer, damit keine Flächen deckungsgleich liegen.
+    fl = Flaeche(AZ_TUER, sw, z_u, sw, z_o, z_u)
     tl = m["tuer_laibung"]
-    nische = rechteck(tu - tb / 2, tu + tb / 2, -0.3, th)
+    nische = rechteck(tu - tb / 2, tu + tb / 2, -0.02, th)
     flaechen_prisma("Tuer_Nische", nische, fl, -tl, 0.5, b.c_minus)
     b.einlagen.append(("Tuer_Blatt_Farbe", rechteck(tu - tb / 2, tu + tb / 2, 0.0, th), fl, -tl - 0.01, -tl + 0.02,
                        "Tuer"))
     bb, bt = P["BRETTFUGE_B_MM"], P["BRETTFUGE_T_MM"]
     for i in range(1, P["BRETTER"]):
         u = tu - tb / 2 + i * tb / P["BRETTER"]
-        flaechen_prisma(f"Tuer_Brettfuge_{i}", rechteck(u - bb / 2, u + bb / 2, -0.3, th - 0.05),
+        flaechen_prisma(f"Tuer_Brettfuge_{i}", rechteck(u - bb / 2, u + bb / 2, -0.01, th - 0.05),
                         fl, -tl - bt, -tl + 0.01, b.c_minus)
     bh, bv = P["BESCHLAG_H_MM"], P["BESCHLAG_VOR_MM"]
     d0 = -tl - bt - 0.02                      # Beschläge reichen bis unter die Brettfugen (keine Hohlräume)
     for i, zb in enumerate(r_("TUER_BAENDER"), 1):
         w = zb * s
-        u_l, u_r = tu - 0.10 * s, tu + tb / 2 + 0.05      # Bandeisen bis in die Laibung (Kloben am Rahmen)
+        u_l, u_r = tu - 0.097 * s, tu + tb / 2 + 0.05      # Bandeisen bis in die Laibung (Kloben am Rahmen)
         b.plus(flaechen_prisma(f"Tuer_Band_{i}", rechteck(u_l, u_r, w - bh / 2, w + bh / 2), fl, d0, -tl + bv,
                                b.c_teile), "Beschlag", nach_gravur=True)
-        b.plus(flaechen_ring(f"Tuer_Band_{i}_Zierring", tu + 0.215 * s, w, 0.10 * s, 0.04 * s, fl, d0, -tl + bv,
+        b.plus(flaechen_ring(f"Tuer_Band_{i}_Zierring", tu + 0.208 * s, w, 0.097 * s, 0.039 * s, fl, d0, -tl + bv,
                              b.c_teile), "Beschlag", nach_gravur=True)
         b.plus(flaechen_prisma(f"Tuer_Band_{i}_Kloben", rechteck(u_r - 0.21, u_r, w - 0.17, w + 0.17), fl, d0,
                                -tl + bv + 0.03, b.c_teile), "Beschlag", nach_gravur=True)
     w = r_("TUER_RIEGEL") * s
-    b.plus(flaechen_prisma("Tuer_Riegel", rechteck(tu - 0.02 * s, tu + 0.11 * s, w - bh / 2, w + bh / 2), fl,
+    b.plus(flaechen_prisma("Tuer_Riegel", rechteck(tu - 0.019 * s, tu + 0.106 * s, w - bh / 2, w + bh / 2), fl,
                            d0, -tl + bv, b.c_teile), "Beschlag", nach_gravur=True)
 
 
@@ -709,7 +739,7 @@ def baue_unterbau_trichter_leiter(b):
     # Steigleiter vom Sockel bis unter den Galerieboden (F1)
     fl = Flaeche(AZ_LEITER, swu, z0, swo, z1, z0)
     lb, hb, hv = r_("LEITER_B") * s, P["LEITER_HOLM_B_MM"], P["LEITER_HOLM_VOR_MM"]
-    w0, w1 = 0.05 * s, z_uk - z0 + ov
+    w0, w1 = 0.048 * s, z_uk - z0 + ov
     for i, u in enumerate((-lb / 2 + hb / 2, lb / 2 - hb / 2), 1):
         b.plus(flaechen_prisma(f"Leiter_Holm_{i}", rechteck(u - hb / 2, u + hb / 2, -0.25, w1), fl, -0.05, hv,
                                b.c_teile), "Leiter")
@@ -805,7 +835,7 @@ def baue_laterne(b):
     b.plus(zylinder("Laterne_Glas", r_l - P["GLAS_TIEFE_MM"], zg0 - ov, zg1 + ov, b.c_teile), "Laterne_Glas")
     b.plus(zylinder("Laterne_Kranz", r_l, zg1, zt + ov, b.c_teile), "Laterne")
     # Zickzack-Sprossen: 8 "V", Fußpunkte auf den Flächenmitten, Spitzen oben an den Ecken (F4)
-    rm = r_l - P["SPROSSE_LAT_T_MM"] / 2.0
+    rm = r_l - P["SPROSSE_LAT_T_MM"] / 2.0 - 0.005    # 5 µm innen: Ecken berühren den Kranz nicht tangential
     for k in range(8):
         a_fuss = math.radians(k * 45)
         for j, a_oben in enumerate((a_fuss - OKT, a_fuss + OKT)):
@@ -823,7 +853,7 @@ def dach_glocke(name, m, coll):
     proben = 24
     n = n_seg * proben
     zt = m["traufe"]
-    r_bezug = 0.6 * s
+    r_bezug = 0.579 * s
     verts = []
     kante = P["TRAUFKANTE_MM"]
     ringe = [(zt, DACH_PROFIL[0][1] * s), (zt + kante, DACH_PROFIL[0][1] * s)]
@@ -860,7 +890,7 @@ def baue_dach_knauf_oese(b):
     profil = [(0.0, zd - 0.45), (radien[0][0], zd - 0.45)] + radien + [(rmin, zk + 0.35), (0.0, zk + 0.35)]
     b.plus(rotationskoerper("Knauf", profil, b.c_teile), "Knauf")
     za, ze = (zd + z * s for z in KNAUF_SCHLITZE_Z)
-    r_l = max(f * 0.14 * s, rmin)
+    r_l = max(f * 0.135 * s, rmin)
     for k in range(P["KNAUF_SCHLITZE"]):
         az = 2.0 * math.pi * k / P["KNAUF_SCHLITZE"] + OKT
         quader(f"Knauf_Schlitz_{k + 1}", (r_l * math.cos(az), r_l * math.sin(az), (za + ze) / 2),
@@ -876,6 +906,8 @@ def baue_dach_knauf_oese(b):
 SCHWARZ = ((0.035, 0.037, 0.04), 0.0, 0.5)
 WEISS = ((0.86, 0.86, 0.84), 0.0, 0.45)
 FARBEN = {   # Farbgebung des Originals (nur für die farbige Rekonstruktion)
+    "Sockelfuss_unten": ("Stein_hell", (0.55, 0.54, 0.51), 0.0, 0.8),     # F4: hellgrau
+    "Sockelfuss_oben": ("Granit", (0.36, 0.36, 0.34), 0.0, 0.8),
     "Sockel": ("Granit", (0.36, 0.36, 0.34), 0.0, 0.8),
     "Unterbau": ("Anstrich_schwarz", *SCHWARZ),
     "Trichter": ("Anstrich_schwarz", *SCHWARZ),
@@ -934,6 +966,7 @@ def main(out_dir, prototyp=False):
     b = Bau(m)
 
     baue_sockel(b)
+    baue_sockelfuss(b)
     baue_unterbau_trichter_leiter(b)
     baue_galerie(b, "Galerie_unten", m["galerie1_uk"], m["galerie1_ok"], m["galerie1_d"], r_("GELAENDER1_HOLME"),
                  P["PFOSTEN1_MM"], P["HOLM1_H_MM"], P["HOLM1_T_MM"], "Galerie1")

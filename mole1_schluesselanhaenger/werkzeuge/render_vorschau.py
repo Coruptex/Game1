@@ -21,10 +21,11 @@ import os
 import sys
 from mathutils import Vector
 
-# Kamera von Foto F4 (Molenweg): 960 × 1628 px, 94,25 px/m in der Turmachse, Abstand ≈ 90 m
-# (aus dem Höhenversatz vorderer/hinterer Geländerholme), Augenhöhe ≈ 1,2 m (Horizont), waagerecht.
-FOTO4 = {"breite_px": 960, "hoehe_px": 1628, "px_pro_m": 94.25, "achse_x": 463.5, "y_sockel": 1305,
-         "abstand_m": 90.0, "augenhoehe_m": 1.2}
+# Kamera von Foto F4 (Molenweg): 960 × 1628 px, 97,65 px/m in der Turmachse (13,40 m vom Molendeck,
+# Zeile 1350,5, bis Spitze Wetterfahne, Zeile 42), Abstand ≈ 87 m (aus dem Höhenversatz vorderer/hinterer
+# Geländerholme), Augenhöhe ≈ 1,62 m über dem Molendeck (Horizont), waagerecht.
+FOTO4 = {"breite_px": 960, "hoehe_px": 1628, "px_pro_m": 97.65, "achse_x": 463.5, "y_molendeck": 1350.5,
+         "abstand_m": 86.87, "augenhoehe_m": 1.624}
 
 
 def argumente():
@@ -162,7 +163,7 @@ def kamera_foto4(s_mm_pro_m):
     cd.sensor_height = 36.0
     hoehe_m = f["hoehe_px"] / f["px_pro_m"]
     cd.lens = (cd.sensor_height / 2.0) / ((hoehe_m / 2.0) / f["abstand_m"])
-    z_mitte = (f["y_sockel"] - f["hoehe_px"] / 2.0) / f["px_pro_m"]
+    z_mitte = (f["y_molendeck"] - f["hoehe_px"] / 2.0) / f["px_pro_m"]
     cd.shift_y = (z_mitte - f["augenhoehe_m"]) / hoehe_m
     cd.shift_x = (f["breite_px"] / 2.0 - f["achse_x"]) / f["hoehe_px"]
     cd.clip_start = 1.0
@@ -211,20 +212,20 @@ def stl_ansichten(a, stl, smp, mm):
                 ("Ansicht_links", kamera("l", m, 180, 0, 400, ortho=38), (900, 1500)),
                 ("Perspektive_vorne_rechts", kamera("p1", m, -40, 15, 190, brennweite=140), (900, 1500)),
                 ("Perspektive_hinten_links", kamera("p2", m, 140, 15, 190, brennweite=140), (900, 1500)),
-                ("Perspektive_oben", kamera("p3", (0, 0, 20), -60, 50, 190, brennweite=140), (900, 1200)),
-                ("Detail_Tuer_Sockel", kamera("d1", (0, -3, 3.0), -80, 8, 70, brennweite=140), (1100, 900)),
-                ("Detail_Ziffer1_Turm", kamera("d2", (2.4, 0, 14.5), 0, 5, 75, brennweite=140), (900, 1100)),
-                ("Detail_Leiter_Trichter", kamera("d3", (2.0, 2.0, 8.0), 45, 5, 80, brennweite=140), (1000, 1100)),
-                ("Detail_Konsolen_obere_Galerie", kamera("d4", (0, 0, 19.0), -70, 12, 70, brennweite=140),
+                ("Perspektive_oben", kamera("p3", (0, 0, 20.4), -60, 50, 190, brennweite=140), (900, 1200)),
+                ("Detail_Tuer_Sockel", kamera("d1", (0, -3, 3.2), -80, 10, 70, brennweite=140), (1100, 900)),
+                ("Detail_Ziffer1_Turm", kamera("d2", (2.3, 0, 15.1), 0, 5, 75, brennweite=140), (900, 1100)),
+                ("Detail_Leiter_Trichter", kamera("d3", (1.9, 1.9, 8.9), 45, 5, 80, brennweite=140), (1000, 1100)),
+                ("Detail_Konsolen_obere_Galerie", kamera("d4", (0, 0, 19.4), -70, 12, 70, brennweite=140),
                  (1100, 900)),
-                ("Detail_Laterne_Dach_Knauf", kamera("d5", (0, 0, 25.5), -60, 12, 75, brennweite=140), (1000, 1100)),
-                ("Detail_untere_Galerie", kamera("d6", (0, 0, 10.5), -30, 28, 90, brennweite=140), (1100, 900)),
+                ("Detail_Laterne_Dach_Knauf", kamera("d5", (0, 0, 25.65), -60, 12, 75, brennweite=140), (1000, 1100)),
+                ("Detail_untere_Galerie", kamera("d6", (0, 0, 11.3), -30, 28, 90, brennweite=140), (1100, 900)),
             ]
         elif stil == "silber":
             ansichten = [
                 ("Silber_Perspektive", kamera("s1", m, -35, 12, 185, brennweite=140), (900, 1500)),
                 ("Silber_Perspektive_Ziffer1", kamera("s2", m, 25, 10, 185, brennweite=140), (900, 1500)),
-                ("Silber_Detail_oben", kamera("s3", (0, 0, 24.0), -55, 15, 95, brennweite=140), (1000, 1100)),
+                ("Silber_Detail_oben", kamera("s3", (0, 0, 24.2), -55, 15, 95, brennweite=140), (1000, 1100)),
             ]
         else:
             ansichten = [("PLA_Perspektive", kamera("q1", m, -35, 12, 185, brennweite=140), (900, 1500))]
@@ -244,7 +245,7 @@ def prototyp_ansichten(a, stl, smp, mm):
     ansichten = [
         ("Prototyp_A1_vorne", kamera("v", m, -90, 0, 400, ortho=38), (900, 1500)),
         ("Prototyp_A1_Perspektive", kamera("p", m, -35, 12, 185, brennweite=140), (900, 1500)),
-        ("Prototyp_A1_Detail_Galerien", kamera("d", (0, 0, 16.0), -40, 20, 105, brennweite=140), (1000, 1100)),
+        ("Prototyp_A1_Detail_Galerien", kamera("d", (0, 0, 16.5), -40, 20, 105, brennweite=140), (1000, 1100)),
     ]
     for name, cam, aufl in ansichten:
         if a["nur"] and a["nur"] not in name:
