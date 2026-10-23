@@ -9,8 +9,8 @@ Bericht mit Bildern und Fotovergleich als Webseite: https://claude.ai/artifact/3
 | | |
 |---|---|
 | **Ergebnis** | STL `export/Mole1_Brunsbuettel_Anhaenger_35mm.stl`: **35,00 mm** hoch (inkl. Öse), **13,98 mm** breit, Maßstab **1 : 384**. Erzeugt mit Blender 5.2.3 und unabhängig geprüft: geschlossen, ein einziger Körper, keine Fehlkanten. |
-| **Version 2** | **Vollständig neu aufgebaut nach vier Referenzfotos** (F1–F4). Alle Proportionen sind an den Fotos gemessen. Die Modellkontur deckt sich mit Foto F4 (Abschnitt 4). Version 1 beruhte mangels Fotos auf Schätzungen und war deutlich zu lang und zu schmal. |
-| **Detailgrad** | Granitsockel mit 4 Steinlagen im Läuferverband, Tür in Laibung mit Brettern, Bändern und Riegel, Abdeckplatte mit Schräge, Unterbau mit Bogenfenster und Steigleiter, Trichter mit Leiteraussparung, zwei runde Galerien mit 8 Pfosten und 3 bzw. 4 Holmen, Turm mit drei Treppenfenstern und gravierter „1“, 32 Hohlkehl-Konsolen, Laterne mit 16 Zickzack-Sprossen, achtteilige Glockenhaube mit Rippen, Knauf mit Lüftungsschlitzen. |
+| **Version 2** | **Vollständig neu aufgebaut nach fünf Referenzfotos** (F1–F5). Alle Proportionen sind an den Fotos gemessen. Die Modellkontur deckt sich mit Foto F4 (Abschnitt 4); F5 zeigt die bis dahin fehlende Rückseite. Version 1 beruhte mangels Fotos auf Schätzungen und war deutlich zu lang und zu schmal. |
+| **Detailgrad** | Granitsockel mit 4 Steinlagen im Läuferverband, Tür in Laibung mit Brettern, Bändern und Riegel, Abdeckplatte mit Schräge, Unterbau mit Bogenfenster und Steigleiter, Trichter mit Leiteraussparung, zwei runde Galerien mit 8 Pfosten und 3 bzw. 4 Holmen, Turm mit vier Treppenfenstern und der gravierten „1“ auf beiden Seiten, 32 Hohlkehl-Konsolen, Laterne mit 16 Zickzack-Sprossen, achtteilige Glockenhaube mit Rippen, Knauf mit Lüftungsschlitzen. |
 | **Ausrichtung auf den Guss** | So viel Detail wie für einen Feinguss nach gedrucktem Wachs- oder Harzmodell sinnvoll. Feinste Teile 0,20–0,30 mm; die kritischen Stellen sind in Abschnitt 6 einzeln benannt. Die Gießerei entscheidet über das Verfahren. |
 | **FDM-Probedruck** | Für den Bambu Lab A1 mit 0,2-mm-Düse gibt es eine **Prototyp-Variante** mit verstärkten Feinteilen: `export/Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl`. Sie besteht die Slicer-Prüfung (alle Pfosten, Holme und Konsolen werden gedruckt, nichts beginnt in der Luft). Die Gussvorlage selbst ist für FDM zu fein (Abschnitt 7). |
 | **Nicht durchgeführt** | Kein Testdruck, kein Lauf in Bambu Studio, kein Probeguss. Durchgeführt wurden Slicer-Prüfungen mit PrusaSlicer 2.7.2 und eine geometrische Gussprüfung. |
@@ -58,7 +58,7 @@ Lage laut WSA: 53° 53′ 19″ N, 9° 08′ 38″ E.
 
 | Punkt | Angaben | Entscheidung |
 |---|---|---|
-| Grundriss | achteckig (5 Quellen) gegenüber sechseckig (Förderverein Roter Sand, MarineTraffic) | **achteckig**, durch alle vier Fotos bestätigt |
+| Grundriss | achteckig (5 Quellen) gegenüber sechseckig (Förderverein Roter Sand, MarineTraffic) | **achteckig**, durch alle fünf Fotos bestätigt |
 | Höhe | 13,40 m (WSA), 13,00 m, 14 m, 11 m (nur Eisenturm), „36 m“ (Lighthouse Digest, Fuß statt Meter) | **13,40 m** bis zur Spitze der Wetterfahne; dient als Maßstab für Foto F4 |
 | Lage der unteren Galerie | in Textquellen nirgends als Maß | an F4 gemessen: Bodenoberkante **4,27 m** |
 
@@ -70,6 +70,7 @@ Lage laut WSA: 53° 53′ 19″ N, 9° 08′ 38″ E.
 | F2 | von der Elbe | „1“, Fenster links neben der „1“ |
 | F3 | erhöht, schräg von oben | „1“, Ausrichtung, Fenster neben der „1“ |
 | F4 | frontal vom Molenweg auf die Tür, hochauflösend (960 × 1628 px) | alle Maße: Silhouette Zeile für Zeile, Steinlagen, Tür, Fenster, Geländer, Konsolen, Laterne, Dachprofil, Knauf |
+| F5 | vom Wasser auf die andere Seite der Mole, Funkmast dahinter (1586 × 2379 px) | Flächen 90°–180°: zweite „1“ (180°), viertes Treppenfenster (135°), Mauerwerk der Rückseite |
 
 Weitere Bildquellen (Wikimedia Commons, deutsche-leuchtfeuer.de, Architektur-Bildarchiv u. a.) sind im Quellenverzeichnis genannt. Ich konnte sie in dieser Umgebung nicht öffnen.
 
@@ -80,7 +81,8 @@ Weitere Bildquellen (Wikimedia Commons, deutsche-leuchtfeuer.de, Architektur-Bil
 - **Maßstab:** In F4 reicht der Turm von der Sockelunterkante (Bildzeile 1305) bis zur Spitze der Wetterfahne (Zeile 42). Das sind 13,40 m, also 94,25 Pixel je Meter.
 - **Breiten:** Ich habe die Silhouette vor dem blauen Himmel Zeile für Zeile ausgelesen. Breiten an der Silhouette sind frei von Perspektivfehlern.
 - **Höhen von Bauteilen auf der Vorderseite** (Geländerholme, Glasband, Fenster): Der Höhenversatz zwischen vorderen und hinteren Geländerholmen zeigt, dass F4 aus rund 90 m Entfernung und aus etwa 1,2 m Augenhöhe aufgenommen wurde. Damit habe ich diese Höhen um einige Zentimeter korrigiert. Holmhöhen sind der Mittelwert aus vorderem und hinterem Holm.
-- **Ausrichtung:** Auf F1–F3 liegt der Molenweg und damit die Tür links neben der „1“. Die „1“ sitzt also 90° rechts der Tür und nicht gegenüber. Die Leiter (F1) liegt auf der Nachbarfläche rechts der „1“. Das Fenster links neben der „1“ (F2/F3) ist dasselbe Bogenfenster, das auf F4 rechts zu sehen ist. Damit sind alle Fotos widerspruchsfrei.
+- **Ausrichtung:** Auf F1–F3 liegt der Molenweg und damit die Tür links neben der „1“. Die „1“ sitzt also 90° rechts der Tür und nicht gegenüber. Die Leiter (F1) liegt auf der Nachbarfläche rechts der „1“. Das Fenster links neben der „1“ (F2/F3) ist dasselbe Bogenfenster, das auf F4 rechts zu sehen ist.
+- **Zweite „1“ (F5):** F5 ist von der anderen Seite der Mole aufgenommen; der Molenweg mit seinen Bogenleuchten läuft dort nach rechts. Trotzdem ist eine „1“ zu sehen, schräg rechts am Turm. Eine einzige „1“ kann nicht von beiden Seiten der Mole sichtbar sein. Die „1“ steht also zweimal, auf beiden Seiten quer zur Mole (0° und 180°), gut sichtbar für Schiffe auf der Elbe in beiden Fahrtrichtungen. Auf F4 liegen beide Flächen genau auf der Silhouette und sind deshalb nicht zu sehen. Damit sind alle fünf Fotos widerspruchsfrei.
 - **Abgleich:** Das Modell wird mit derselben Kamera wie F4 in das Foto projiziert und als Kontur eingezeichnet (`werkzeuge/fotovergleich.py`).
 
 ### 3.2 Maße (Status F = an Fotos gemessen, B = belegt, S = Schätzung)
@@ -96,7 +98,7 @@ Weitere Bildquellen (Wikimedia Commons, deutsche-leuchtfeuer.de, Architektur-Bil
 | Trichter (achteckig) bis Galerieboden | 3,16 → 4,11 m | F | 8,23 → 10,69 mm |
 | Untere Galerie: Ø / Boden / Holme über Boden | 5,30 m / 4,11–4,27 m / 0,23, 0,50, 0,78 m | F | 13,80 mm / 0,41 mm / 3 Holme |
 | Weißer Turm: Schlüsselweite unten / oben, Oberkante | 1,93 / 1,83 m, 6,87 m | F | 5,02 / 4,76 mm, 17,87 mm |
-| „1“: Höhe / Stammbreite / Unterkante | 1,74 m / 0,26 m / 4,70 m | F | 4,53 / 0,68 / 12,24 mm |
+| „1“ (zweimal, 0° und 180°): Höhe / Stammbreite / Unterkante | 1,74 m / 0,26 m / 4,70 m | F | 4,53 / 0,68 / 12,24 mm |
 | Konsolenkranz: Hohlkehle R / Anzahl | 0,62 m / ≈ 32 | F | 1,61 mm / 32 |
 | Obere Galerie: Ø / Boden / Holme über Boden | 2,95 m / 7,49–7,59 m / 0,10, 0,30, 0,50, 0,71 m | F | 7,68 mm / 0,26 mm / 4 Holme |
 | Laterne: Ø / Glasband | 1,74 m / 8,38–8,97 m | F | 4,53 mm / 1,54 mm |
@@ -117,7 +119,7 @@ Das Dachprofil ist an 14 Höhen gemessen, der Knauf an 9. Alle Werte stehen mit 
 | Steigleiter | zwei Holme, 8 Sprossen im Abstand 0,24 m, von der Abdeckplatte bis unter den Galerieboden; Fläche 45° | F1 |
 | Trichter | achteckig, oben im Kreis des Galeriebodens; 0,70 m breite Aussparung für die Leiter | F4, F1 |
 | Untere Galerie | runder Boden, 8 Pfosten an den Achteckecken, Handlauf und 2 Holme; Holme stehen leicht über die Bodenkante vor | F4 |
-| Weißer Turm | verjüngtes Achteck; drei Fenster, die wie bei einer Wendeltreppe ansteigen (225° Bogen, 270° rechteckig, 315° Bogen); gravierte „1“ auf der Fläche 0° | F4, F1–F3 |
+| Weißer Turm | verjüngtes Achteck; vier Fenster, die wie bei einer Wendeltreppe um etwa 0,33 m je Fläche ansteigen (135° rechteckig, 225° Bogen, 270° rechteckig, 315° Bogen); gravierte „1“ auf den Flächen 0° und 180° | F4, F1–F3, F5 |
 | Konsolenkranz | 32 Konsolen, Außenkante als Viertelkreis-Hohlkehle | F4 (Silhouette auf ±2 cm getroffen) |
 | Obere Galerie | runder Boden, 8 Pfosten, 4 Holme (der unterste als Fußleiste, siehe 3.5) | F4 |
 | Laterne | Zylinder, Fensterbank, zurückgesetztes Glasband mit 8 „V“ aus 16 Diagonalsprossen (Fußpunkte auf den Flächenmitten, Spitzen an den Ecken) | F4 (Vergrößerung) |
@@ -138,7 +140,7 @@ Das Dachprofil ist an 14 Höhen gemessen, der Knauf an 9. Alle Werte stehen mit 
 | Geländer | Eckpfosten, ein Band, Handlauf | 8 Pfosten; unten 3, oben 4 Holme |
 | Laterne | Ø 1,40 m, 8 senkrechte Sprossen | **Ø 1,74 m**, 16 Diagonalsprossen (Zickzack) |
 | Dach | helmförmige Kuppel Ø 1,60 m | **Glockenhaube Ø 2,04 m**, 8 Segmente mit Rippen |
-| Neu | – | „1“, Leiter, 4 Fenster, Tür, Knauf mit Schlitzen |
+| Neu | – | „1“ auf beiden Seiten, Leiter, 5 Fenster, Tür, Knauf mit Schlitzen |
 
 Keine Geometrie aus Version 1 wurde übernommen; das Skript ist neu geschrieben.
 
@@ -155,8 +157,8 @@ Keine Geometrie aus Version 1 wurde übernommen; das Skript ist neu geschrieben.
 
 ### 3.6 Nicht eindeutig durch Fotos belegt
 
-1. **Flächen 135° und 180° (hinten links)**: Keines der Fotos zeigt sie. Sie sind glatt modelliert; ob dort Fenster sitzen, ist offen.
-2. **Mauerwerk auf den nicht sichtbaren Sockelflächen** und **Stoßfugen der untersten Steinlage**: In F4 sind diese Stellen verdeckt. Das Muster der sichtbaren Flächen ist übertragen.
+1. **Rückseite (F5)**: Die Flächen 90°–180° zeigt nur F5, schräg und aus größerer Entfernung. Daraus stammen die zweite „1“ und das Fenster auf 135°. Dessen seitliche Lage (0,12 m rechts der Flächenmitte) ist auf etwa ±0,07 m unsicher; die Feinform der zweiten „1“ ist wie bei der ersten angenommen.
+2. **Mauerwerk**: F5 bestätigt den Läuferverband auch auf der Rückseite (drei sichtbare Lagen, abwechselnd drei und zwei Stoßfugen). Die genaue Lage der Stoßfugen dort und die unterste Steinlage sind verdeckt bzw. nicht messbar; das Muster von F4 ist übertragen.
 3. **Tiefe der Türlaibung** (0,22 m): aus dem Schattenwurf geschätzt.
 4. **Anzahl der Konsolen**: 28–36 erkennbar, 32 gewählt (4 je Achteckfläche). Hinter den Konsolen ist der Turmkern angenommen.
 5. **Lage der „1“ quer auf der Fläche** (mittig) und die Feinform der Fahne: nur aus den niedrig aufgelösten Fotos F1–F3.
@@ -174,16 +176,16 @@ Keine Geometrie aus Version 1 wurde übernommen; das Skript ist neu geschrieben.
 
 ## 4. Kontrolle anhand der Referenzbilder
 
-Ansichten von vorne (Tür), rechts („1“), hinten und links sowie Perspektiven liegen in `bilder/`. Der Fotovergleich (Kontur auf F4, Gegenüberstellung, Überblendung) steht im privaten Bericht.
+Ansichten von vorne (Tür), rechts („1“), hinten und links sowie Perspektiven liegen in `bilder/`. Der Fotovergleich (Kontur auf F4, Gegenüberstellungen mit F1, F3, F4 und F5) steht im privaten Bericht.
 
 | Frage | Ergebnis |
 |---|---|
 | Weniger lang und schmal? | Ja. Breite zu Höhe jetzt 13,98 : 35 mm statt 8,07 : 35 mm. Die mit der F4-Kamera projizierte Modellkontur liegt auf der Fotosilhouette (Sockel, Platte, Unterbau, Trichter, Galerien, Turm, Konsolen, Laterne, Dach). |
 | Oberer Teil breiter und originalgetreu? | Ja. Obere Galerie Ø 7,68 mm auf Hohlkehl-Konsolen, Laterne Ø 4,53 mm, Glockenhaube Ø 5,31 mm. Das Dachprofil folgt der Fotosilhouette Zeile für Zeile. Einzige gewollte Abweichung: Knauf und Öse statt der schlanken Spitze und der Wetterfahne. |
 | Mauerwerk realistisch? | Gemessene Lagenhöhen und das ausgezählte Stoßfugenmuster (Läuferverband), kein gleichmäßiges Raster. Tür mit Laibung, Brettern und Beschlägen. |
-| „1“ korrekt? | Fläche 0° (rechts der Tür), Höhe 4,70–6,44 m, serifenlose Form mit schräger Fahne, graviert 0,20 mm. Das Fenster links daneben und die Leiter auf der Nachbarfläche rechts stimmen mit F1–F3 überein. |
+| „1“ korrekt? | Zweimal, auf beiden Seiten quer zur Mole (0° und 180°, F1–F3 und F5), Höhe 4,70–6,44 m, serifenlose Form mit schräger Fahne, graviert 0,20 mm. Fenster und Leiter daneben stimmen mit F1–F3 überein. |
 | Streben, Leitern, Plattformen, Geländer vollständig? | 2 Galerien, 16 Pfosten, 7 Holme, 32 Konsolen, Leiter mit 8 Sprossen, 16 Laternensprossen. Freistehende Diagonalstreben zeigt keines der Fotos: Die untere Galerie trägt der geschlossene Trichter, die obere die Konsolen. Diagonal verlaufen nur die Laternensprossen und die Trichterkanten. |
-| Vorder- und Rückseite? | Vorderseite und rechte Seite sind durch F4 bzw. F1–F3 belegt. Hinten (90°) zeigt F1 schräg eine glatte Fläche. Die Flächen 135° und 180° sind ohne Foto (Abschnitt 3.6, Punkt 1). |
+| Vorder- und Rückseite? | Alle acht Seiten sind jetzt durch Fotos abgedeckt: vorne und rechts F4 bzw. F1–F3, hinten und links F5 (zweite „1“, viertes Fenster, glatte Fläche 90°). Die Gegenüberstellung mit F5 steht im privaten Bericht. |
 
 ## 5. Öse
 
@@ -200,7 +202,7 @@ Belastbarkeit nur als grobe Abschätzung mit Literaturwerten und **nicht geprüf
 
 Das Modell ist **massiv** und schreibt **kein Gussverfahren** vor. Die feinen Teile sind auf ein **gedrucktes Gussmodell aus Wachs oder gießbarem Harz** (Auflösung ≈ 0,03–0,05 mm) ausgelegt. Allgemeingültige Mindestmaße lege ich bewusst nicht fest, weil sie von Verfahren, Legierung, Anguss und Ausstattung abhängen. Die Gießerei entscheidet.
 
-**Gewicht** (Volumen 918 mm³): Silber 925 ≈ 9,5 g · Gold 585 ≈ 12,0 g · Gold 750 ≈ 14,2 g (Richtwerte ohne Anguss).
+**Gewicht** (Volumen 917 mm³): Silber 925 ≈ 9,5 g · Gold 585 ≈ 12,0 g · Gold 750 ≈ 14,2 g (Richtwerte ohne Anguss).
 
 | Element | Modell | Bewertung für den Feinguss |
 |---|---|---|
@@ -235,7 +237,7 @@ Die Gussvorlage ist für den FDM-Druck zu fein. Deshalb erzeugt das Skript mit `
 | Mauerfugen | 0,12 × 0,08 mm | 0,20 × 0,12 mm |
 | Tiefe Fenster / „1“ | 0,12 / 0,20 mm | 0,20 / 0,25 mm |
 
-Größte Breite 14,14 mm (Holme), Volumen 935 mm³, etwa 1,2 g PLA. Geometrieprüfung wie bei der Gussvorlage: wasserdicht, ein Körper, keine Fehlkanten, alle 102 Bauteile vollständig, alle Geländerfelder, Konsolenzwischenräume und das Ösenloch offen (`pruefung/prototyp_a1/`).
+Größte Breite 14,14 mm (Holme), Volumen 934 mm³, etwa 1,2 g PLA. Geometrieprüfung wie bei der Gussvorlage: wasserdicht, ein Körper, keine Fehlkanten, alle 102 Bauteile vollständig, alle Geländerfelder, Konsolenzwischenräume und das Ösenloch offen (`pruefung/prototyp_a1/`).
 
 **Slicer-Prüfung** (PrusaSlicer 2.7.2, A1-ähnliches Profil: 0,22 mm Linie, 0,08 mm Schicht; beide Wandgeneratoren; **kein Testdruck, kein Bambu Studio**). Neu ist ein Test auf Bahninseln, die keine oder fast keine Auflage auf der Schicht darunter haben, also in die Luft gedruckt würden.
 
@@ -273,7 +275,7 @@ Was nur ein Testdruck klärt: Durchhängen der Holme zwischen den Pfosten, Oberf
 | 9. Details im Verhältnis zur Größe | Tabelle in Abschnitt 6 |
 | 10. Skalierung und Export | binäre STL in mm, nach dem Export erneut eingelesen und geprüft; Blender-Szene 1 Einheit = 1 mm |
 | Fotoabgleich | Modellkontur mit der Kamera von F4 projiziert: deckungsgleich bis auf Knauf und Öse (gewollt) |
-| Reproduzierbarkeit | Neuaufbau mit dem Skript ergibt bitgleiche STL-Dateien (Gussvorlage und Prototyp, SHA-256 verglichen); der Endkörper in der .blend ist dreieck- und volumengleich mit der STL (43 908 Dreiecke, 917,98 mm³) |
+| Reproduzierbarkeit | Neuaufbau mit dem Skript ergibt bitgleiche STL-Dateien (Gussvorlage und Prototyp, SHA-256 verglichen); der Endkörper in der .blend ist dreieck- und volumengleich mit der STL (44 004 Dreiecke, 917,23 mm³) |
 
 Messmethoden: Wandstärke per Strahl von 60 000 Oberflächenpunkten nach innen, Spaltweite per Strahl nach außen (Embree). Gewertet wurde jeweils nur eine gegenüberliegende Fläche (±45°). Die Inselprüfung schneidet das Modell in 0,08-mm-Schichten.
 
@@ -282,8 +284,8 @@ Messmethoden: Wandstärke per Strahl von 60 000 Oberflächenpunkten nach innen, 
 SHA-256-Prüfsummen der STL-Dateien:
 
 ```
-b7ec2851014b9507219b6f451f6ea6458158f205fea3dfed18dd5bb13bb0e447  Mole1_Brunsbuettel_Anhaenger_35mm.stl
-419dc60ba543f6472ddf2cf0917fa377314b587e22b8f6d50105c9bbbae0c6a0  Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl
+d76756f380af089bdafe45effb8bd8690bf6ae0024d05fa843f14d04a6314419  Mole1_Brunsbuettel_Anhaenger_35mm.stl
+facd3ed7c3f0b2016718e2742e83a1fa665aecd56cb160d65c82d5b72d48b31d  Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl
 ```
 
 ## 9. Arbeitsweise und Ausführung
@@ -298,7 +300,7 @@ Alles in diesem Ordner wurde in dieser Arbeitsumgebung tatsächlich erzeugt. Ble
 
 ## 10. Nächste Schritte
 
-1. **Modell beurteilen** (Bilder, Bericht): Passt der Detailgrad? Sollen die offenen Punkte aus 3.6 noch geklärt werden, etwa mit einem Foto der Rückseite (Flächen 135°/180°)?
+1. **Modell beurteilen** (Bilder, Bericht): Passt der Detailgrad? Die offenen Punkte aus 3.6 ließen sich mit einer Nahaufnahme der Rückseite oder des Konsolenkranzes weiter eingrenzen.
 2. **FDM-Prototyp drucken** (Einstellungen in Abschnitt 7) und Größe, Proportionen, Öse und Schlüsselring prüfen. Auffälligkeiten (z. B. durchhängende Holme) lassen sich über die Werte in `PROTOTYP_A1` im Skript nachstellen.
 3. **Gießerei bzw. Onkel:** Liste in Abschnitt 6 durchgehen; Verfahren, Modellmaterial, Aushöhlen, Anguss und Schwindmaß festlegen.
 
@@ -316,6 +318,6 @@ Alles in diesem Ordner wurde in dieser Arbeitsumgebung tatsächlich erzeugt. Ble
 - Werner Dröger: [Brunsbüttel-Schleusen Mole 1, 2, 3, 4](http://homepage.o2mail.de/wernerdroeger/index.html/BRUNSBUT.HTM)
 - Lighthouse Digest (mit Fuß/Meter-Fehler): [Datenbankeintrag 4092](https://www.lighthousedigest.com/Digest/database/uniquelighthouse.cfm?value=4092) · MarineTraffic (Angabe „sechseckig“): [Light Details](https://www.marinetraffic.com/en/ais/details/lights/1000006270)
 - Weitere Bildquellen (nicht gesichtet): [Wikimedia Commons, Lighthouses in Schleswig-Holstein](https://commons.wikimedia.org/wiki/Category:Lighthouses_in_Schleswig-Holstein) · [Architektur-Bildarchiv Nr. 75969](https://www.architektur-bildarchiv.de/image/Leuchtfeuer-Mole-1-Brunsb%C3%BCttel-75969.html) · [wolkenmond.de](http://wolkenmond.de/foto/leuchttuerme/brunsbuettel.html)
-- **Referenzfotos F1–F4**: vom Auftraggeber bereitgestellt, Grundlage aller Maße; nicht im Repository.
+- **Referenzfotos F1–F5**: vom Auftraggeber bereitgestellt, Grundlage aller Maße; nicht im Repository.
 
-Hinweis zur Methode: Die Textquellen wurden über eine Websuche ausgewertet, die Seiteninhalte als Text zusammenfasst. Die Maße stammen aus den vier bereitgestellten Fotos.
+Hinweis zur Methode: Die Textquellen wurden über eine Websuche ausgewertet, die Seiteninhalte als Text zusammenfasst. Die Maße stammen aus den fünf bereitgestellten Fotos.

@@ -11,8 +11,8 @@ Getestet mit Blender 5.2.3 LTS (pip-Paket "bpy" 5.2.3); benötigt Blender >= 4.5
 Aufbau von unten nach oben:
   Granitsockel (4 Steinlagen im Läuferverband, Tür in Laibung mit Brettern und Bändern) –
   Abdeckplatte mit Schräge – schwarzer achteckiger Unterbau (Bogenfenster, Steigleiter) –
-  achteckiger Trichter mit Leiteraussparung – runde untere Galerie (8 Pfosten, 4 Holme) –
-  weißer achteckiger Turm (3 Treppenfenster, gravierte "1") – Kranz aus 32 Hohlkehl-Konsolen –
+  achteckiger Trichter mit Leiteraussparung – runde untere Galerie (8 Pfosten, 3 Holme) –
+  weißer achteckiger Turm (4 Treppenfenster, gravierte "1" auf beiden Seiten) – 32 Hohlkehl-Konsolen –
   runde obere Galerie (8 Pfosten, 4 Holme) – runde Laterne mit Zickzack-Sprossen –
   achtteilige Glockenhaube – Knauf mit Lüftungsschlitzen – Öse (anstelle der Wetterfahne).
 
@@ -31,7 +31,8 @@ Nur in einer neuen, leeren Datei oder in der mitgelieferten .blend ausführen.
 
 Koordinaten: z = 0 ist die Unterkante des Granitsockels, z zeigt nach oben.
 Vorderseite (−Y, Azimut 270°) = Tür, Blickrichtung wie Foto F4 vom Molenweg.
-Die große "1" liegt auf der Fläche +X (Azimut 0°), d. h. von vorne gesehen rechts.
+Die große "1" steht zweimal am Turm: auf der Fläche +X (Azimut 0°, von vorne gesehen rechts) und auf der
+Gegenfläche −X (180°), also auf beiden Seiten quer zur Mole.
 Azimut = Winkel in der Draufsicht, 0° = +X, gegen den Uhrzeigersinn.
 Einheiten: 1 Blender-Einheit = 1 mm (Szene metrisch, Längeneinheit Millimeter).
 """
@@ -47,7 +48,8 @@ import json
 #    Status: "Foto"      = an den Referenzfotos gemessen (Maßstab F4: 94,25 px/m über 13,40 m)
 #            "belegt"    = aus schriftlicher Quelle
 #            "Schätzung" = auf den Fotos nicht eindeutig messbar
-#    F1 = Wasserseite (Blick auf "1" und Leiter), F2 = von der Elbe, F3 = erhöht, F4 = frontal Molenweg
+#    F1 = Wasserseite (Blick auf "1" und Leiter), F2 = von der Elbe, F3 = erhöht, F4 = frontal Molenweg,
+#    F5 = vom Wasser auf die andere Seite der Mole (Flächen 90°–180°, zweite "1", Funkmast dahinter)
 # ---------------------------------------------------------------------------
 REAL = {
     "H_GESAMT":         (13.40, "belegt", "Höhe bis Spitze der Wetterfahne (WSA); Maßstabsbezug für F4"),
@@ -80,8 +82,8 @@ REAL = {
     "TURM_SW_U":        (1.93, "Foto", "F4: 182 px"),
     "TURM_SW_O":        (1.83, "Foto", "F4: 172 px"),
     "TURM_OK":          (6.865, "Foto", "F4: y 658 (Beginn Konsolenkranz)"),
-    "EINS_UK":          (4.70, "Foto", "F1/F3: 0,44 m über Galerieboden"),
-    "EINS_OK":          (6.44, "Foto", "F1/F3: 0,42 m unter dem Konsolenkranz"),
+    "EINS_UK":          (4.70, "Foto", "F1/F3: 0,44 m über Galerieboden; F5: 4,66 m"),
+    "EINS_OK":          (6.44, "Foto", "F1/F3: 0,42 m unter dem Konsolenkranz; F5: 6,41 m"),
     "EINS_STAMM":       (0.26, "Foto", "F1: 7,5 px, F3: 6 px"),
     "KONSOLE_R0":       (0.90, "Foto", "F4: Fußpunkt der Hohlkehle am Turm"),
     "KONSOLE_RADIUS":   (0.62, "Foto", "F4: Außenkante = Viertelkreis-Hohlkehle R 0,62 (9 Punkte, ±2 cm)"),
@@ -113,14 +115,19 @@ KNAUF_SCHLITZE_Z = (0.31, 0.42)      # Lüftungsschlitze, Höhe über Dachspitze
 
 # Ausrichtung (Azimut der Achteckflächen in Grad)
 #   Tür 270° (F4 frontal). Die "1": F1–F3 zeigen den Molenweg – und damit die Tür – links neben
-#   der "1" → "1" auf 0°. Leiter: F1 zeigt sie auf der Nachbarfläche rechts der "1" → 45°.
-AZ_TUER, AZ_EINS, AZ_LEITER = 270, 0, 45
+#   der "1" → "1" auf 0°. F5 ist von der anderen Seite der Mole aufgenommen (Molenweg rechts) und
+#   zeigt ebenfalls eine "1", schräg rechts → zweite "1" auf 180°. Leiter: F1 zeigt sie auf der
+#   Nachbarfläche rechts der "1" → 45°.
+AZ_TUER, AZ_LEITER = 270, 45
+AZ_EINS = (0, 180)
 
 # Fenster: (Bauteil, Azimut, Breite, Unterkante, Oberkante [m], Rundbogen, seitlicher Versatz u [m], Quelle)
-#   u > 0 = von außen gesehen nach rechts. Die drei Turmfenster steigen wie bei einer Wendeltreppe an.
+#   u > 0 = von außen gesehen nach rechts. Die vier Turmfenster steigen wie bei einer Wendeltreppe an
+#   (≈ 0,33 m je Achteckfläche); auf 180° sitzt statt eines Fensters die zweite "1".
 #   Höhen der Turmfenster perspektivisch korrigiert (Kamera F4 ≈ 90 m entfernt, Augenhöhe ≈ 1,2 m).
 FENSTER = [
     ("Unterbau", 225, 0.18, 2.13, 3.12, True, 0.10, "F4: x 390–401, y 1008–1104"),
+    ("Turm", 135, 0.17, 4.55, 4.90, False, 0.12, "F5: x 808–820, y 1563–1588; seitlicher Versatz geschätzt"),
     ("Turm", 225, 0.17, 5.26, 5.61, True, 0.04, "F4: x 398–409, y 773–806"),
     ("Turm", 270, 0.16, 5.57, 5.90, False, 0.00, "F4: x 456–471, y 744–775"),
     ("Turm", 315, 0.17, 5.89, 6.23, True, -0.06, "F4: x 516–527, y 715–746; in F2/F3 links neben der „1“"),
@@ -762,11 +769,12 @@ def baue_turm(b):
         um = bogenfenster(fb_m * s, (zo - zu) * s, u_m * s) if bogen else \
             rechteck((u_m - fb_m / 2) * s, (u_m + fb_m / 2) * s, 0.0, (zo - zu) * s)
         b.gravur(f"Fenster_Turm_{az_f}", um, fl, P["FENSTER_TIEFE_MM"], "Fenster")
-    # Die "1" (F1–F3), graviert; Gesamtbreite (Stamm + Fahne) mittig auf der Fläche
-    fl = Flaeche(AZ_EINS, swu, z0, swo, z1, m["eins_uk"])
+    # Die "1" auf beiden Seiten quer zur Mole (0°: F1–F3, 180°: F5), graviert; Stamm + Fahne mittig
     hoehe = m["eins_ok"] - m["eins_uk"]
     glyphe = [(u + 0.042 * hoehe, w) for (u, w) in glyphe_eins(hoehe, m["eins_stamm"])]
-    b.gravur("Ziffer_1", glyphe, fl, P["EINS_TIEFE_MM"], "Ziffer")
+    for az in AZ_EINS:
+        fl = Flaeche(az, swu, z0, swo, z1, m["eins_uk"])
+        b.gravur(f"Ziffer_1_{az:03d}", glyphe, fl, P["EINS_TIEFE_MM"], "Ziffer")
 
 
 def baue_konsolen(b):
@@ -977,7 +985,7 @@ def main(out_dir, prototyp=False):
         "final_netz": netz_statistik(final),
         "final_vertices": len(final.data.vertices),
         "final_dreiecke": len(final.data.polygons),
-        "ausrichtung_azimut_grad": {"Tuer": AZ_TUER, "Ziffer_1": AZ_EINS, "Leiter": AZ_LEITER},
+        "ausrichtung_azimut_grad": {"Tuer": AZ_TUER, "Ziffer_1": list(AZ_EINS), "Leiter": AZ_LEITER},
         "fenster": [dict(zip(("bauteil", "azimut", "breite_m", "uk_m", "ok_m", "bogen", "u_m", "quelle"), f))
                     for f in FENSTER],
         "modellmasse_mm": {k: round(v, 4) for k, v in m.items()},

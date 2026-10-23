@@ -183,7 +183,7 @@ def main():
     y -= 0.06
     ax3.text(0.0, y, "(F) = an Referenzfotos gemessen (Maßstab über 13,40 m Höhe),\n"
                      "(B) = belegt, (S) = Schätzung. SW = Schlüsselweite des Achtecks.\n"
-                     "Ausrichtung: Tür vorne (−Y), „1“ rechts (+X), Leiter +45°.",
+                     "Ausrichtung: Tür vorne (−Y), „1“ rechts und links (±X), Leiter +45°.",
              fontsize=6.6, transform=ax3.transAxes, va="top", color="#333333")
     fig.suptitle("Mole 1 Brunsbüttel – Schmuck-Schlüsselanhänger (3D-Miniatur) – Maßzeichnung", fontsize=12)
     os.makedirs(a["bilder"], exist_ok=True)

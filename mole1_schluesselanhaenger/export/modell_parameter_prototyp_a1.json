@@ -6,17 +6,20 @@
   "mm_pro_m": 2.6032,
   "teile_anzahl": 102,
   "teile_nicht_geschlossen": [],
-  "gravurkoerper": 92,
+  "gravurkoerper": 94,
   "final_geschlossen": true,
   "final_netz": {
     "nicht_manifold_kanten": 0,
     "entartete_flaechen": 0
   },
-  "final_vertices": 21824,
-  "final_dreiecke": 43840,
+  "final_vertices": 21872,
+  "final_dreiecke": 43936,
   "ausrichtung_azimut_grad": {
     "Tuer": 270,
-    "Ziffer_1": 0,
+    "Ziffer_1": [
+      0,
+      180
+    ],
     "Leiter": 45
   },
   "fenster": [
@@ -29,6 +32,16 @@
       "bogen": true,
       "u_m": 0.1,
       "quelle": "F4: x 390–401, y 1008–1104"
+    },
+    {
+      "bauteil": "Turm",
+      "azimut": 135,
+      "breite_m": 0.17,
+      "uk_m": 4.55,
+      "ok_m": 4.9,
+      "bogen": false,
+      "u_m": 0.12,
+      "quelle": "F5: x 808–820, y 1563–1588; seitlicher Versatz geschätzt"
     },
     {
       "bauteil": "Turm",
@@ -298,12 +311,12 @@
     "EINS_UK": {
       "wert_m": 4.7,
       "status": "Foto",
-      "begruendung": "F1/F3: 0,44 m über Galerieboden"
+      "begruendung": "F1/F3: 0,44 m über Galerieboden; F5: 4,66 m"
     },
     "EINS_OK": {
       "wert_m": 6.44,
       "status": "Foto",
-      "begruendung": "F1/F3: 0,42 m unter dem Konsolenkranz"
+      "begruendung": "F1/F3: 0,42 m unter dem Konsolenkranz; F5: 6,41 m"
     },
     "EINS_STAMM": {
       "wert_m": 0.26,

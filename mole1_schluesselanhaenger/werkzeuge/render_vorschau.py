@@ -281,6 +281,7 @@ def farbmodell_ansichten(a, blend, smp, mm):
         ("Farbmodell_Kamera_wie_Foto4", kamera_foto4(s), (FOTO4["breite_px"], FOTO4["hoehe_px"])),
         ("Farbmodell_wie_Foto1_Wasserseite", kamera("f1", m, 32, 4, 135, brennweite=140), (900, 1500)),
         ("Farbmodell_wie_Foto3_erhoeht", kamera("f3", m, 25, 22, 135, brennweite=140), (900, 1400)),
+        ("Farbmodell_wie_Foto5_Gegenseite", kamera("f5", m, 140, 3, 135, brennweite=140), (900, 1500)),
         ("Farbmodell_hinten_links", kamera("f5", m, 135, 10, 135, brennweite=140), (900, 1500)),
     ]
     for name, cam, aufl in ansichten:
