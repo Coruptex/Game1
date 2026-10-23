@@ -56,6 +56,56 @@
       "Internal infill": 548.0,
       "Overhang perimeter": 312.6
     },
+    "schwebende_bahninseln": {
+      "anzahl": 6,
+      "schwebend": 0,
+      "kaum_gestuetzt": 6,
+      "befunde": [
+        {
+          "art": "kaum gestützt",
+          "z_mm": 11.7,
+          "flaeche_mm2": 9.4574,
+          "aufliegender_anteil": 0.0136,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 12.34,
+          "flaeche_mm2": 9.4578,
+          "aufliegender_anteil": 0.0135,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 13.06,
+          "flaeche_mm2": 9.4556,
+          "aufliegender_anteil": 0.0135,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 20.5,
+          "flaeche_mm2": 5.2206,
+          "aufliegender_anteil": 0.0241,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 20.98,
+          "flaeche_mm2": 5.2261,
+          "aufliegender_anteil": 0.0241,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 21.54,
+          "flaeche_mm2": 5.2276,
+          "aufliegender_anteil": 0.0241,
+          "radius_mm": 0.0
+        }
+      ],
+      "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"
+    },
     "druckzeit": "1h 7m 43s",
     "filament_g": "1.16",
     "filament_mm": "387.31",
@@ -134,6 +184,84 @@
       "Internal infill": 548.8,
       "Gap fill": 144.1,
       "Overhang perimeter": 136.2
+    },
+    "schwebende_bahninseln": {
+      "anzahl": 10,
+      "schwebend": 10,
+      "kaum_gestuetzt": 0,
+      "befunde": [
+        {
+          "art": "schwebend",
+          "z_mm": 11.7,
+          "flaeche_mm2": 9.4596,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 12.34,
+          "flaeche_mm2": 9.6903,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 13.06,
+          "flaeche_mm2": 9.4599,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 19.38,
+          "flaeche_mm2": 0.1673,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 3.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 19.38,
+          "flaeche_mm2": 0.1673,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 3.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 19.38,
+          "flaeche_mm2": 0.1673,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 3.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 19.38,
+          "flaeche_mm2": 0.1673,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 3.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 20.5,
+          "flaeche_mm2": 5.4468,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 20.98,
+          "flaeche_mm2": 5.4473,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "schwebend",
+          "z_mm": 21.54,
+          "flaeche_mm2": 5.4451,
+          "aufliegender_anteil": 0.0,
+          "radius_mm": 0.0
+        }
+      ],
+      "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"
     },
     "druckzeit": "1h 8m 49s",
     "filament_g": "1.15",
@@ -219,7 +347,57 @@
       "Internal infill": 548.0,
       "Overhang perimeter": 312.6
     },
-    "druckzeit": "1h 30m 35s",
+    "schwebende_bahninseln": {
+      "anzahl": 6,
+      "schwebend": 0,
+      "kaum_gestuetzt": 6,
+      "befunde": [
+        {
+          "art": "kaum gestützt",
+          "z_mm": 11.7,
+          "flaeche_mm2": 9.4574,
+          "aufliegender_anteil": 0.0136,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 12.34,
+          "flaeche_mm2": 9.4578,
+          "aufliegender_anteil": 0.0135,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 13.06,
+          "flaeche_mm2": 9.4556,
+          "aufliegender_anteil": 0.0135,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 20.5,
+          "flaeche_mm2": 5.2206,
+          "aufliegender_anteil": 0.0241,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 20.98,
+          "flaeche_mm2": 5.2261,
+          "aufliegender_anteil": 0.0241,
+          "radius_mm": 0.0
+        },
+        {
+          "art": "kaum gestützt",
+          "z_mm": 21.54,
+          "flaeche_mm2": 5.2276,
+          "aufliegender_anteil": 0.0241,
+          "radius_mm": 0.0
+        }
+      ],
+      "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"
+    },
+    "druckzeit": "1h 30m 36s",
     "filament_g": "2.42",
     "filament_mm": "811.21",
     "bahnen_nach_zone_mm": {

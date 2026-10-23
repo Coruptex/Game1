@@ -12,6 +12,7 @@ Ansichten der STL (hellgraues Modellmaterial, zeigt Details am besten):
 Farbmodell: u. a. mit derselben Kamera wie Referenzfoto F4 (Molenweg, ca. 45 m Abstand).
 
 Aufruf:  python render_vorschau.py --export <export-ordner> --bilder <bilder-ordner> [--schnell]
+         [--prototyp]   Prototyp für den A1 (liest modell_parameter_prototyp_a1.json, nur PLA-Ansichten)
 """
 import bpy
 import json
@@ -28,7 +29,7 @@ FOTO4 = {"breite_px": 960, "hoehe_px": 1628, "px_pro_m": 94.25, "achse_x": 463.5
 
 def argumente():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
-    a = {"export": None, "bilder": None, "schnell": False, "nur": None}
+    a = {"export": None, "bilder": None, "schnell": False, "nur": None, "prototyp": False}
     i = 0
     while i < len(argv):
         if argv[i] in ("--export", "--bilder", "--nur"):
@@ -36,6 +37,8 @@ def argumente():
             i += 1
         elif argv[i] == "--schnell":
             a["schnell"] = True
+        elif argv[i] == "--prototyp":
+            a["prototyp"] = True
         i += 1
     return a
 
@@ -231,6 +234,24 @@ def stl_ansichten(a, stl, smp, mm):
             rendern(sc, cam, os.path.join(a["bilder"], f"{name}.png"), aufl, smp)
 
 
+def prototyp_ansichten(a, stl, smp, mm):
+    """PLA-Eindruck der FDM-Prototyp-Variante (gleiche Kameras wie bei der Gussvorlage)."""
+    m = (0, 0, mm["z_oben"] / 2.0)
+    sc = szene_leeren()
+    studio(sc)
+    boden()
+    stl_laden(stl, mat_einfach(*MATERIALIEN["pla"]))
+    ansichten = [
+        ("Prototyp_A1_vorne", kamera("v", m, -90, 0, 400, ortho=38), (900, 1500)),
+        ("Prototyp_A1_Perspektive", kamera("p", m, -35, 12, 185, brennweite=140), (900, 1500)),
+        ("Prototyp_A1_Detail_Galerien", kamera("d", (0, 0, 16.0), -40, 20, 105, brennweite=140), (1000, 1100)),
+    ]
+    for name, cam, aufl in ansichten:
+        if a["nur"] and a["nur"] not in name:
+            continue
+        rendern(sc, cam, os.path.join(a["bilder"], f"{name}.png"), aufl, smp)
+
+
 def farbmodell_ansichten(a, blend, smp, mm):
     bpy.ops.wm.open_mainfile(filepath=blend)
     sc = bpy.context.scene
@@ -272,9 +293,13 @@ def main():
     a = argumente()
     os.makedirs(a["bilder"], exist_ok=True)
     smp = 16 if a["schnell"] else 64
-    with open(os.path.join(a["export"], "modell_parameter.json"), encoding="utf-8") as f:
+    datei = "modell_parameter_prototyp_a1.json" if a["prototyp"] else "modell_parameter.json"
+    with open(os.path.join(a["export"], datei), encoding="utf-8") as f:
         par = json.load(f)
     stl = os.path.join(a["export"], par["dateien"]["stl"])
+    if a["prototyp"]:
+        prototyp_ansichten(a, stl, smp, par["modellmasse_mm"])
+        return
     stl_ansichten(a, stl, smp, par["modellmasse_mm"])
     blend = os.path.join(a["export"], par["dateien"]["blend"])
     if os.path.exists(blend):

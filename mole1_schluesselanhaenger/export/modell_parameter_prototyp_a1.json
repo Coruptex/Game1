@@ -1,0 +1,378 @@
+{
+  "version": 2,
+  "variante": "Prototyp FDM Bambu Lab A1 0,2-mm-Düse",
+  "blender_version": "5.2.3 LTS",
+  "massstab": "1:384",
+  "mm_pro_m": 2.6032,
+  "teile_anzahl": 102,
+  "teile_nicht_geschlossen": [],
+  "gravurkoerper": 92,
+  "final_geschlossen": true,
+  "final_netz": {
+    "nicht_manifold_kanten": 0,
+    "entartete_flaechen": 0
+  },
+  "final_vertices": 21824,
+  "final_dreiecke": 43840,
+  "ausrichtung_azimut_grad": {
+    "Tuer": 270,
+    "Ziffer_1": 0,
+    "Leiter": 45
+  },
+  "fenster": [
+    {
+      "bauteil": "Unterbau",
+      "azimut": 225,
+      "breite_m": 0.18,
+      "uk_m": 2.13,
+      "ok_m": 3.12,
+      "bogen": true,
+      "u_m": 0.1,
+      "quelle": "F4: x 390–401, y 1008–1104"
+    },
+    {
+      "bauteil": "Turm",
+      "azimut": 225,
+      "breite_m": 0.17,
+      "uk_m": 5.26,
+      "ok_m": 5.61,
+      "bogen": true,
+      "u_m": 0.04,
+      "quelle": "F4: x 398–409, y 773–806"
+    },
+    {
+      "bauteil": "Turm",
+      "azimut": 270,
+      "breite_m": 0.16,
+      "uk_m": 5.57,
+      "ok_m": 5.9,
+      "bogen": false,
+      "u_m": 0.0,
+      "quelle": "F4: x 456–471, y 744–775"
+    },
+    {
+      "bauteil": "Turm",
+      "azimut": 315,
+      "breite_m": 0.17,
+      "uk_m": 5.89,
+      "ok_m": 6.23,
+      "bogen": true,
+      "u_m": -0.06,
+      "quelle": "F4: x 516–527, y 715–746; in F2/F3 links neben der „1“"
+    }
+  ],
+  "modellmasse_mm": {
+    "s": 2.6032,
+    "massstab": 384.1379,
+    "oese_aussen": 6.2,
+    "h_gesamt": 34.8833,
+    "sockel_sw": 8.07,
+    "sockel_h": 4.2823,
+    "tuer_b": 2.2388,
+    "tuer_h": 4.0871,
+    "tuer_u": -0.1041,
+    "tuer_laibung": 0.5727,
+    "tuer_riegel": 1.9004,
+    "kappe_sw": 8.4605,
+    "kappe_kante": 0.4686,
+    "kappe_ok": 5.2481,
+    "unterbau_sw_u": 6.0395,
+    "unterbau_sw_o": 5.649,
+    "trichter_u": 8.2262,
+    "galerie1_uk": 10.6889,
+    "galerie1_ok": 11.1028,
+    "galerie1_d": 13.7971,
+    "leiter_b": 1.0934,
+    "leiter_sprosse": 0.6248,
+    "leiter_aussparung": 1.8223,
+    "turm_sw_u": 5.0242,
+    "turm_sw_o": 4.7639,
+    "turm_ok": 17.8712,
+    "eins_uk": 12.2352,
+    "eins_ok": 16.7648,
+    "eins_stamm": 0.6768,
+    "konsole_r0": 2.3429,
+    "konsole_radius": 1.614,
+    "galerie2_ok": 19.7481,
+    "galerie2_d": 7.6795,
+    "laterne_d": 4.5296,
+    "glas_uk": 21.8151,
+    "glas_ok": 23.351,
+    "traufe": 23.6894,
+    "dach_spitze": 27.1517,
+    "knauf_ok": 29.0,
+    "galerie2_uk": 19.4852,
+    "z_oese_unten": 28.8,
+    "oese_R": 2.45,
+    "z_oese_mitte": 31.9,
+    "z_oben": 35.0
+  },
+  "parameter": {
+    "GESAMTHOEHE_MM": 35.0,
+    "SEGMENTE": 192,
+    "UEBERLAPPUNG_MM": 0.08,
+    "FUGE_BREITE_MM": 0.2,
+    "FUGE_TIEFE_MM": 0.12,
+    "BRETTER": 6,
+    "BRETTFUGE_B_MM": 0.06,
+    "BRETTFUGE_T_MM": 0.05,
+    "BESCHLAG_H_MM": 0.15,
+    "BESCHLAG_VOR_MM": 0.07,
+    "FENSTER_TIEFE_MM": 0.2,
+    "EINS_TIEFE_MM": 0.25,
+    "PFOSTEN_ANZAHL": 8,
+    "PFOSTEN1_MM": 0.48,
+    "HOLM1_H_MM": 0.32,
+    "HOLM1_T_MM": 0.44,
+    "PFOSTEN2_MM": 0.44,
+    "HOLM2_H_MM": 0.24,
+    "HOLM2_T_MM": 0.4,
+    "HANDLAUF_FAKTOR": 1.15,
+    "KONSOLEN_ANZAHL": 32,
+    "KONSOLE_DICKE_MM": 0.4,
+    "LEITER_HOLM_B_MM": 0.3,
+    "LEITER_HOLM_VOR_MM": 0.3,
+    "LEITER_SPROSSE_H_MM": 0.24,
+    "LEITER_SPROSSE_VOR_MM": 0.26,
+    "GLAS_TIEFE_MM": 0.15,
+    "SPROSSE_LAT_B_MM": 0.3,
+    "SPROSSE_LAT_T_MM": 0.22,
+    "SIMS_VOR_MM": 0.08,
+    "SIMS_H_MM": 0.2,
+    "DACH_SEGMENTE": 8,
+    "DACH_WOELBUNG": 0.045,
+    "DACH_NAHT_MM": 0.06,
+    "TRAUFKANTE_MM": 0.25,
+    "KNAUF_FAKTOR": 1.92,
+    "KNAUF_R_MIN_MM": 0.7,
+    "KNAUF_SCHLITZE": 8,
+    "SCHLITZ_B_MM": 0.25,
+    "SCHLITZ_T_MM": 0.12,
+    "OESE_INNEN_D_MM": 3.6,
+    "OESE_RING_RADIAL_MM": 1.3,
+    "OESE_RING_AXIAL_MM": 1.9,
+    "OESE_EINGRIFF_MM": 0.2
+  },
+  "realmasse": {
+    "H_GESAMT": {
+      "wert_m": 13.4,
+      "status": "belegt",
+      "begruendung": "Höhe bis Spitze der Wetterfahne (WSA); Maßstabsbezug für F4"
+    },
+    "SOCKEL_SW": {
+      "wert_m": 3.1,
+      "status": "Foto",
+      "begruendung": "F4: 292 px Schlüsselweite"
+    },
+    "SOCKEL_H": {
+      "wert_m": 1.645,
+      "status": "Foto",
+      "begruendung": "F4: y 1305→1150"
+    },
+    "LAGEN_FUGEN": {
+      "wert_m": [
+        0.5,
+        0.88,
+        1.24
+      ],
+      "status": "Foto",
+      "begruendung": "F4: Lagerfugen y 1258/1222/1188"
+    },
+    "TUER_B": {
+      "wert_m": 0.86,
+      "status": "Foto",
+      "begruendung": "F4: Nische x 420–500"
+    },
+    "TUER_H": {
+      "wert_m": 1.57,
+      "status": "Foto",
+      "begruendung": "F4: Sturz y 1157"
+    },
+    "TUER_U": {
+      "wert_m": -0.04,
+      "status": "Foto",
+      "begruendung": "F4: Nischenmitte x 460 (Achse 463,5)"
+    },
+    "TUER_LAIBUNG": {
+      "wert_m": 0.22,
+      "status": "Schätzung",
+      "begruendung": "Tiefe der Nische, aus dem Schattenwurf abgeschätzt"
+    },
+    "TUER_BAENDER": {
+      "wert_m": [
+        0.39,
+        1.135
+      ],
+      "status": "Foto",
+      "begruendung": "F4: Mitten der Bandringe y 1268/1198"
+    },
+    "TUER_RIEGEL": {
+      "wert_m": 0.73,
+      "status": "Foto",
+      "begruendung": "F4: Riegel y 1232–1242"
+    },
+    "KAPPE_SW": {
+      "wert_m": 3.25,
+      "status": "Foto",
+      "begruendung": "F4: 305 px"
+    },
+    "KAPPE_KANTE": {
+      "wert_m": 0.18,
+      "status": "Foto",
+      "begruendung": "F4: senkrechte Kante y 1150→1133"
+    },
+    "KAPPE_OK": {
+      "wert_m": 2.016,
+      "status": "Foto",
+      "begruendung": "F4: y 1115 (Schräge trifft Unterbau)"
+    },
+    "UNTERBAU_SW_U": {
+      "wert_m": 2.32,
+      "status": "Foto",
+      "begruendung": "F4: 218 px"
+    },
+    "UNTERBAU_SW_O": {
+      "wert_m": 2.17,
+      "status": "Foto",
+      "begruendung": "F4: 204 px"
+    },
+    "TRICHTER_U": {
+      "wert_m": 3.16,
+      "status": "Foto",
+      "begruendung": "F4: y 1007 (Knick Unterbau/Trichter)"
+    },
+    "GALERIE1_UK": {
+      "wert_m": 4.106,
+      "status": "Foto",
+      "begruendung": "F4: y 918"
+    },
+    "GALERIE1_OK": {
+      "wert_m": 4.265,
+      "status": "Foto",
+      "begruendung": "F4: y 903 (weißer Bodenrand 0,16 m)"
+    },
+    "GALERIE1_D": {
+      "wert_m": 5.3,
+      "status": "Foto",
+      "begruendung": "F4: 500 px; Trichter oben = Achteck im Bodenkreis"
+    },
+    "GELAENDER1_HOLME": {
+      "wert_m": [
+        0.23,
+        0.5,
+        0.78
+      ],
+      "status": "Foto",
+      "begruendung": "F4: 3 Holme (Handlauf + 2); Mittel aus vorderem und hinterem Holm, x 330/680"
+    },
+    "LEITER_B": {
+      "wert_m": 0.42,
+      "status": "Foto",
+      "begruendung": "F1: 13 px"
+    },
+    "LEITER_SPROSSE": {
+      "wert_m": 0.24,
+      "status": "Foto",
+      "begruendung": "F1: Sprossenteilung 7,5 px"
+    },
+    "LEITER_AUSSPARUNG": {
+      "wert_m": 0.7,
+      "status": "Foto",
+      "begruendung": "F1: helle Aussparung im Trichter 21 px"
+    },
+    "TURM_SW_U": {
+      "wert_m": 1.93,
+      "status": "Foto",
+      "begruendung": "F4: 182 px"
+    },
+    "TURM_SW_O": {
+      "wert_m": 1.83,
+      "status": "Foto",
+      "begruendung": "F4: 172 px"
+    },
+    "TURM_OK": {
+      "wert_m": 6.865,
+      "status": "Foto",
+      "begruendung": "F4: y 658 (Beginn Konsolenkranz)"
+    },
+    "EINS_UK": {
+      "wert_m": 4.7,
+      "status": "Foto",
+      "begruendung": "F1/F3: 0,44 m über Galerieboden"
+    },
+    "EINS_OK": {
+      "wert_m": 6.44,
+      "status": "Foto",
+      "begruendung": "F1/F3: 0,42 m unter dem Konsolenkranz"
+    },
+    "EINS_STAMM": {
+      "wert_m": 0.26,
+      "status": "Foto",
+      "begruendung": "F1: 7,5 px, F3: 6 px"
+    },
+    "KONSOLE_R0": {
+      "wert_m": 0.9,
+      "status": "Foto",
+      "begruendung": "F4: Fußpunkt der Hohlkehle am Turm"
+    },
+    "KONSOLE_RADIUS": {
+      "wert_m": 0.62,
+      "status": "Foto",
+      "begruendung": "F4: Außenkante = Viertelkreis-Hohlkehle R 0,62 (9 Punkte, ±2 cm)"
+    },
+    "GALERIE2_OK": {
+      "wert_m": 7.586,
+      "status": "Foto",
+      "begruendung": "F4: y 590"
+    },
+    "GALERIE2_D": {
+      "wert_m": 2.95,
+      "status": "Foto",
+      "begruendung": "F4: 283 px"
+    },
+    "GELAENDER2_HOLME": {
+      "wert_m": [
+        0.1,
+        0.3,
+        0.5,
+        0.71
+      ],
+      "status": "Foto",
+      "begruendung": "F4: 4 Holme; Mittel aus vorderem und hinterem Holm, x 350/565"
+    },
+    "LATERNE_D": {
+      "wert_m": 1.74,
+      "status": "Foto",
+      "begruendung": "F4: 165 px"
+    },
+    "GLAS_UK": {
+      "wert_m": 8.38,
+      "status": "Foto",
+      "begruendung": "F4: y 510 (Fußpunkte der Sprossen), perspektivisch korrigiert"
+    },
+    "GLAS_OK": {
+      "wert_m": 8.97,
+      "status": "Foto",
+      "begruendung": "F4: y 453 (Spitzen an den Ecken), perspektivisch korrigiert"
+    },
+    "TRAUFE": {
+      "wert_m": 9.1,
+      "status": "Foto",
+      "begruendung": "F4: y 447"
+    },
+    "DACH_SPITZE": {
+      "wert_m": 10.43,
+      "status": "Foto",
+      "begruendung": "F4: y 322"
+    },
+    "KNAUF_OK": {
+      "wert_m": 11.14,
+      "status": "Foto",
+      "begruendung": "F4: y 255 (darüber Wetterfahne bis 13,40 m)"
+    }
+  },
+  "dateien": {
+    "stl": "Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl",
+    "blend": "Mole1_Brunsbuettel_Anhaenger_Prototyp_A1.blend"
+  }
+}

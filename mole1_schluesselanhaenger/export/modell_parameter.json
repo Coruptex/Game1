@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "variante": "Gussvorlage",
   "blender_version": "5.2.3 LTS",
   "massstab": "1:384",
   "mm_pro_m": 2.6032,

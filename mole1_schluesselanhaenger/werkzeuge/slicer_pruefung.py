@@ -125,6 +125,38 @@ def ring_bahnen(bahnen, z_soll, r0, r1, mitte=(128.0, 128.0)):
     return round(z, 3), round(laenge, 2)
 
 
+def schwebende_bahnen(bahnen, linienbreite=0.22, min_flaeche=0.003, min_anteil=0.03, mitte=(128.0, 128.0)):
+    """Bahninseln einer Schicht ohne ausreichende Auflage auf der Schicht darunter:
+    "schwebend" = berührt die Schicht darunter gar nicht (Druck in die Luft);
+    "kaum gestützt" = größere Insel (≥ 0,5 mm²), von der weniger als min_anteil aufliegt, z. B. ein
+    Geländerring, von dessen Pfosten der Slicer nur Reste erzeugt hat. Brücken sind an ihren Enden
+    aufgelagert und zählen nicht. Rand/Brim und Stützmaterial sind ausgenommen."""
+    from shapely.geometry import LineString
+    from shapely.ops import unary_union
+    je_schicht = defaultdict(list)
+    for (z, typ), segs in bahnen.items():
+        if typ == "Skirt/Brim" or typ.startswith("Support"):
+            continue
+        je_schicht[z].extend(segs)
+    vorher = None
+    befunde = []
+    for z in sorted(je_schicht):
+        flaeche = unary_union([LineString(s).buffer(linienbreite / 2.0) for s in je_schicht[z]])
+        if vorher is not None:
+            for teil in getattr(flaeche, "geoms", [flaeche]):
+                if teil.area < min_flaeche:
+                    continue
+                anteil = teil.intersection(vorher).area / teil.area if teil.intersects(vorher) else 0.0
+                if anteil == 0.0 or (teil.area >= 0.5 and anteil < min_anteil):
+                    cx, cy = teil.centroid.coords[0]
+                    befunde.append({"art": "schwebend" if anteil == 0.0 else "kaum gestützt",
+                                    "z_mm": round(z, 3), "flaeche_mm2": round(teil.area, 4),
+                                    "aufliegender_anteil": round(anteil, 4),
+                                    "radius_mm": round(((cx - mitte[0]) ** 2 + (cy - mitte[1]) ** 2) ** 0.5, 2)})
+        vorher = flaeche.buffer(0.02)
+    return befunde
+
+
 def zone_typen(bahnen, zonen):
     """Bahntypen je Höhenzone (z. B. Überhänge an den Galerien)."""
     out = defaultdict(Counter)
@@ -193,6 +225,13 @@ def main():
         r["schichten"] = len(zs)
         r["z_max_mm"] = zs[-1] if zs else None
         r["bahnlaenge_mm_nach_typ"] = {k: round(v, 1) for k, v in laengen.most_common()}
+        schwebend = schwebende_bahnen(bahnen)
+        r["schwebende_bahninseln"] = {
+            "anzahl": len(schwebend),
+            "schwebend": sum(1 for b in schwebend if b["art"] == "schwebend"),
+            "kaum_gestuetzt": sum(1 for b in schwebend if b["art"] == "kaum gestützt"),
+            "befunde": schwebend[:40],
+            "hinweis": "Bahninsel ohne bzw. mit < 3 % Auflage auf der Schicht darunter (Druck in die Luft)"}
         r["druckzeit"] = meta.get("estimated printing time (normal mode)")
         r["filament_g"] = meta.get("total filament used [g]") or meta.get("filament used [g]")
         r["filament_mm"] = meta.get("filament used [mm]")

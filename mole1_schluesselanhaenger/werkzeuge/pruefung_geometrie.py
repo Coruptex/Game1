@@ -10,6 +10,7 @@ schwebende Inseln für die Druckausrichtung "aufrecht", Öse (Lochweite, Quersch
 Volumen und Gewicht.
 
 Aufruf: python pruefung_geometrie.py --export <export-ordner> --out <pruef-ordner>
+        [--parameter modell_parameter_prototyp_a1.json]   (Standard: modell_parameter.json)
 (benötigt trimesh, shapely, numpy, rtree, embreex; für den Bauteilabgleich zusätzlich das pip-Paket bpy)
 """
 import json
@@ -34,10 +35,12 @@ DICHTE = {  # g/cm³, typische Werte – je nach Legierung abweichend
 
 def argumente():
     argv = sys.argv[1:]
-    a = {"export": None, "out": None}
+    a = {"export": None, "out": None, "parameter": "modell_parameter.json"}
     for i, x in enumerate(argv):
         if x in ("--export", "--out"):
             a[x[2:]] = os.path.abspath(argv[i + 1])
+        elif x == "--parameter":
+            a["parameter"] = argv[i + 1]
     return a
 
 
@@ -327,13 +330,13 @@ def durchbrueche(final, mm, prm, real):
 def main():
     a = argumente()
     os.makedirs(a["out"], exist_ok=True)
-    with open(os.path.join(a["export"], "modell_parameter.json"), encoding="utf-8") as f:
+    with open(os.path.join(a["export"], a["parameter"]), encoding="utf-8") as f:
         par = json.load(f)
     mm, prm = par["modellmasse_mm"], par["parameter"]
     datei = par["dateien"].get("stl") or par["dateien"]["stl_A"]
 
     m = lade(os.path.join(a["export"], datei))
-    r = {"datei": datei, "massstab": par["massstab"], "grund": grundpruefung(m)}
+    r = {"datei": datei, "variante": par.get("variante"), "massstab": par["massstab"], "grund": grundpruefung(m)}
     r["gewicht_g"] = {k: round(m.volume / 1000.0 * d, 2) for k, d in DICHTE.items()}
 
     r["strahl_backend"] = type(m.ray).__module__

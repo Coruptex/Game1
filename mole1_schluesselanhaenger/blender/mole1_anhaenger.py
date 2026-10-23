@@ -24,8 +24,10 @@ Nur in einer neuen, leeren Datei oder in der mitgelieferten .blend ausführen.
 * Blender-Oberfläche: Arbeitsbereich "Scripting" → Text → Öffnen → diese Datei → "Run Script".
   Ausgabeordner ist "export" neben der Skriptdatei bzw. neben der gespeicherten .blend
   (liegt die .blend bereits in einem Ordner "export", wird dieser verwendet).
-* Konsole:                  blender -b -P mole1_anhaenger.py -- --out ./export [--hoehe 35]
-* Python mit pip-Paket bpy: python mole1_anhaenger.py --out ./export [--hoehe 35]
+* Konsole:                  blender -b -P mole1_anhaenger.py -- --out ./export [--hoehe 35] [--prototyp]
+* Python mit pip-Paket bpy: python mole1_anhaenger.py --out ./export [--hoehe 35] [--prototyp]
+  --prototyp erzeugt die verstärkte Variante für den FDM-Probedruck (Bambu Lab A1, 0,2-mm-Düse)
+  mit eigenen Dateinamen (…_Prototyp_A1.stl/.blend, modell_parameter_prototyp_a1.json).
 
 Koordinaten: z = 0 ist die Unterkante des Granitsockels, z zeigt nach oben.
 Vorderseite (−Y, Azimut 270°) = Tür, Blickrichtung wie Foto F4 vom Molenweg.
@@ -184,6 +186,23 @@ P = {
     "OESE_RING_RADIAL_MM":   1.30,
     "OESE_RING_AXIAL_MM":    1.90,
     "OESE_EINGRIFF_MM":      0.20,
+}
+
+# Prototyp für den FDM-Probedruck (Bambu Lab A1, 0,2-mm-Düse, 0,22 mm Linienbreite, Option --prototyp):
+# Feinteile so verstärkt, dass der Slicer sie als geschlossene Bahnen druckt. Maße, Anordnung und Anzahl
+# bleiben wie bei der Gussvorlage; es ändern sich nur Querschnitte und Gravurtiefen.
+PROTOTYP_A1 = {
+    "PFOSTEN1_MM": 0.48, "PFOSTEN2_MM": 0.44,
+    "HOLM1_H_MM": 0.32, "HOLM1_T_MM": 0.44,
+    "HOLM2_H_MM": 0.24, "HOLM2_T_MM": 0.40,
+    "HANDLAUF_FAKTOR": 1.15,
+    "KONSOLE_DICKE_MM": 0.40,
+    "LEITER_HOLM_B_MM": 0.30, "LEITER_HOLM_VOR_MM": 0.30,
+    "LEITER_SPROSSE_H_MM": 0.24, "LEITER_SPROSSE_VOR_MM": 0.26,
+    "SPROSSE_LAT_B_MM": 0.30, "SPROSSE_LAT_T_MM": 0.22, "GLAS_TIEFE_MM": 0.15,
+    "FUGE_BREITE_MM": 0.20, "FUGE_TIEFE_MM": 0.12,
+    "FENSTER_TIEFE_MM": 0.20, "EINS_TIEFE_MM": 0.25,
+    "SCHLITZ_B_MM": 0.25,
 }
 
 OKT = math.pi / 8.0          # halber Mittelpunktswinkel des Achtecks (22,5°)
@@ -896,7 +915,11 @@ def farbmodell(b, mats):
     return c
 
 
-def main(out_dir, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
+def main(out_dir, prototyp=False):
+    """Baut das Modell und exportiert STL, .blend und Parameter. prototyp=True: FDM-Variante für den A1."""
+    if prototyp:
+        P.update(PROTOTYP_A1)
+    zusatz = "_Prototyp_A1" if prototyp else ""
     os.makedirs(out_dir, exist_ok=True)
     szene_vorbereiten()
     m = berechne_masse()
@@ -943,6 +966,7 @@ def main(out_dir, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
 
     ergebnis = {
         "version": 2,
+        "variante": "Prototyp FDM Bambu Lab A1 0,2-mm-Düse" if prototyp else "Gussvorlage",
         "blender_version": bpy.app.version_string,
         "massstab": f"1:{m['massstab']:.0f}",
         "mm_pro_m": round(m["s"], 4),
@@ -961,7 +985,7 @@ def main(out_dir, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
         "realmasse": {k: {"wert_m": v[0], "status": v[1], "begruendung": v[2]} for k, v in REAL.items()},
         "dateien": {},
     }
-    stl = os.path.join(out_dir, f"Mole1_Brunsbuettel_Anhaenger_{P['GESAMTHOEHE_MM']:.0f}mm.stl")
+    stl = os.path.join(out_dir, f"Mole1_Brunsbuettel_Anhaenger_{P['GESAMTHOEHE_MM']:.0f}mm{zusatz}.stl")
     stl_export(final, stl)
     ergebnis["dateien"]["stl"] = os.path.basename(stl)
 
@@ -971,10 +995,10 @@ def main(out_dir, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
             txt.write(f.read())
     except (NameError, OSError):
         pass
-    blend = os.path.join(out_dir, blend_name)
+    blend = os.path.join(out_dir, f"Mole1_Brunsbuettel_Anhaenger{zusatz}.blend")
     bpy.ops.wm.save_as_mainfile(filepath=blend, compress=True)
     ergebnis["dateien"]["blend"] = os.path.basename(blend)
-    with open(os.path.join(out_dir, "modell_parameter.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(out_dir, f"modell_parameter{zusatz.lower()}.json"), "w", encoding="utf-8") as f:
         json.dump(ergebnis, f, ensure_ascii=False, indent=2, default=str)
     print(json.dumps({k: v for k, v in ergebnis.items()
                       if k not in ("modellmasse_mm", "parameter", "realmasse", "fenster")},
@@ -985,6 +1009,7 @@ def main(out_dir, blend_name="Mole1_Brunsbuettel_Anhaenger.blend"):
 def _argumente():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     out = None
+    prototyp = False
     i = 0
     while i < len(argv):
         if argv[i] == "--out" and i + 1 < len(argv):
@@ -993,6 +1018,8 @@ def _argumente():
         elif argv[i] == "--hoehe" and i + 1 < len(argv):
             P["GESAMTHOEHE_MM"] = float(argv[i + 1])
             i += 1
+        elif argv[i] == "--prototyp":
+            prototyp = True
         i += 1
     if out is None:
         basis = bpy.data.filepath and os.path.dirname(bpy.data.filepath)
@@ -1002,8 +1029,9 @@ def _argumente():
             except NameError:
                 basis = os.getcwd()
         out = basis if os.path.basename(basis) == "export" else os.path.join(basis, "export")
-    return os.path.abspath(out)
+    return os.path.abspath(out), prototyp
 
 
 if __name__ == "__main__":
-    main(_argumente())
+    ziel, als_prototyp = _argumente()
+    main(ziel, prototyp=als_prototyp)

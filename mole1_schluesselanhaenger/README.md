@@ -12,8 +12,8 @@ Bericht mit Bildern und Fotovergleich als Webseite: https://claude.ai/artifact/3
 | **Version 2** | **Vollständig neu aufgebaut nach vier Referenzfotos** (F1–F4). Alle Proportionen sind an den Fotos gemessen. Die Modellkontur deckt sich mit Foto F4 (Abschnitt 4). Version 1 beruhte mangels Fotos auf Schätzungen und war deutlich zu lang und zu schmal. |
 | **Detailgrad** | Granitsockel mit 4 Steinlagen im Läuferverband, Tür in Laibung mit Brettern, Bändern und Riegel, Abdeckplatte mit Schräge, Unterbau mit Bogenfenster und Steigleiter, Trichter mit Leiteraussparung, zwei runde Galerien mit 8 Pfosten und 3 bzw. 4 Holmen, Turm mit drei Treppenfenstern und gravierter „1“, 32 Hohlkehl-Konsolen, Laterne mit 16 Zickzack-Sprossen, achtteilige Glockenhaube mit Rippen, Knauf mit Lüftungsschlitzen. |
 | **Ausrichtung auf den Guss** | So viel Detail wie für einen Feinguss nach gedrucktem Wachs- oder Harzmodell sinnvoll. Feinste Teile 0,20–0,30 mm; die kritischen Stellen sind in Abschnitt 6 einzeln benannt. Die Gießerei entscheidet über das Verfahren. |
-| **Wichtigster Hinweis** | Diese Gussvorlage eignet sich **nicht** für einen FDM-Probedruck mit 0,2-mm-Düse: Der Slicer lässt die 0,28–0,30 mm dünnen Geländerpfosten weg (Abschnitt 7). Dafür wäre im nächsten Schritt eine verstärkte Prototyp-Variante nötig. |
-| **Nicht durchgeführt** | Kein Testdruck, kein Lauf in Bambu Studio, kein Probeguss. Durchgeführt wurden eine Slicer-Prüfung mit PrusaSlicer 2.7.2 und eine geometrische Gussprüfung. |
+| **FDM-Probedruck** | Für den Bambu Lab A1 mit 0,2-mm-Düse gibt es eine **Prototyp-Variante** mit verstärkten Feinteilen: `export/Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl`. Sie besteht die Slicer-Prüfung (alle Pfosten, Holme und Konsolen werden gedruckt, nichts beginnt in der Luft). Die Gussvorlage selbst ist für FDM zu fein (Abschnitt 7). |
+| **Nicht durchgeführt** | Kein Testdruck, kein Lauf in Bambu Studio, kein Probeguss. Durchgeführt wurden Slicer-Prüfungen mit PrusaSlicer 2.7.2 und eine geometrische Gussprüfung. |
 
 ## 1. Lieferumfang
 
@@ -22,10 +22,12 @@ Bericht mit Bildern und Fotovergleich als Webseite: https://claude.ai/artifact/3
 | `export/Mole1_Brunsbuettel_Anhaenger_35mm.stl` | **Finale STL**, binär, Einheit mm, Z nach oben, Sockelunterkante auf z = 0, Tür zeigt nach −Y |
 | `export/Mole1_Brunsbuettel_Anhaenger.blend` | Blender-Datei: `01_Bauteile` (102 einzeln benannte Bauteile), `02_Hilfsgeometrie` (Gravuren, Aussparungen), `03_Export_Anhaenger` (Endkörper), `04_Farbmodell_Rekonstruktion` (Originalfarben); Skript als Textblock. Beim Öffnen ist nur der Endkörper eingeblendet (Augen-Symbol im Outliner). |
 | `export/modell_parameter.json` | Alle Real- und Modellmaße mit Status und Quelle |
+| `export/Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl` | **Prototyp für den FDM-Probedruck** (Bambu Lab A1, 0,2-mm-Düse), gleiche Maße, verstärkte Feinteile; dazu `…_Prototyp_A1.blend` und `modell_parameter_prototyp_a1.json` |
 | `blender/mole1_anhaenger.py` | Parametrisches Blender-Python-Skript (baut, vereinigt, graviert, exportiert) |
 | `pruefung/pruefbericht.json` | Maschinenlesbarer Prüfbericht |
-| `pruefung/slicer/` | Slicer-Prüfung: Ergebnis-JSON, Profile, Bahnbilder |
-| `bilder/` | Ansichten von vorne, rechts, hinten, links; Perspektiven; Details; Silber- und PLA-Eindruck; Farbmodell (auch mit der Kamera von Foto F4); Maßzeichnung (PNG/PDF) |
+| `pruefung/slicer/` | Slicer-Prüfung der Gussvorlage: Ergebnis-JSON, Profile, Bahnbilder |
+| `pruefung/prototyp_a1/` | Prüfbericht und Slicer-Prüfung des A1-Prototyps |
+| `bilder/` | Ansichten von vorne, rechts, hinten, links; Perspektiven; Details; Silber- und PLA-Eindruck; Farbmodell (auch mit der Kamera von Foto F4); A1-Prototyp (`Prototyp_A1_*`); Maßzeichnung (PNG/PDF) |
 | `werkzeuge/` | Prüf-, Render-, Zeichnungs-, Slicer- und Fotovergleichsskripte; `alles_erzeugen.sh` |
 
 Die Referenzfotos und die Bilder, die sie enthalten (Überlagerung, Gegenüberstellung), liegen **nicht** im Repository, weil die Bildrechte unklar sind. Sie stehen nur im privaten Bericht.
@@ -220,14 +222,41 @@ Weitere Hinweise: Die Taschen unter den Galerieböden (zwischen Konsolen bzw. ü
 
 ## 7. FDM-Probedruck (Bambu Lab A1, 0,2-mm-Düse)
 
-Die FDM-Prüfung ist für den nächsten Schritt vorgesehen. Den Slicer habe ich trotzdem schon laufen lassen, damit das Ergebnis vorliegt (PrusaSlicer 2.7.2, A1-ähnliches Profil: 0,22 mm Linie, 0,08 mm Schicht; **kein Testdruck, kein Bambu Studio**):
+Die Gussvorlage ist für den FDM-Druck zu fein. Deshalb erzeugt das Skript mit `--prototyp` eine eigene **Prototyp-Variante**: `export/Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl`. Maße, Anordnung und Anzahl aller Teile sind gleich. Nur Querschnitte und Gravurtiefen sind für die 0,22 mm breite Bahn der 0,2-mm-Düse verstärkt. Der PLA-Druck zeigt Größe, Proportionen und Wirkung; ein Gussmodell ist er nicht.
 
-- 437 Schichten, ≈ 1 h 8 min, ≈ 1,2 g PLA.
-- Holme, Galerieböden, Konsolenkranz und Laternensprossen erzeugt der Slicer als Bahnen.
-- **Die Geländerpfosten fehlen:** In Schichten zwischen den Holmen erzeugt Arachne nur 0,3 mm Bahn für alle 8 Pfosten, Classic gar keine. Die Holmringe würden damit frei in der Luft gedruckt.
-- **Von den 32 Konsolen** erzeugt Arachne nur Bruchstücke, Classic weniger als die Hälfte.
+| Element | Gussvorlage | Prototyp A1 |
+|---|---|---|
+| Pfosten unten / oben | 0,30 / 0,28 mm | **0,48 / 0,44 mm** |
+| Holme unten (Höhe × Tiefe) | 0,22 × 0,28 mm | **0,32 × 0,44 mm** (zwei Bahnen) |
+| Holme oben (Höhe × Tiefe) | 0,22 × 0,26 mm | **0,24 × 0,40 mm** |
+| Konsolen (32) | 0,25 mm | **0,40 mm** |
+| Leiter: Holme / Sprossen | 0,22 / 0,20 mm | 0,30 / 0,24 mm |
+| Laternensprossen | 0,20 mm breit, 0,12 mm erhaben | 0,30 mm breit, 0,15 mm erhaben |
+| Mauerfugen | 0,12 × 0,08 mm | 0,20 × 0,12 mm |
+| Tiefe Fenster / „1“ | 0,12 / 0,20 mm | 0,20 / 0,25 mm |
 
-**Folgerung:** Diese Gussvorlage ist für den 0,2-mm-FDM-Druck zu fein. Für den Probedruck schlage ich als nächsten Schritt eine **Prototyp-Variante** aus demselben Skript vor: Pfosten, Holme und Konsolen auf etwa 0,45 mm verstärkt. Alternativ ginge ein Druck im doppelten Maßstab (70 mm) oder ein Harzdruck bei einem Dienstleister. Der von der Prüfung erzeugte G-Code ist **nicht** für den A1 bestimmt und wurde nicht aufbewahrt.
+Größte Breite 14,14 mm (Holme), Volumen 935 mm³, etwa 1,2 g PLA. Geometrieprüfung wie bei der Gussvorlage: wasserdicht, ein Körper, keine Fehlkanten, alle 102 Bauteile vollständig, alle Geländerfelder, Konsolenzwischenräume und das Ösenloch offen (`pruefung/prototyp_a1/`).
+
+**Slicer-Prüfung** (PrusaSlicer 2.7.2, A1-ähnliches Profil: 0,22 mm Linie, 0,08 mm Schicht; beide Wandgeneratoren; **kein Testdruck, kein Bambu Studio**). Neu ist ein Test auf Bahninseln, die keine oder fast keine Auflage auf der Schicht darunter haben, also in die Luft gedruckt würden.
+
+| Prüfung | Gussvorlage | Prototyp A1 |
+|---|---|---|
+| Pfosten in Schichten zwischen den Holmen (Bahnlänge aller 8 Pfosten, Arachne / Classic) | 0,3 / 0 mm | 7,2 / 8,1 mm |
+| Holmringe | eine Bahn | zwei Bahnen |
+| Konsolen | Bruchstücke | 32 einzelne Rippen |
+| Bahninseln ohne ausreichende Auflage | Arachne: 6 Holmringe (1–2 % Auflage), Classic: 10 schwebende Inseln | **keine** (beide Generatoren) |
+| Schichten / Druckzeit / PLA | 437 / ≈ 1 h 8 min / 1,2 g | 437 / ≈ 1 h 8 min / 1,2 g |
+
+**Empfohlene Einstellungen in Bambu Studio** (aus der Prüfung abgeleitet, nicht im Druck getestet):
+
+- Drucker A1 mit 0,2-mm-Düse, Prozess „0.08mm Extra Fine @BBL A1 0.2 nozzle“; PLA, am besten matt und hellgrau
+- aufrecht drucken, wie exportiert (Sockel auf der Platte)
+- **Stützen aus.** Die steilste Überhangfläche ist der Trichter mit etwa 33–35° gegen die Waagerechte. Unter den Holmen überbrückt der Drucker die Strecke von Pfosten zu Pfosten: unten etwa 4,9 mm, oben etwa 2,5 mm. Stützen zwischen den Geländern ließen sich kaum entfernen.
+- Brim 3–5 mm, weil das Teil hoch und schlank ist und der A1 das Bett bewegt
+- 2–3 Exemplare mit Abstand gleichzeitig drucken: Jede Schicht kühlt länger, und ein Ersatzteil entsteht nebenbei.
+- Vorsichtig vom Brim lösen; Pfosten und Holme sind in PLA zerbrechlich.
+
+Was nur ein Testdruck klärt: Durchhängen der Holme zwischen den Pfosten, Oberfläche der Trichterunterseite, Sichtbarkeit der Fugen und der „1“. Der von der Prüfung erzeugte G-Code ist **nicht** für den A1 bestimmt und wurde nicht aufbewahrt.
 
 ## 8. Prüfbericht
 
@@ -237,23 +266,24 @@ Die FDM-Prüfung ist für den nächsten Schritt vorgesehen. Den Slicer habe ich 
 | 2. Vollständigkeit | alle 102 Einzelbauteile zu 100 % im Endkörper (je bis 200 Stichproben; Punkte in gewollten Gravuren ausgenommen); alle Geländerfelder (2 × 3 Reihen × 8), alle 32 Konsolenzwischenräume und das Ösenloch offen |
 | 3. Geschlossene Oberfläche | wasserdicht, Orientierung konsistent, gültiges Volumen |
 | 4. Nicht-manifold Kanten, offene Flächen | 0 / 0; 0 entartete, 0 doppelte Dreiecke |
-| 5. Lose oder schwebende Teile | genau 1 Körper; keine schwebenden Inseln in 437 Schichten der Geometrie (siehe aber Abschnitt 7: Der Slicer verwirft die Pfosten) |
+| 5. Lose oder schwebende Teile | genau 1 Körper; keine schwebenden Inseln in 437 Schichten der Geometrie (im Slicer verliert die Gussvorlage aber die Pfosten, siehe Abschnitt 7) |
 | 6. Dünne Bereiche | Minimum planmäßig 0,20–0,25 mm (Sprossen, Leiter, Fensterbank, Holme, Konsolen), 0,15 mm am Zierring der Türbänder. Lokale Werte nahe 0 nur an den spitzen Winkeln der Ziffernfahne (Gravur, 42°) und an den Haarlinien der Brettfugen. Beim Prüfen gefunden und behoben: Hohlräume unter den Türbändern (0,03 mm), Traufkante 0,10 mm, Fensterbank 0,13 mm, Spalt am Leiterfuß, Absatz am Übergang Knauf/Öse (0,004 mm). |
 | 7. Öse | Loch 3,60 mm; kleinster Querschnitt im Kraftfluss 1,37 mm²; Schwerpunkt auf der Achse |
-| 8. FDM mit 0,2-mm-Düse | **nicht geeignet** ohne Prototyp-Variante (Abschnitt 7); Testdruck nicht durchgeführt |
+| 8. FDM mit 0,2-mm-Düse | Gussvorlage **nicht geeignet**; **Prototyp A1**: Slicer-Prüfung bestanden (alle Feinteile als Bahnen, keine Bahninseln ohne Auflage). Testdruck nicht durchgeführt |
 | 9. Details im Verhältnis zur Größe | Tabelle in Abschnitt 6 |
 | 10. Skalierung und Export | binäre STL in mm, nach dem Export erneut eingelesen und geprüft; Blender-Szene 1 Einheit = 1 mm |
 | Fotoabgleich | Modellkontur mit der Kamera von F4 projiziert: deckungsgleich bis auf Knauf und Öse (gewollt) |
-| Reproduzierbarkeit | Neuaufbau mit dem Skript ergibt eine bitgleiche STL (SHA-256 verglichen); der Endkörper in der .blend ist dreieck- und volumengleich mit der STL (43 908 Dreiecke, 917,98 mm³) |
+| Reproduzierbarkeit | Neuaufbau mit dem Skript ergibt bitgleiche STL-Dateien (Gussvorlage und Prototyp, SHA-256 verglichen); der Endkörper in der .blend ist dreieck- und volumengleich mit der STL (43 908 Dreiecke, 917,98 mm³) |
 
 Messmethoden: Wandstärke per Strahl von 60 000 Oberflächenpunkten nach innen, Spaltweite per Strahl nach außen (Embree). Gewertet wurde jeweils nur eine gegenüberliegende Fläche (±45°). Die Inselprüfung schneidet das Modell in 0,08-mm-Schichten.
 
 **Nicht geprüft:** Testdruck, Bambu Studio, Probeguss, Festigkeit (FEM oder Versuch), Beurteilung durch eine Gießerei.
 
-SHA-256-Prüfsumme der STL:
+SHA-256-Prüfsummen der STL-Dateien:
 
 ```
 b7ec2851014b9507219b6f451f6ea6458158f205fea3dfed18dd5bb13bb0e447  Mole1_Brunsbuettel_Anhaenger_35mm.stl
+419dc60ba543f6472ddf2cf0917fa377314b587e22b8f6d50105c9bbbae0c6a0  Mole1_Brunsbuettel_Anhaenger_35mm_Prototyp_A1.stl
 ```
 
 ## 9. Arbeitsweise und Ausführung
@@ -262,14 +292,14 @@ Alles in diesem Ordner wurde in dieser Arbeitsumgebung tatsächlich erzeugt. Ble
 
 - **Ansehen auf dem iPad:** Die STL lässt sich in der Dateien-App als 3D-Vorschau öffnen; die Bilder liegen in `bilder/`.
 - **Maße ändern in Blender (Computer):** `export/Mole1_Brunsbuettel_Anhaenger.blend` öffnen, im Arbeitsbereich „Scripting“ den Textblock `mole1_anhaenger.py` wählen, Werte in `REAL`, `FENSTER` oder `P` ändern, „Run Script“ ausführen. Die neuen Dateien landen im Ordner `export` neben der .blend.
-- **Kommandozeile:** `blender -b -P blender/mole1_anhaenger.py -- --out export [--hoehe 40]`.
-- **Gesamte Kette** (Modell, Prüfung, Slicer, Bilder): `werkzeuge/alles_erzeugen.sh`. Mit `FOTO4=<Pfad>` entsteht zusätzlich der Konturvergleich mit Foto F4.
+- **Kommandozeile:** `blender -b -P blender/mole1_anhaenger.py -- --out export [--hoehe 40] [--prototyp]`; `--prototyp` erzeugt die A1-Variante mit eigenen Dateinamen.
+- **Gesamte Kette** (Gussvorlage und Prototyp: Modell, Prüfung, Slicer, Bilder): `werkzeuge/alles_erzeugen.sh`. Mit `FOTO4=<Pfad>` entsteht zusätzlich der Konturvergleich mit Foto F4.
 - Alternativ in dieser Sitzung: die gewünschte Änderung beschreiben; ich passe die Parameter an und erzeuge alles neu.
 
 ## 10. Nächste Schritte
 
 1. **Modell beurteilen** (Bilder, Bericht): Passt der Detailgrad? Sollen die offenen Punkte aus 3.6 noch geklärt werden, etwa mit einem Foto der Rückseite (Flächen 135°/180°)?
-2. **FDM-Prototyp:** Prototyp-Variante mit verstärkten Feinteilen erzeugen und prüfen (Abschnitt 7).
+2. **FDM-Prototyp drucken** (Einstellungen in Abschnitt 7) und Größe, Proportionen, Öse und Schlüsselring prüfen. Auffälligkeiten (z. B. durchhängende Holme) lassen sich über die Werte in `PROTOTYP_A1` im Skript nachstellen.
 3. **Gießerei bzw. Onkel:** Liste in Abschnitt 6 durchgehen; Verfahren, Modellmaterial, Aushöhlen, Anguss und Schwindmaß festlegen.
 
 ## Quellen
