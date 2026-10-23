@@ -1,0 +1,162 @@
+{
+  "blender_version": "5.2.3 LTS",
+  "massstab": "1:457",
+  "mm_pro_m": 2.186,
+  "teile_geschlossen": 37,
+  "teile_nicht_geschlossen": [],
+  "final_geschlossen": true,
+  "final_netz": {
+    "nicht_manifold_kanten": 0,
+    "entartete_flaechen": 0
+  },
+  "final_vertices": 6334,
+  "final_faces": 12732,
+  "modellmasse_mm": {
+    "s": 2.186,
+    "massstab": 457.4468,
+    "oese_aussen": 6.2,
+    "sockel_h": 5.2465,
+    "sockel_sw": 6.5581,
+    "turm_sw_u": 5.4651,
+    "turm_sw_o": 3.8256,
+    "z_gu": 9.8372,
+    "z_go": 21.8605,
+    "ausk_u": 1.5302,
+    "ausk_o": 1.3116,
+    "gel_h": 2.186,
+    "lat_r": 1.5302,
+    "z_bruest": 23.9372,
+    "z_glas": 26.3419,
+    "z_feuer": 25.1395,
+    "dach_r": 1.7488,
+    "z_traufe": 26.7419,
+    "z_spitze": 28.2,
+    "z_oese_unten": 28.8,
+    "oese_R": 2.45,
+    "z_oese_mitte": 31.9,
+    "z_oben": 35.0,
+    "deck_sw_u": 8.0726,
+    "deck_sw_o": 6.4488
+  },
+  "parameter": {
+    "GESAMTHOEHE_MM": 35.0,
+    "BODEN_DICKE_MM": 0.6,
+    "KRAGARM_DICKE_MM": 0.6,
+    "KRAGARM_ANZAHL": 8,
+    "GELAENDER_DICKE_MM": 0.6,
+    "HANDLAUF_H_MM": 0.6,
+    "PFOSTEN_B_MM": 0.55,
+    "GELAENDER_DURCHBROCHEN": true,
+    "BLINDTIEFE_MM": 0.3,
+    "SPROSSEN_ANZAHL": 8,
+    "SPROSSEN_B_MM": 0.45,
+    "SCHEIBEN_TIEFE_MM": 0.2,
+    "KRANZ_H_MM": 0.25,
+    "TRAUFE_DICKE_MM": 0.4,
+    "OESE_INNEN_D_MM": 3.6,
+    "OESE_RING_RADIAL_MM": 1.3,
+    "OESE_RING_AXIAL_MM": 1.9,
+    "HALS_D_MM": 1.4,
+    "HALS_KRAGEN_D_MM": 1.7,
+    "HALS_SPALT_MM": 0.6,
+    "SOCKEL_FASE_UNTEN_MM": 0.25,
+    "SOCKEL_FASE_OBEN_MM": 0.15,
+    "SEGMENTE": 96,
+    "UEBERLAPPUNG_MM": 0.1,
+    "INSCHRIFT_1": false,
+    "INSCHRIFT_TIEFE_MM": 0.25,
+    "RELIEF_TIEFENFAKTOR": 0.75
+  },
+  "realmasse": {
+    "H_GESAMT": {
+      "wert_m": 13.4,
+      "status": "belegt",
+      "begruendung": "Turmhöhe über Molendeck (WSA Nord-Ostsee-Kanal); Oberkante inkl. Wetterfahne angenommen"
+    },
+    "Z_FEUER": {
+      "wert_m": 11.5,
+      "status": "abgeleitet",
+      "begruendung": "Feuerhöhe ≈ 15 m ü. NHN (WSV) minus Molendeck NN +3,50 m; 13,50 m ü. MThw passt dazu"
+    },
+    "SOCKEL_H": {
+      "wert_m": 2.4,
+      "status": "Schätzung",
+      "begruendung": "13,40 m Gesamthöhe minus ≈ 11 m Eisenturm (Lighthouse Directory)"
+    },
+    "SOCKEL_SW": {
+      "wert_m": 3.0,
+      "status": "Schätzung",
+      "begruendung": "Schlüsselweite des achteckigen Granitsockels (Achteck belegt, Maß nicht)"
+    },
+    "TURM_SW_UNTEN": {
+      "wert_m": 2.5,
+      "status": "Schätzung",
+      "begruendung": "Schlüsselweite Gussturm am Fuß (Verjüngung belegt, Maß nicht)"
+    },
+    "TURM_SW_OBEN": {
+      "wert_m": 1.75,
+      "status": "Schätzung",
+      "begruendung": "Schlüsselweite Gussturm unter der oberen Galerie"
+    },
+    "Z_GALERIE_UNTEN": {
+      "wert_m": 4.5,
+      "status": "Schätzung",
+      "begruendung": "≈ 1/3 der Höhe; Farbbeschreibung: oberhalb der unteren Galerie weiß, unteres Drittel schwarz"
+    },
+    "AUSKRAG_UNTEN": {
+      "wert_m": 0.7,
+      "status": "Schätzung",
+      "begruendung": "Laufbreite der unteren Galerie"
+    },
+    "Z_GALERIE_OBEN": {
+      "wert_m": 10.0,
+      "status": "abgeleitet",
+      "begruendung": "Brennebene 11,50 m minus halbe Verglasung minus Brüstung; Licht muss über das Geländer (OK 11,0 m) scheinen"
+    },
+    "AUSKRAG_OBEN": {
+      "wert_m": 0.6,
+      "status": "Schätzung",
+      "begruendung": "Laufbreite der oberen Galerie"
+    },
+    "GELAENDER_H": {
+      "wert_m": 1.0,
+      "status": "Schätzung",
+      "begruendung": "übliche Geländerhöhe"
+    },
+    "LATERNE_D": {
+      "wert_m": 1.4,
+      "status": "Schätzung",
+      "begruendung": "runde Laterne belegt; Ø aus der 460 mm hohen Gürtellinse abgeschätzt"
+    },
+    "BRUESTUNG_H": {
+      "wert_m": 0.95,
+      "status": "Schätzung",
+      "begruendung": "geschlossener Laternenunterbau; Verglasung beginnt etwa auf Geländerhöhe"
+    },
+    "VERGLASUNG_H": {
+      "wert_m": 1.1,
+      "status": "Schätzung",
+      "begruendung": "Brennebene (11,50 m) liegt in Verglasungsmitte, Linse 460 mm hoch"
+    },
+    "DACH_D": {
+      "wert_m": 1.6,
+      "status": "Schätzung",
+      "begruendung": "Kupferdach (helm-/kuppelförmig belegt) mit kleinem Traufüberstand"
+    },
+    "Z_DACH_SPITZE": {
+      "wert_m": 12.9,
+      "status": "Schätzung",
+      "begruendung": "darüber bis 13,40 m die Wetterfahne von 1895 – im Modell durch die Öse ersetzt"
+    }
+  },
+  "dateien": {
+    "stl_A": "Mole1_Brunsbuettel_Anhaenger_A_35mm.stl",
+    "stl_B": "Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl",
+    "blend": "Mole1_Brunsbuettel_Anhaenger.blend"
+  },
+  "relief_geschlossen": true,
+  "relief_netz": {
+    "nicht_manifold_kanten": 0,
+    "entartete_flaechen": 0
+  }
+}

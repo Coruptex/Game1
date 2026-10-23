@@ -1,0 +1,523 @@
+{
+  "quelle": {
+    "stl_A": "Mole1_Brunsbuettel_Anhaenger_A_35mm.stl",
+    "stl_B": "Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl",
+    "blend": "Mole1_Brunsbuettel_Anhaenger.blend"
+  },
+  "massstab": "1:457",
+  "variante_A": {
+    "datei": "Mole1_Brunsbuettel_Anhaenger_A_35mm.stl",
+    "grund": {
+      "dreiecke": 12732,
+      "punkte": 6334,
+      "bbox_min_mm": [
+        -4.036,
+        -4.036,
+        0.0
+      ],
+      "bbox_max_mm": [
+        4.036,
+        4.036,
+        35.0
+      ],
+      "abmessungen_mm": [
+        8.073,
+        8.073,
+        35.0
+      ],
+      "wasserdicht": true,
+      "orientierung_konsistent": true,
+      "gueltiges_volumen": true,
+      "kanten_nutzung": {
+        "2": 19098
+      },
+      "nicht_manifold_kanten": 0,
+      "entartete_dreiecke": 0,
+      "doppelte_dreiecke": 0,
+      "euler_charakteristik": -32,
+      "geschlecht_genus": 17,
+      "anzahl_koerper": 1,
+      "volumen_mm3": 628.748,
+      "oberflaeche_mm2": 873.16,
+      "schwerpunkt_mm": [
+        -0.0,
+        -0.0,
+        11.722
+      ]
+    },
+    "gewicht_g": {
+      "PLA (Prototyp)": 0.78,
+      "Gusswachs/Resin (Modell)": 0.69,
+      "Sterlingsilber 925": 6.51,
+      "Gelbgold 585 (14 kt)": 8.24,
+      "Gelbgold 750 (18 kt)": 9.75
+    },
+    "wandstaerke": {
+      "methode": "Raycasting nach innen, nur gegenüberliegende Austrittsfläche (±45°) gewertet",
+      "min_mm": 0.4,
+      "p01_mm": 0.554,
+      "p05_mm": 0.6,
+      "median_mm": 3.903,
+      "gewertete_messpunkte": 56848,
+      "kantenartefakte_verworfen": 3152,
+      "roh_min_mm_inkl_kanten": 0.4,
+      "nach_zone": {
+        "Turmschaft oben": {
+          "n": 7660,
+          "min": 4.057,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "untere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 16704,
+          "min": 0.551,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.5345
+        },
+        "Granitsockel": {
+          "n": 9258,
+          "min": 5.246,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "Öse": {
+          "n": 5172,
+          "min": 1.26,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "Laterne": {
+          "n": 1748,
+          "min": 0.4,
+          "anteil_unter_0.4": 0.0263,
+          "anteil_unter_0.5": 0.2706,
+          "anteil_unter_0.6": 0.2706
+        },
+        "obere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 12269,
+          "min": 0.45,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0026,
+          "anteil_unter_0.6": 0.5153
+        },
+        "Turmschaft unten": {
+          "n": 2887,
+          "min": 5.15,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "Dach/Kuppel/Schaft": {
+          "n": 1150,
+          "min": 0.4,
+          "anteil_unter_0.4": 0.0443,
+          "anteil_unter_0.5": 0.0443,
+          "anteil_unter_0.6": 0.0443
+        }
+      }
+    },
+    "spalte": {
+      "methode": "Raycasting nach außen, nur gegenüberliegende Fläche (±45°) gewertet",
+      "min_mm": 1.012,
+      "roh_min_mm_inkl_innenecken": 0.007,
+      "nach_zone": {
+        "untere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 6117,
+          "min": 1.012,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        },
+        "obere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 5177,
+          "min": 1.095,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        },
+        "Laterne": {
+          "n": 212,
+          "min": 2.155,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        },
+        "Öse": {
+          "n": 332,
+          "min": 3.632,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        },
+        "Turmschaft unten": {
+          "n": 385,
+          "min": 3.991,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        },
+        "Dach/Kuppel/Schaft": {
+          "n": 15,
+          "min": 2.55,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        }
+      }
+    },
+    "ueberhaenge_aufrecht_45grad": {
+      "flaeche_mm2": 73.733,
+      "anteil_an_oberflaeche": 0.0844,
+      "nach_zone": {
+        "untere Galerie (Kragarme/Boden/Geländer)": 36.703,
+        "obere Galerie (Kragarme/Boden/Geländer)": 23.857,
+        "Laterne": 3.362,
+        "Öse": 9.811
+      }
+    },
+    "schwebende_inseln_aufrecht": {
+      "schichten_0_08mm": 437,
+      "befunde": []
+    },
+    "oese": {
+      "loch_mitte_frei": true,
+      "lochdurchmesser_min_mm": 3.598,
+      "lochdurchmesser_max_mm": 3.6,
+      "soll_innen_d_mm": 3.6,
+      "aussen_d_mm": 6.2,
+      "ring_radial_mm": 1.3,
+      "ring_axial_mm": 1.9,
+      "querschnitt_schaft_mm2": 1.538,
+      "z_schaft_schnitt_mm": 28.5,
+      "querschnitt_ringflanken_gesamt_mm2": 3.855,
+      "ringflanken_anzahl": 2,
+      "querschnitt_ringscheitel_oben_mm2": 1.927
+    },
+    "durchbrueche": {
+      "Geländeröffnungen unten (8 Stück) frei": true,
+      "Geländeröffnungen oben (8 Stück) frei": true,
+      "Ösenloch frei": true
+    },
+    "druck_standflaeche_mm2": 31.212,
+    "schlankheit_hoehe_zu_fussbreite": 6.26,
+    "vollstaendigkeit_bauteile": {
+      "Dach_Kuppel": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Dach_Traufe": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Boden": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Gelaender": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_1": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_2": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_3": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_4": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_5": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_6": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_7": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_oben_Kragarm_8": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Boden": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Gelaender": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_1": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_2": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_3": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_4": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_5": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_6": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_7": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Galerie_unten_Kragarm_8": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Bruestung": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Kranz": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_1": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_2": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_3": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_4": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_5": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_6": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_7": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Sprosse_8": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Laterne_Verglasung": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Oese": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Oese_Schaft": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Sockel_Granit": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      },
+      "Turm_Gusseisen": {
+        "stichproben": 200,
+        "anteil_im_endkoerper": 1.0
+      }
+    }
+  },
+  "variante_B": {
+    "datei": "Mole1_Brunsbuettel_Variante_B_Relief_Vergleich.stl",
+    "grund": {
+      "dreiecke": 10460,
+      "punkte": 5218,
+      "bbox_min_mm": [
+        -4.036,
+        -3.027,
+        0.0
+      ],
+      "bbox_max_mm": [
+        4.036,
+        0.0,
+        35.0
+      ],
+      "abmessungen_mm": [
+        8.073,
+        3.027,
+        35.0
+      ],
+      "wasserdicht": true,
+      "orientierung_konsistent": true,
+      "gueltiges_volumen": true,
+      "kanten_nutzung": {
+        "2": 15690
+      },
+      "nicht_manifold_kanten": 0,
+      "entartete_dreiecke": 0,
+      "doppelte_dreiecke": 0,
+      "euler_charakteristik": -12,
+      "geschlecht_genus": 7,
+      "anzahl_koerper": 1,
+      "volumen_mm3": 257.325,
+      "oberflaeche_mm2": 561.33,
+      "schwerpunkt_mm": [
+        -0.0,
+        -0.93,
+        13.412
+      ]
+    },
+    "gewicht_g": {
+      "PLA (Prototyp)": 0.32,
+      "Gusswachs/Resin (Modell)": 0.28,
+      "Sterlingsilber 925": 2.67,
+      "Gelbgold 585 (14 kt)": 3.37,
+      "Gelbgold 750 (18 kt)": 3.99
+    },
+    "wandstaerke": {
+      "methode": "Raycasting nach innen, nur gegenüberliegende Austrittsfläche (±45°) gewertet",
+      "min_mm": 0.316,
+      "p01_mm": 0.45,
+      "p05_mm": 0.509,
+      "median_mm": 1.48,
+      "gewertete_messpunkte": 52431,
+      "kantenartefakte_verworfen": 7569,
+      "roh_min_mm_inkl_kanten": 0.001,
+      "nach_zone": {
+        "Turmschaft oben": {
+          "n": 8691,
+          "min": 0.635,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "Granitsockel": {
+          "n": 9413,
+          "min": 1.019,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "untere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 12898,
+          "min": 0.416,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0799,
+          "anteil_unter_0.6": 0.4407
+        },
+        "obere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 8753,
+          "min": 0.349,
+          "anteil_unter_0.4": 0.0014,
+          "anteil_unter_0.5": 0.0951,
+          "anteil_unter_0.6": 0.4794
+        },
+        "Öse": {
+          "n": 7237,
+          "min": 0.333,
+          "anteil_unter_0.4": 0.0006,
+          "anteil_unter_0.5": 0.0022,
+          "anteil_unter_0.6": 0.0035
+        },
+        "Turmschaft unten": {
+          "n": 3032,
+          "min": 0.828,
+          "anteil_unter_0.4": 0.0,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.6": 0.0
+        },
+        "Dach/Kuppel/Schaft": {
+          "n": 1008,
+          "min": 0.316,
+          "anteil_unter_0.4": 0.0387,
+          "anteil_unter_0.5": 0.0982,
+          "anteil_unter_0.6": 0.2063
+        },
+        "Laterne": {
+          "n": 1399,
+          "min": 0.349,
+          "anteil_unter_0.4": 0.0972,
+          "anteil_unter_0.5": 0.1451,
+          "anteil_unter_0.6": 0.2137
+        }
+      }
+    },
+    "spalte": {
+      "methode": "Raycasting nach außen, nur gegenüberliegende Fläche (±45°) gewertet",
+      "min_mm": 0.587,
+      "roh_min_mm_inkl_innenecken": 0.002,
+      "nach_zone": {
+        "obere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 2929,
+          "min": 0.59,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0017,
+          "anteil_unter_1.0": 0.1608
+        },
+        "untere Galerie (Kragarme/Boden/Geländer)": {
+          "n": 3045,
+          "min": 0.76,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0966,
+          "anteil_unter_1.0": 0.3251
+        },
+        "Öse": {
+          "n": 901,
+          "min": 0.884,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0178
+        },
+        "Laterne": {
+          "n": 155,
+          "min": 0.587,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.1419,
+          "anteil_unter_1.0": 0.1419
+        },
+        "Turmschaft unten": {
+          "n": 220,
+          "min": 3.991,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        },
+        "Dach/Kuppel/Schaft": {
+          "n": 30,
+          "min": 2.106,
+          "anteil_unter_0.5": 0.0,
+          "anteil_unter_0.8": 0.0,
+          "anteil_unter_1.0": 0.0
+        }
+      }
+    }
+  }
+}
