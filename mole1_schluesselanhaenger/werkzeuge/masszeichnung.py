@@ -6,7 +6,6 @@ Bemaßte Ansicht + Schnitt (y = 0) des Anhängers als PNG/PDF, direkt aus der ST
 Aufruf: python masszeichnung.py --export <export-ordner> --bilder <bilder-ordner>
 """
 import json
-import math
 import os
 import sys
 
@@ -47,20 +46,22 @@ def zeichne_flaeche(ax, geom, **kw):
 
 
 def hoehenmass(ax, x, z0, z1, text, seite="links"):
-    ax.annotate("", xy=(x, z0), xytext=(x, z1), arrowprops=dict(arrowstyle="<->", lw=0.7, color="#1f4e79"))
-    dx = -0.25 if seite == "links" else 0.25
+    ax.annotate("", xy=(x, z0), xytext=(x, z1), arrowprops=dict(arrowstyle="<->", lw=0.6, color="#1f4e79",
+                                                                shrinkA=0, shrinkB=0))
+    dx = -0.15 if seite == "links" else 0.15
     ax.text(x + dx, (z0 + z1) / 2.0, text, rotation=90, va="center", ha="right" if seite == "links" else "left",
-            fontsize=7, color="#1f4e79")
+            fontsize=5.6, color="#1f4e79")
 
 
 def breitenmass(ax, z, x0, x1, text, oben=True):
-    ax.annotate("", xy=(x0, z), xytext=(x1, z), arrowprops=dict(arrowstyle="<->", lw=0.7, color="#7a2e0e"))
-    ax.text((x0 + x1) / 2.0, z + (0.18 if oben else -0.18), text, ha="center", va="bottom" if oben else "top",
-            fontsize=7, color="#7a2e0e")
+    ax.annotate("", xy=(x0, z), xytext=(x1, z), arrowprops=dict(arrowstyle="<->", lw=0.6, color="#7a2e0e",
+                                                                shrinkA=0, shrinkB=0))
+    ax.text((x0 + x1) / 2.0, z + (0.12 if oben else -0.12), text, ha="center", va="bottom" if oben else "top",
+            fontsize=5.8, color="#7a2e0e")
 
 
 def hilfslinie(ax, z, x0, x1):
-    ax.plot([x0, x1], [z, z], lw=0.4, ls=":", color="#888888")
+    ax.plot([x0, x1], [z, z], lw=0.35, ls=":", color="#888888")
 
 
 def main():
@@ -68,105 +69,126 @@ def main():
     with open(os.path.join(a["export"], "modell_parameter.json"), encoding="utf-8") as f:
         par = json.load(f)
     mm, P, R = par["modellmasse_mm"], par["parameter"], par["realmasse"]
-    m = trimesh.load(os.path.join(a["export"], par["dateien"]["stl_A"]))
+    m = trimesh.load(os.path.join(a["export"], par["dateien"]["stl"]))
+    s = mm["s"]
 
     fig = plt.figure(figsize=(11.69, 8.27))     # A4 quer
-    ax1 = fig.add_axes([0.03, 0.06, 0.40, 0.86])
-    ax2 = fig.add_axes([0.45, 0.06, 0.22, 0.86])
-    ax3 = fig.add_axes([0.69, 0.06, 0.30, 0.86])
+    ax1 = fig.add_axes([0.02, 0.05, 0.42, 0.88])
+    ax2 = fig.add_axes([0.44, 0.05, 0.20, 0.88])
+    ax3 = fig.add_axes([0.66, 0.05, 0.33, 0.88])
     for ax in (ax1, ax2):
         ax.set_aspect("equal")
-        ax.set_xlim(-10.5, 8.5)
-        ax.set_ylim(-1.5, 37.0)
+        ax.set_ylim(-1.6, 36.2)
         ax.axis("off")
-    ax2.set_xlim(-5.5, 5.5)
+    ax1.set_xlim(-13.5, 9.0)
+    ax2.set_xlim(-7.5, 7.5)
 
-    # --- Ansicht von vorne -----------------------------------------------------
+    # --- Ansicht von vorne (Tür) -----------------------------------------------
     sil = silhouette(m)
-    zeichne_flaeche(ax1, sil, facecolor="#d9dde2", edgecolor="#222222", linewidth=0.6)
-    ax1.set_title("Ansicht von vorne (Maße in mm)", fontsize=10)
-    xl = -6.2
+    zeichne_flaeche(ax1, sil, facecolor="#d9dde2", edgecolor="#222222", linewidth=0.5)
+    ax1.set_title("Ansicht von vorne (Türseite) – Maße in mm", fontsize=10)
     stufen = [
-        (0.0, mm["sockel_h"], f"Sockel {mm['sockel_h']:.2f}"),
-        (mm["sockel_h"], mm["z_gu"], f"{mm['z_gu'] - mm['sockel_h']:.2f}"),
-        (mm["z_gu"], mm["z_go"], f"{mm['z_go'] - mm['z_gu']:.2f}"),
-        (mm["z_go"], mm["z_glas"], f"Laterne {mm['z_glas'] - mm['z_go']:.2f}"),
-        (mm["z_glas"], mm["z_spitze"], f"{mm['z_spitze'] - mm['z_glas']:.2f}"),
-        (mm["z_spitze"], mm["z_oben"], f"Öse+Schaft {mm['z_oben'] - mm['z_spitze']:.2f}"),
+        (0.0, mm["sockel_h"], "Sockel"),
+        (mm["sockel_h"], mm["kappe_ok"], "Platte"),
+        (mm["kappe_ok"], mm["trichter_u"], "Unterbau"),
+        (mm["trichter_u"], mm["galerie1_uk"], "Trichter"),
+        (mm["galerie1_ok"], mm["turm_ok"], "Turm"),
+        (mm["turm_ok"], mm["galerie2_uk"], "Konsolen"),
+        (mm["galerie2_ok"], mm["traufe"], "Laterne"),
+        (mm["traufe"], mm["dach_spitze"], "Dach"),
+        (mm["dach_spitze"], mm["knauf_ok"], "Knauf"),
+        (mm["z_oese_unten"], mm["z_oben"], "Öse"),
     ]
-    for z0, z1, t in stufen:
-        hoehenmass(ax1, xl, z0, z1, t)
-        hilfslinie(ax1, z1, xl, 0)
-    hoehenmass(ax1, -9.3, 0.0, mm["z_oben"], f"Gesamthöhe {mm['z_oben']:.2f} mm")
-    for z, t in ((mm["z_gu"], "OK Boden untere Galerie"), (mm["z_go"], "OK Boden obere Galerie"),
-                 (mm["z_feuer"], "Brennebene (Feuerhöhe)")):
-        ax1.text(4.6, z, f"{t}\nz = {z:.2f}", fontsize=6.5, va="center", color="#444444")
-        hilfslinie(ax1, z, 0, 4.5)
-    breitenmass(ax1, -0.9, -mm["sockel_sw"] / 2, mm["sockel_sw"] / 2, f"SW {mm['sockel_sw']:.2f}", oben=False)
-    breitenmass(ax1, mm["z_gu"] + mm["gel_h"] + 0.35, -mm["deck_sw_u"] / 2, mm["deck_sw_u"] / 2,
-                f"SW {mm['deck_sw_u']:.2f}")
-    breitenmass(ax1, mm["z_go"] + mm["gel_h"] + 0.35, -mm["deck_sw_o"] / 2, mm["deck_sw_o"] / 2,
-                f"SW {mm['deck_sw_o']:.2f}")
+    for i, (z0, z1, name) in enumerate(stufen):
+        x = -9.2 if i % 2 == 0 else -10.6
+        hoehenmass(ax1, x, z0, z1, f"{name} {z1 - z0:.2f}")
+        hilfslinie(ax1, z1, x, -2.0)
+        hilfslinie(ax1, z0, x, -2.0)
+    hoehenmass(ax1, -12.4, 0.0, mm["z_oben"], f"Gesamthöhe {mm['z_oben']:.2f} mm")
+    for z, t in ((mm["galerie1_ok"], "OK Galerieboden unten"), (mm["galerie2_ok"], "OK Galerieboden oben"),
+                 (mm["glas_uk"], "UK Glasband Laterne")):
+        ax1.text(7.2, z, f"{t}\nz = {z:.2f}", fontsize=5.6, va="center", color="#444444")
+        hilfslinie(ax1, z, 0, 7.1)
+    breitenmass(ax1, -0.8, -mm["sockel_sw"] / 2, mm["sockel_sw"] / 2, f"Sockel SW {mm['sockel_sw']:.2f}", oben=False)
+    breitenmass(ax1, mm["galerie1_uk"] - 0.7, -mm["galerie1_d"] / 2, mm["galerie1_d"] / 2,
+                f"Galerie unten Ø {mm['galerie1_d']:.2f}", oben=False)
+    breitenmass(ax1, mm["turm_ok"] - 1.2, -mm["turm_sw_o"] / 2, mm["turm_sw_o"] / 2, f"SW {mm['turm_sw_o']:.2f}")
+    breitenmass(ax1, mm["galerie2_uk"] - 0.55, -mm["galerie2_d"] / 2, mm["galerie2_d"] / 2,
+                f"Ø {mm['galerie2_d']:.2f}", oben=False)
+    breitenmass(ax1, mm["traufe"] - 0.45, -mm["laterne_d"] / 2, mm["laterne_d"] / 2, f"Ø {mm['laterne_d']:.2f}",
+                oben=False)
     breitenmass(ax1, mm["z_oese_mitte"], -mm["oese_aussen"] / 2, mm["oese_aussen"] / 2, "")
-    ax1.text(mm["oese_aussen"] / 2 + 0.3, mm["z_oese_mitte"] + 0.6,
-             f"Öse Ø {mm['oese_aussen']:.1f} außen\nØ {P['OESE_INNEN_D_MM']:.1f} innen", fontsize=6.5,
-             color="#7a2e0e")
+    ax1.text(mm["oese_aussen"] / 2 + 0.3, mm["z_oese_mitte"] + 0.5,
+             f"Öse Ø {mm['oese_aussen']:.1f} außen\nØ {P['OESE_INNEN_D_MM']:.1f} innen", fontsize=5.8, color="#7a2e0e")
+    breite = float(m.extents[0])
 
     # --- Schnitt y = 0 ---------------------------------------------------------
     seg = trimesh.intersections.mesh_plane(m, plane_normal=[0, 1, 0], plane_origin=[0, 0, 0])
-    lines = seg[:, :, [0, 2]]
-    ax2.add_collection(LineCollection(lines, colors="#222222", linewidths=0.6))
+    ax2.add_collection(LineCollection(seg[:, :, [0, 2]], colors="#222222", linewidths=0.5))
     ax2.set_title("Schnitt durch die Achse (y = 0)", fontsize=10)
-    ax2.text(0, -1.0, "massiv – keine Hohlräume", ha="center", fontsize=7, color="#444444")
+    ax2.text(0, -1.2, "massiv – keine Hohlräume", ha="center", fontsize=6.5, color="#444444")
 
     # --- Tabelle Modell ↔ Realität ---------------------------------------------
     ax3.axis("off")
-    s = mm["s"]
+
+    def real(k):
+        e = R[k]
+        st = {"Foto": "F", "belegt": "B", "Schätzung": "S"}[e["status"]]
+        return e["wert_m"], st
+
     zeilen = [
         ("Maßstab", f"1 : {mm['massstab']:.0f}", f"{s:.3f} mm je m"),
-        ("Gesamthöhe Anhänger", f"{mm['z_oben']:.2f}", "inkl. Öse"),
-        ("Sockel H / SW", f"{mm['sockel_h']:.2f} / {mm['sockel_sw']:.2f}",
-         f"{R['SOCKEL_H']['wert_m']:.2f} / {R['SOCKEL_SW']['wert_m']:.2f} m (S)"),
-        ("Turm SW unten / oben", f"{mm['turm_sw_u']:.2f} / {mm['turm_sw_o']:.2f}",
-         f"{R['TURM_SW_UNTEN']['wert_m']:.2f} / {R['TURM_SW_OBEN']['wert_m']:.2f} m (S)"),
-        ("untere Galerie OK", f"{mm['z_gu']:.2f}", f"{R['Z_GALERIE_UNTEN']['wert_m']:.2f} m (S)"),
-        ("obere Galerie OK", f"{mm['z_go']:.2f}", f"{R['Z_GALERIE_OBEN']['wert_m']:.2f} m (A)"),
-        ("Brennebene", f"{mm['z_feuer']:.2f}", f"{R['Z_FEUER']['wert_m']:.2f} m (A)"),
-        ("Geländerhöhe", f"{mm['gel_h']:.2f}", f"{R['GELAENDER_H']['wert_m']:.2f} m (S)"),
-        ("Laterne Ø", f"{2 * mm['lat_r']:.2f}", f"{R['LATERNE_D']['wert_m']:.2f} m (S)"),
-        ("Dach Ø / Spitze", f"{2 * mm['dach_r']:.2f} / {mm['z_spitze']:.2f}",
-         f"{R['DACH_D']['wert_m']:.2f} / {R['Z_DACH_SPITZE']['wert_m']:.2f} m (S)"),
-        ("Mindestmaße (statt maßstäblich)", "", ""),
-        ("Galerieboden", f"{P['BODEN_DICKE_MM']:.2f}", "maßstäbl. ≈ 0,2"),
-        ("Geländerband / Handlauf", f"{P['GELAENDER_DICKE_MM']:.2f} / {P['HANDLAUF_H_MM']:.2f}", "maßstäbl. ≈ 0,1"),
-        ("Eckpfosten (je Seite)", f"{P['PFOSTEN_B_MM']:.2f}", ""),
-        ("Kragarme", f"{P['KRAGARM_DICKE_MM']:.2f}", f"{P['KRAGARM_ANZAHL']} Stück, 45°"),
-        ("Laternensprossen", f"{P['SPROSSEN_B_MM']:.2f}", f"Scheiben −{P['SCHEIBEN_TIEFE_MM']:.2f}"),
-        ("Traufe", f"{P['TRAUFE_DICKE_MM']:.2f}", "dünnste Stelle"),
-        ("Öse innen / Ring", f"{P['OESE_INNEN_D_MM']:.2f} / {P['OESE_RING_RADIAL_MM']:.2f}×{P['OESE_RING_AXIAL_MM']:.2f}", ""),
-        ("Schaft Ø", f"{P['HALS_D_MM']:.2f}", "ersetzt Wetterfahne"),
+        ("Gesamthöhe / größte Breite", f"{mm['z_oben']:.2f} / {breite:.2f}", "inkl. Öse"),
     ]
-    y = 0.97
-    ax3.text(0.0, y, "Bauteil", fontsize=8, weight="bold", transform=ax3.transAxes)
-    ax3.text(0.47, y, "Modell [mm]", fontsize=8, weight="bold", transform=ax3.transAxes)
-    ax3.text(0.72, y, "Realität / Hinweis", fontsize=8, weight="bold", transform=ax3.transAxes)
+    for titel, k_mm, k_real in (("Sockel Höhe", "sockel_h", "SOCKEL_H"), ("Sockel SW", "sockel_sw", "SOCKEL_SW"),
+                                ("Unterbau SW unten", "unterbau_sw_u", "UNTERBAU_SW_U"),
+                                ("Galerie unten Ø", "galerie1_d", "GALERIE1_D"),
+                                ("Galerie unten OK", "galerie1_ok", "GALERIE1_OK"),
+                                ("Turm SW unten", "turm_sw_u", "TURM_SW_U"), ("Turm SW oben", "turm_sw_o", "TURM_SW_O"),
+                                ("Ziffer 1 Höhe", None, None),
+                                ("Galerie oben Ø", "galerie2_d", "GALERIE2_D"),
+                                ("Galerie oben OK", "galerie2_ok", "GALERIE2_OK"),
+                                ("Laterne Ø", "laterne_d", "LATERNE_D"), ("Traufe", "traufe", "TRAUFE"),
+                                ("Dachspitze", "dach_spitze", "DACH_SPITZE"), ("Knauf OK", "knauf_ok", "KNAUF_OK")):
+        if k_mm is None:
+            h = mm["eins_ok"] - mm["eins_uk"]
+            zeilen.append((titel, f"{h:.2f}", f"{h / s:.2f} m (F)"))
+            continue
+        w, st = real(k_real)
+        zeilen.append((titel, f"{mm[k_mm]:.2f}", f"{w:.2f} m ({st})"))
+    zeilen += [
+        ("Fertigungsmaße (statt maßstäblich)", "", ""),
+        ("Geländerholme H × T", f"{P['HOLM1_H_MM']:.2f} × {P['HOLM1_T_MM']:.2f}", "maßstäblich ≈ 0,13"),
+        ("Pfosten unten / oben", f"{P['PFOSTEN1_MM']:.2f} / {P['PFOSTEN2_MM']:.2f}", "je 8, an den Ecken"),
+        ("Konsolen (32) Dicke", f"{P['KONSOLE_DICKE_MM']:.2f}", "maßstäblich ≈ 0,18"),
+        ("Laternensprossen B", f"{P['SPROSSE_LAT_B_MM']:.2f}", "16 Stück (8 V)"),
+        ("Mauerfugen B × T", f"{P['FUGE_BREITE_MM']:.2f} × {P['FUGE_TIEFE_MM']:.2f}", "graviert"),
+        ("Ziffer 1 Tiefe", f"{P['EINS_TIEFE_MM']:.2f}", "graviert"),
+        ("Knauf min. Ø", f"{2 * P['KNAUF_R_MIN_MM']:.2f}", "trägt die Öse"),
+        ("Öse innen / Ring", f"{P['OESE_INNEN_D_MM']:.2f} / {P['OESE_RING_RADIAL_MM']:.2f}×"
+                             f"{P['OESE_RING_AXIAL_MM']:.2f}", "ersetzt Wetterfahne"),
+    ]
+    y = 0.975
+    ax3.text(0.0, y, "Bauteil", fontsize=7.5, weight="bold", transform=ax3.transAxes)
+    ax3.text(0.50, y, "Modell [mm]", fontsize=7.5, weight="bold", transform=ax3.transAxes)
+    ax3.text(0.75, y, "Original", fontsize=7.5, weight="bold", transform=ax3.transAxes)
     for (t1, t2, t3) in zeilen:
-        y -= 0.042
+        y -= 0.034
         fett = t2 == "" and t3 == ""
-        ax3.text(0.0, y, t1, fontsize=7.5, transform=ax3.transAxes, weight="bold" if fett else "normal")
-        ax3.text(0.47, y, t2, fontsize=7.5, transform=ax3.transAxes)
-        ax3.text(0.72, y, t3, fontsize=7, transform=ax3.transAxes, color="#444444")
-    y -= 0.07
-    ax3.text(0.0, y, "(S) = Schätzung, (A) = aus belegten Werten abgeleitet.\n"
-                     "Belegt: 13,40 m Höhe über Molendeck, achteckiger Granitsockel,\n"
-                     "achteckiger verjüngter Gussturm, 2 Galerien, runde Laterne,\n"
-                     "helmförmiges Kupferdach, Wetterfahne 1895.\n"
-                     "SW = Schlüsselweite (Abstand gegenüberliegender Achteckseiten).",
-             fontsize=7, transform=ax3.transAxes, va="top", color="#333333")
-    fig.suptitle("Mole 1 Brunsbüttel – Schlüsselanhänger Variante A (3D) – Maßzeichnung", fontsize=12)
+        if fett:
+            y -= 0.012
+        ax3.text(0.0, y, t1, fontsize=7, transform=ax3.transAxes, weight="bold" if fett else "normal")
+        ax3.text(0.50, y, t2, fontsize=7, transform=ax3.transAxes)
+        ax3.text(0.75, y, t3, fontsize=6.6, transform=ax3.transAxes, color="#444444")
+    y -= 0.06
+    ax3.text(0.0, y, "(F) = an Referenzfotos gemessen (Maßstab über 13,40 m Höhe),\n"
+                     "(B) = belegt, (S) = Schätzung. SW = Schlüsselweite des Achtecks.\n"
+                     "Ausrichtung: Tür vorne (−Y), „1“ rechts (+X), Leiter +45°.",
+             fontsize=6.6, transform=ax3.transAxes, va="top", color="#333333")
+    fig.suptitle("Mole 1 Brunsbüttel – Schmuck-Schlüsselanhänger (3D-Miniatur) – Maßzeichnung", fontsize=12)
     os.makedirs(a["bilder"], exist_ok=True)
     for ext in ("png", "pdf"):
-        fig.savefig(os.path.join(a["bilder"], f"Masszeichnung_Variante_A.{ext}"), dpi=200)
+        fig.savefig(os.path.join(a["bilder"], f"Masszeichnung.{ext}"), dpi=200)
     print("Maßzeichnung gespeichert")
 
 

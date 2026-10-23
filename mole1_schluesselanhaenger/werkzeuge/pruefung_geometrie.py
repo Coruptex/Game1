@@ -10,7 +10,7 @@ schwebende Inseln für die Druckausrichtung "aufrecht", Öse (Lochweite, Quersch
 Volumen und Gewicht.
 
 Aufruf: python pruefung_geometrie.py --export <export-ordner> --out <pruef-ordner>
-(benötigt trimesh, shapely, numpy, rtree; für den Bauteilabgleich zusätzlich das pip-Paket bpy)
+(benötigt trimesh, shapely, numpy, rtree, embreex; für den Bauteilabgleich zusätzlich das pip-Paket bpy)
 """
 import json
 import math
@@ -74,6 +74,18 @@ def grundpruefung(m):
 GEGENUEBER_COS = 0.7   # Gegenfläche gilt als "gegenüber", wenn ihre Normale höchstens ~45° abweicht
 
 
+def strahlen(m, start, richtung, block=20000):
+    """Erster Treffer je Strahl, blockweise. Mit dem Paket "embreex" nutzt trimesh Embree (schnell,
+    wenig Speicher); ohne Embree braucht die Strahlsuche bei diesem Modell sehr viel Arbeitsspeicher."""
+    locs, rays, tris = [], [], []
+    for i in range(0, len(start), block):
+        loc, ir, it = m.ray.intersects_location(start[i:i + block], richtung[i:i + block], multiple_hits=False)
+        locs.append(loc)
+        rays.append(ir + i)
+        tris.append(it)
+    return np.concatenate(locs), np.concatenate(rays), np.concatenate(tris)
+
+
 def wandstaerken(m, n=60000, seed=1):
     """Lokale Wandstärke: Strahl vom Oberflächenpunkt nach innen bis zur Gegenseite.
     Gewertet wird nur, wenn die Austrittsfläche der Startfläche gegenüberliegt (echte Wand);
@@ -81,7 +93,7 @@ def wandstaerken(m, n=60000, seed=1):
     pts, fid = trimesh.sample.sample_surface_even(m, n, seed=seed)
     nrm = m.face_normals[fid]
     start = pts - nrm * 1e-4
-    loc, idx_ray, idx_tri = m.ray.intersects_location(start, -nrm, multiple_hits=False)
+    loc, idx_ray, idx_tri = strahlen(m, start, -nrm)
     d = np.full(len(pts), np.nan)
     gegen = (m.face_normals[idx_tri] * nrm[idx_ray]).sum(axis=1) < -GEGENUEBER_COS
     d[idx_ray[gegen]] = np.linalg.norm(loc[gegen] - start[idx_ray[gegen]], axis=1)
@@ -97,7 +109,7 @@ def spalte(m, n=60000, seed=2):
     pts, fid = trimesh.sample.sample_surface_even(m, n, seed=seed)
     nrm = m.face_normals[fid]
     start = pts + nrm * 1e-4
-    loc, idx_ray, idx_tri = m.ray.intersects_location(start, nrm, multiple_hits=False)
+    loc, idx_ray, idx_tri = strahlen(m, start, nrm)
     d = np.full(len(pts), np.inf)
     gegen = (m.face_normals[idx_tri] * nrm[idx_ray]).sum(axis=1) < -GEGENUEBER_COS
     d[idx_ray[gegen]] = np.linalg.norm(loc[gegen] - start[idx_ray[gegen]], axis=1)
@@ -106,16 +118,28 @@ def spalte(m, n=60000, seed=2):
     return pts, d, roh
 
 
-def zone(z, mm):
-    """Ordnet eine Höhe (mm) dem Bauteil zu."""
+def zone(p, mm):
+    """Ordnet einen Punkt (x, y, z in mm) dem Bauteil zu (Geländer über den Radius getrennt)."""
+    x, y, z = p
+    r = math.hypot(x, y)
+    s = mm["s"]
+    if mm["galerie1_ok"] < z < mm["galerie1_ok"] + 0.95 * s and r > mm["galerie1_d"] / 2 - 0.5:
+        return "Geländer unten"
+    if mm["galerie2_ok"] < z < mm["galerie2_ok"] + 0.85 * s and r > mm["galerie2_d"] / 2 - 0.5:
+        return "Geländer oben"
     grenzen = [
-        (0.0, mm["sockel_h"], "Granitsockel"),
-        (mm["sockel_h"], mm["z_gu"] - 0.6 - 2.0, "Turmschaft unten"),
-        (mm["z_gu"] - 0.6 - 2.0, mm["z_gu"] + mm["gel_h"] + 0.05, "untere Galerie (Kragarme/Boden/Geländer)"),
-        (mm["z_gu"] + mm["gel_h"] + 0.05, mm["z_go"] - 0.6 - 1.7, "Turmschaft oben"),
-        (mm["z_go"] - 0.6 - 1.7, mm["z_go"] + mm["gel_h"] + 0.05, "obere Galerie (Kragarme/Boden/Geländer)"),
-        (mm["z_go"] + mm["gel_h"] + 0.05, mm["z_glas"] + 0.05, "Laterne"),
-        (mm["z_glas"] + 0.05, mm["z_oese_unten"], "Dach/Kuppel/Schaft"),
+        (-1.0, mm["sockel_h"], "Granitsockel (Mauerwerk, Tür)"),
+        (mm["sockel_h"], mm["kappe_ok"], "Abdeckplatte"),
+        (mm["kappe_ok"], mm["trichter_u"], "Unterbau (Leiter, Fenster)"),
+        (mm["trichter_u"], mm["galerie1_uk"], "Trichter"),
+        (mm["galerie1_uk"], mm["galerie1_ok"], "Galerieboden unten"),
+        (mm["galerie1_ok"], mm["turm_ok"], "weißer Turm"),
+        (mm["turm_ok"], mm["galerie2_uk"], "Konsolenkranz"),
+        (mm["galerie2_uk"], mm["galerie2_ok"], "Galerieboden oben"),
+        (mm["galerie2_ok"], mm["glas_uk"], "Laterne unten"),
+        (mm["glas_uk"], mm["traufe"], "Laterne Glasband (Sprossen)"),
+        (mm["traufe"], mm["dach_spitze"], "Glockenhaube"),
+        (mm["dach_spitze"], mm["z_oese_unten"], "Knauf"),
         (mm["z_oese_unten"], 1e9, "Öse"),
     ]
     for a, b, name in grenzen:
@@ -126,10 +150,10 @@ def zone(z, mm):
 
 def statistik_nach_zone(pts, werte, mm, grenzen_mm):
     out = {}
-    for z, w in zip(pts[:, 2], werte):
+    for p, w in zip(pts, werte):
         if not np.isfinite(w):
             continue
-        name = zone(z, mm)
+        name = zone(p, mm)
         e = out.setdefault(name, {"n": 0, "min": 1e9, **{f"anteil_unter_{g}": 0 for g in grenzen_mm}})
         e["n"] += 1
         e["min"] = min(e["min"], float(w))
@@ -187,7 +211,7 @@ def querschnitt(m, z, normal=(0, 0, 1), nur_ueber_z=None):
 
 
 def oesen_pruefung(m, mm, prm):
-    """Lochweite der Öse und Querschnitte im Kraftfluss Öse → Schaft → Kuppel."""
+    """Lochweite der Öse und Querschnitte im Kraftfluss Öse → Knauf → Dach."""
     zc = mm["z_oese_mitte"]
     # Lochweite: Strahlen in der Ösenebene (y = 0) vom Mittelpunkt nach außen
     winkel = np.radians(np.arange(0, 360, 5))
@@ -196,9 +220,11 @@ def oesen_pruefung(m, mm, prm):
     loc, idx, _ = m.ray.intersects_location(start, richt, multiple_hits=False)
     r = np.linalg.norm(loc - start[idx], axis=1)
     loch_mitte_frei = not bool(m.contains([[0.0, 0.0, zc]])[0])
-    # Querschnitte: Schaft (waagerecht) und Ringflanken (waagerechter Schnitt durch Ösenmitte)
-    z_schaft = (mm["z_spitze"] + mm["z_oese_unten"]) / 2.0
-    a_schaft, _ = querschnitt(m, z_schaft)
+    # Querschnitte: Knauf/Dachspitze (waagerecht, kleinster Wert) und Ringflanken (Schnitt durch Ösenmitte)
+    zs = np.linspace(mm["dach_spitze"] - 0.6, mm["z_oese_unten"] - 0.02, 40)
+    flaechen = [querschnitt(m, z)[0] for z in zs]
+    i_min = int(np.argmin(flaechen))
+    z_schaft, a_schaft = float(zs[i_min]), float(flaechen[i_min])
     a_flanken, n_flanken = querschnitt(m, zc)
     # senkrechter Schnitt x = 0, nur oberer Ringbogen (dort liegt der Schlüsselring an)
     a_scheitel, _ = querschnitt(m, zc, normal=(1, 0, 0), nur_ueber_z=zc)
@@ -210,22 +236,16 @@ def oesen_pruefung(m, mm, prm):
         "aussen_d_mm": round(mm["oese_aussen"], 3),
         "ring_radial_mm": prm["OESE_RING_RADIAL_MM"],
         "ring_axial_mm": prm["OESE_RING_AXIAL_MM"],
-        "querschnitt_schaft_mm2": round(a_schaft, 3),
-        "z_schaft_schnitt_mm": round(z_schaft, 3),
+        "querschnitt_kraftfluss_min_mm2": round(a_schaft, 3),
+        "z_querschnitt_min_mm": round(z_schaft, 3),
+        "querschnitt_kraftfluss_kreis_aequivalent_d_mm": round(2 * math.sqrt(a_schaft / math.pi), 3),
         "querschnitt_ringflanken_gesamt_mm2": round(a_flanken, 3),
         "ringflanken_anzahl": n_flanken,
         "querschnitt_ringscheitel_oben_mm2": round(a_scheitel, 3),
     }
 
 
-def bauteile_aus_blend(blend):
-    """Netze der Einzelbauteile aus der .blend lesen (für den Vollständigkeitsabgleich)."""
-    try:
-        import bpy
-    except ImportError:
-        return None
-    bpy.ops.wm.open_mainfile(filepath=blend)
-    coll = bpy.data.collections.get("01_Bauteile")
+def _netze(coll):
     teile = {}
     for ob in coll.objects:
         me = ob.data
@@ -236,8 +256,21 @@ def bauteile_aus_blend(blend):
     return teile
 
 
-def vollstaendigkeit(final, teile, n=200, seed=3):
-    """Punkte aus dem Inneren jedes Bauteils müssen im Endkörper liegen."""
+def bauteile_aus_blend(blend):
+    """Netze der Einzelbauteile und der Gravurkörper aus der .blend lesen (Vollständigkeitsabgleich)."""
+    try:
+        import bpy
+    except ImportError:
+        return None, None
+    bpy.ops.wm.open_mainfile(filepath=blend)
+    teile = _netze(bpy.data.collections["01_Bauteile"])
+    grav = bpy.data.collections.get("Hilf_Gravuren_Aussparungen")
+    return teile, (list(_netze(grav).values()) if grav else [])
+
+
+def vollstaendigkeit(final, teile, gravuren, n=200, seed=3):
+    """Punkte aus dem Inneren jedes Bauteils müssen im Endkörper liegen – außer sie liegen in einer
+    gewollten Gravur/Aussparung (Fugen, Fenster, "1", Tür, Schlitze)."""
     rng = np.random.default_rng(seed)
     ergebnis = {}
     for name, t in sorted(teile.items()):
@@ -246,24 +279,47 @@ def vollstaendigkeit(final, teile, n=200, seed=3):
             continue
         lo, hi = t.bounds
         kand = rng.uniform(lo, hi, size=(n * 15, 3))
-        innen = kand[t.contains(kand)][:n]
+        innen = kand[t.contains(kand)]
+        graviert = np.zeros(len(innen), dtype=bool)
+        for g in gravuren:
+            lo_g, hi_g = g.bounds
+            nah = np.all((innen >= lo_g) & (innen <= hi_g), axis=1)
+            if nah.any():
+                graviert[nah] |= g.contains(innen[nah])
+        innen = innen[~graviert][:n]
         if len(innen) == 0:
             ergebnis[name] = {"stichproben": 0}
             continue
         drin = final.contains(innen)
-        ergebnis[name] = {"stichproben": int(len(innen)), "anteil_im_endkoerper": round(float(drin.mean()), 4)}
+        ergebnis[name] = {"stichproben": int(len(innen)), "anteil_im_endkoerper": round(float(drin.mean()), 4),
+                          "stichproben_in_gravur_verworfen": int(graviert.sum())}
     return ergebnis
 
 
-def durchbrueche(final, mm, prm):
-    """Mittelpunkte der Geländeröffnungen und das Ösenloch müssen frei sein (nicht im Körper)."""
+def durchbrueche(final, mm, prm, real):
+    """Mitten aller Geländeröffnungen, der Konsolenzwischenräume und das Ösenloch müssen frei sein."""
     tests = {}
-    t_g = prm["GELAENDER_DICKE_MM"]
-    for key, z, sw in (("unten", mm["z_gu"], mm["deck_sw_u"]), ("oben", mm["z_go"], mm["deck_sw_o"])):
-        zm = z + (mm["gel_h"] - prm["HANDLAUF_H_MM"]) / 2.0
-        r = sw / 2.0 - t_g / 2.0
-        pkt = [[r * math.cos(w), r * math.sin(w), zm] for w in np.radians(np.arange(0, 360, 45))]
-        tests[f"Geländeröffnungen {key} (8 Stück) frei"] = bool(not final.contains(pkt).any())
+    s = mm["s"]
+    feld = np.radians(np.arange(0, 360, 45))            # Feldmitten zwischen den Eckpfosten
+    for key, z_ok, d, holme, fuss in (("unten", mm["galerie1_ok"], mm["galerie1_d"],
+                                       real["GELAENDER1_HOLME"]["wert_m"], False),
+                                      ("oben", mm["galerie2_ok"], mm["galerie2_d"],
+                                       real["GELAENDER2_HOLME"]["wert_m"], True)):
+        r = d / 2.0 - 0.05
+        hoehen = [0.0] + [h * s for h in holme]
+        offen = []
+        for i in range(len(hoehen) - 1):
+            if fuss and i == 0:
+                continue                                  # unterster Holm oben als Fußleiste ausgeführt
+            zm = z_ok + (hoehen[i] + hoehen[i + 1]) / 2.0
+            pkt = [[r * math.cos(w), r * math.sin(w), zm] for w in feld]
+            offen.append(bool(not final.contains(pkt).any()))
+        tests[f"Geländer {key}: {len(offen)} Öffnungsreihen × 8 Felder frei"] = all(offen)
+    n = prm["KONSOLEN_ANZAHL"]
+    zk = mm["turm_ok"] + 0.75 * (mm["galerie2_uk"] - mm["turm_ok"])
+    rk = mm["konsole_r0"] + 0.6 * mm["konsole_radius"]
+    pkt = [[rk * math.cos(w), rk * math.sin(w), zk] for w in 2 * math.pi * (np.arange(n) + 0.5) / n]
+    tests[f"Konsolenzwischenräume ({n}) frei"] = bool(not final.contains(pkt).any())
     tests["Ösenloch frei"] = bool(not final.contains([[0, 0, mm["z_oese_mitte"]]])[0])
     return tests
 
@@ -274,62 +330,60 @@ def main():
     with open(os.path.join(a["export"], "modell_parameter.json"), encoding="utf-8") as f:
         par = json.load(f)
     mm, prm = par["modellmasse_mm"], par["parameter"]
+    datei = par["dateien"].get("stl") or par["dateien"]["stl_A"]
 
-    bericht = {"quelle": par["dateien"], "massstab": par["massstab"]}
-    dateien = {"A": par["dateien"]["stl_A"]}
+    m = lade(os.path.join(a["export"], datei))
+    r = {"datei": datei, "massstab": par["massstab"], "grund": grundpruefung(m)}
+    r["gewicht_g"] = {k: round(m.volume / 1000.0 * d, 2) for k, d in DICHTE.items()}
 
-    for var, datei in dateien.items():
-        m = lade(os.path.join(a["export"], datei))
-        r = {"datei": datei, "grund": grundpruefung(m)}
-        r["gewicht_g"] = {k: round(m.volume / 1000.0 * d, 2) for k, d in DICHTE.items()}
-
-        pts, d, d_roh = wandstaerken(m)
-        r["wandstaerke"] = {
-            "methode": "Raycasting nach innen, nur gegenüberliegende Austrittsfläche (±45°) gewertet",
-            "min_mm": round(float(np.nanmin(d)), 3),
-            "p01_mm": round(float(np.nanpercentile(d, 1)), 3),
-            "p05_mm": round(float(np.nanpercentile(d, 5)), 3),
-            "median_mm": round(float(np.nanmedian(d)), 3),
-            "gewertete_messpunkte": int(np.isfinite(d).sum()),
-            "kantenartefakte_verworfen": int(np.isfinite(d_roh).sum() - np.isfinite(d).sum()),
-            "roh_min_mm_inkl_kanten": round(float(np.nanmin(d_roh)), 3),
-            "nach_zone": statistik_nach_zone(pts, d, mm, (0.4, 0.5, 0.6)),
-        }
-        pts_g, g, g_roh = spalte(m)
-        fin = np.isfinite(g)
-        r["spalte"] = {
-            "methode": "Raycasting nach außen, nur gegenüberliegende Fläche (±45°) gewertet",
-            "min_mm": round(float(g[fin].min()), 3) if fin.any() else None,
-            "roh_min_mm_inkl_innenecken": round(float(g_roh[np.isfinite(g_roh)].min()), 3),
-            "nach_zone": statistik_nach_zone(pts_g[fin], g[fin], mm, (0.5, 0.8, 1.0)),
-        }
-        if var == "A":
-            unten, zmin = ueberhaenge(m)
-            fl = m.area_faces
-            flz = Counter()
-            for z, a_ in zip(zmin[unten], fl[unten]):
-                flz[zone(z, mm)] += a_
-            r["ueberhaenge_aufrecht_45grad"] = {
-                "flaeche_mm2": round(float(fl[unten].sum()), 3),
-                "anteil_an_oberflaeche": round(float(fl[unten].sum() / fl.sum()), 4),
-                "nach_zone": {k: round(v, 3) for k, v in flz.items()},
-            }
-            inseln_befund, n_schichten = inseln(m)
-            r["schwebende_inseln_aufrecht"] = {"schichten_0_08mm": n_schichten, "befunde": inseln_befund}
-            r["oese"] = oesen_pruefung(m, mm, prm)
-            r["durchbrueche"] = durchbrueche(m, mm, prm)
-            fuss, _ = querschnitt(m, 0.04)
-            r["druck_standflaeche_mm2"] = round(fuss, 3)
-            r["schlankheit_hoehe_zu_fussbreite"] = round(m.extents[2] / math.sqrt(max(fuss, 1e-9)), 2)
-            blend = os.path.join(a["export"], par["dateien"]["blend"])
-            teile = bauteile_aus_blend(blend) if os.path.exists(blend) else None
-            if teile:
-                r["vollstaendigkeit_bauteile"] = vollstaendigkeit(m, teile)
-        bericht[f"variante_{var}"] = r
+    r["strahl_backend"] = type(m.ray).__module__
+    pts, d, d_roh = wandstaerken(m)
+    r["wandstaerke"] = {
+        "methode": "Raycasting nach innen, nur gegenüberliegende Austrittsfläche (±45°) gewertet",
+        "min_mm": round(float(np.nanmin(d)), 3),
+        "p01_mm": round(float(np.nanpercentile(d, 1)), 3),
+        "p05_mm": round(float(np.nanpercentile(d, 5)), 3),
+        "median_mm": round(float(np.nanmedian(d)), 3),
+        "gewertete_messpunkte": int(np.isfinite(d).sum()),
+        "kantenartefakte_verworfen": int(np.isfinite(d_roh).sum() - np.isfinite(d).sum()),
+        "roh_min_mm_inkl_kanten": round(float(np.nanmin(d_roh)), 3),
+        "nach_zone": statistik_nach_zone(pts, d, mm, (0.25, 0.3, 0.4, 0.5)),
+    }
+    pts_g, g, g_roh = spalte(m)
+    fin = np.isfinite(g)
+    r["spalte"] = {
+        "methode": "Raycasting nach außen, nur gegenüberliegende Fläche (±45°) gewertet",
+        "min_mm": round(float(g[fin].min()), 3) if fin.any() else None,
+        "roh_min_mm_inkl_innenecken": round(float(g_roh[np.isfinite(g_roh)].min()), 3),
+        "nach_zone": statistik_nach_zone(pts_g[fin], g[fin], mm, (0.2, 0.3, 0.4, 0.5)),
+    }
+    unten, _ = ueberhaenge(m)
+    fl = m.area_faces
+    flz = Counter()
+    for p, a_ in zip(m.triangles_center[unten], fl[unten]):
+        flz[zone(p, mm)] += a_
+    r["ueberhaenge_aufrecht_45grad"] = {
+        "flaeche_mm2": round(float(fl[unten].sum()), 3),
+        "anteil_an_oberflaeche": round(float(fl[unten].sum() / fl.sum()), 4),
+        "nach_zone": {k: round(v, 3) for k, v in flz.most_common()},
+    }
+    inseln_befund, n_schichten = inseln(m)
+    r["schwebende_inseln_aufrecht"] = {"schichten_0_08mm": n_schichten, "anzahl": len(inseln_befund),
+                                       "befunde": inseln_befund[:60]}
+    r["oese"] = oesen_pruefung(m, mm, prm)
+    r["durchbrueche"] = durchbrueche(m, mm, prm, par["realmasse"])
+    fuss, _ = querschnitt(m, 0.04)
+    r["druck_standflaeche_mm2"] = round(fuss, 3)
+    r["schlankheit_hoehe_zu_fussbreite"] = round(m.extents[2] / math.sqrt(max(fuss, 1e-9)), 2)
+    blend = os.path.join(a["export"], par["dateien"]["blend"])
+    teile, gravuren = bauteile_aus_blend(blend) if os.path.exists(blend) else (None, None)
+    if teile:
+        r["vollstaendigkeit_bauteile"] = vollstaendigkeit(m, teile, gravuren)
 
     with open(os.path.join(a["out"], "pruefbericht.json"), "w", encoding="utf-8") as f:
-        json.dump(bericht, f, ensure_ascii=False, indent=2)
-    print(json.dumps(bericht, ensure_ascii=False, indent=1)[:6000])
+        json.dump(r, f, ensure_ascii=False, indent=2)
+    print(json.dumps({k: v for k, v in r.items() if k != "vollstaendigkeit_bauteile"},
+                     ensure_ascii=False, indent=1)[:8000])
 
 
 if __name__ == "__main__":

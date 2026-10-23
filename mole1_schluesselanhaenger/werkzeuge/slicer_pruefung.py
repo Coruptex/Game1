@@ -109,6 +109,22 @@ def gcode_lesen(pfad):
     return bahnen, laengen, meta
 
 
+def ring_bahnen(bahnen, z_soll, r0, r1, mitte=(128.0, 128.0)):
+    """Extrusionslänge (mm) einer Schicht im Kreisring r0..r1 um die Bauteilachse."""
+    zs = sorted({z for (z, _) in bahnen})
+    z = min(zs, key=lambda v: abs(v - z_soll))
+    laenge = 0.0
+    for (zz, _), segs in bahnen.items():
+        if zz != z:
+            continue
+        for (a, b) in segs:
+            ra = ((a[0] - mitte[0]) ** 2 + (a[1] - mitte[1]) ** 2) ** 0.5
+            rb = ((b[0] - mitte[0]) ** 2 + (b[1] - mitte[1]) ** 2) ** 0.5
+            if r0 <= ra <= r1 and r0 <= rb <= r1:
+                laenge += ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5
+    return round(z, 3), round(laenge, 2)
+
+
 def zone_typen(bahnen, zonen):
     """Bahntypen je Höhenzone (z. B. Überhänge an den Galerien)."""
     out = defaultdict(Counter)
@@ -136,8 +152,8 @@ def schichten_zeichnen(bahnen, ziele, pfad, titel):
             typen.add(typ)
             ax.add_collection(LineCollection(segs, colors=FARBEN.get(typ, "k"), linewidths=1.2))
         ax.set_aspect("equal")
-        ax.set_xlim(123.5, 132.5)
-        ax.set_ylim(123.5, 132.5)
+        ax.set_xlim(120.5, 135.5)
+        ax.set_ylim(120.5, 135.5)
         ax.set_title(f"{name}\nz = {z:.2f} mm", fontsize=8)
         ax.tick_params(labelsize=6)
     handles = [plt.Line2D([], [], color=c, lw=2, label=t) for t, c in FARBEN.items()]
@@ -163,7 +179,7 @@ def main():
                                                  "support_material_threshold": "45",
                                                  "dont_support_bridges": "1"})):
         ini = os.path.join(a["out"], f"profil_{name}.ini")
-        gc = os.path.join(a["out"], f"mole1_A_{name}.gcode")
+        gc = os.path.join(a["out"], f"mole1_{name}.gcode")
         profil_schreiben(ini, extra)
         code, log = slicen(a["stl"], ini, gc)
         r = {"returncode": code}
@@ -181,20 +197,34 @@ def main():
         r["filament_g"] = meta.get("total filament used [g]") or meta.get("filament used [g]")
         r["filament_mm"] = meta.get("filament used [mm]")
         if mm:
-            zonen = [("Sockel", 0, mm["sockel_h"]),
-                     ("Schaft unten", mm["sockel_h"], mm["z_gu"] - 2.4),
-                     ("untere Galerie", mm["z_gu"] - 2.4, mm["z_gu"] + mm["gel_h"] + 0.1),
-                     ("Schaft oben", mm["z_gu"] + mm["gel_h"] + 0.1, mm["z_go"] - 2.0),
-                     ("obere Galerie", mm["z_go"] - 2.0, mm["z_go"] + mm["gel_h"] + 0.1),
-                     ("Laterne+Dach", mm["z_go"] + mm["gel_h"] + 0.1, mm["z_spitze"] + 0.3),
-                     ("Schaft+Öse", mm["z_spitze"] + 0.3, 99)]
+            s = mm["s"]
+            zonen = [("Sockel+Platte", 0, mm["kappe_ok"]),
+                     ("Unterbau", mm["kappe_ok"], mm["trichter_u"]),
+                     ("Trichter+Galerie unten", mm["trichter_u"], mm["galerie1_ok"] + 0.9 * s),
+                     ("Turm", mm["galerie1_ok"] + 0.9 * s, mm["turm_ok"]),
+                     ("Konsolen+Galerie oben", mm["turm_ok"], mm["galerie2_ok"] + 0.8 * s),
+                     ("Laterne+Dach", mm["galerie2_ok"] + 0.8 * s, mm["dach_spitze"]),
+                     ("Knauf+Öse", mm["dach_spitze"], 99)]
             r["bahnen_nach_zone_mm"] = zone_typen(bahnen, zonen)
+            # Feinteile: Werden Holme, Pfosten und Konsolen überhaupt als Bahnen erzeugt?
+            ru, ro = mm["galerie1_d"] / 2.0, mm["galerie2_d"] / 2.0
+            r["feinteile_bahnlaenge_je_schicht_mm"] = {
+                f"{titel} (z={z_ist})": laenge for titel, z_ist, laenge in (
+                    (t,) + ring_bahnen(bahnen, z, a0, a1) for t, z, a0, a1 in (
+                        ("Geländer unten: Holm 2", mm["galerie1_ok"] + 0.50 * s, ru - 0.5, ru + 0.3),
+                        ("Geländer unten: nur Pfosten (zwischen Holmen)", mm["galerie1_ok"] + 0.36 * s, ru - 0.5,
+                         ru + 0.3),
+                        ("Geländer oben: Holm 3", mm["galerie2_ok"] + 0.50 * s, ro - 0.5, ro + 0.3),
+                        ("Geländer oben: nur Pfosten (zwischen Holmen)", mm["galerie2_ok"] + 0.40 * s, ro - 0.5,
+                         ro + 0.3),
+                        ("Konsolenkranz (32 Konsolen)", mm["turm_ok"] + 0.40 * s, mm["turm_sw_o"] / 2 + 0.05,
+                         ro - 0.1)))}
             if name.startswith("ohne_stuetzen"):
-                ziele = [("Geländeröffnung unten", mm["z_gu"] + 0.8),
-                         ("Handlauf unten", mm["z_gu"] + mm["gel_h"] - 0.3),
-                         ("Galerieboden oben", mm["z_go"] - 0.3),
-                         ("Geländeröffnung oben", mm["z_go"] + 0.8),
-                         ("Laternenverglasung", (mm["z_bruest"] + mm["z_glas"]) / 2),
+                ziele = [("Holm unten", mm["galerie1_ok"] + 0.50 * s),
+                         ("Pfosten unten (zw. Holmen)", mm["galerie1_ok"] + 0.36 * s),
+                         ("Konsolen", mm["turm_ok"] + 0.4 * s),
+                         ("Holm oben", mm["galerie2_ok"] + 0.50 * s),
+                         ("Laternensprossen", (mm["glas_uk"] + mm["glas_ok"]) / 2),
                          ("Ösenmitte", mm["z_oese_mitte"])]
                 gen = "Arachne" if name == "ohne_stuetzen" else "Classic"
                 schichten_zeichnen(bahnen, ziele, os.path.join(a["out"], f"Slicer_Schichten_Details_{gen}.png"),
