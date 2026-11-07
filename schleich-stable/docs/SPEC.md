@@ -57,7 +57,7 @@ and the cobbled aisle.
 * A timber-frame **post-and-panel system** replaces large moulded shells. 16 mm posts are
   printed upright; panels are printed flat and slide into grooves.
 * The central roof is **45 deg** instead of about 34 deg. At 45 deg it prints in one piece
-  standing on its eaves, with no support.
+  (the whole length of the aisle) standing on its eaves, with no support.
 * The wood grain is replaced by crisp V-grooved boards (fine grain does not print well at
   0.4 mm). Ball finials were left out (small and fragile).
 * Every hinge uses a full-length separate pin and robust knuckles, not moulded clips.
@@ -83,13 +83,13 @@ The design horse is a parameter (`horse_l`, `horse_w`, `horse_h` in `config.scad
 | 2 | Attractive, coherent | Reference-inspired facade, textures, black trim by filament change |
 | 3 | Sturdy | 16 mm posts in 6-28 mm deep sockets; 2.8 mm panels held on three or four edges; 8 mm sandwich floor; interlocking floor tiles |
 | 4 | Printable on the A1 | 26 unique parts, all <= 197 x 207 mm footprint, <= 216 mm tall; checked in `docs/VALIDATION.md` |
-| 5 | Roof removable without tools | 6 gravity-seated roof units, located by tabs/pockets and post notches |
+| 5 | Roof removable without tools | 3 roof units (one central, two side), located by tabs/pockets and post notches; the central roof locks the side roofs |
 | 6 | Stall doors open/close | Knuckle hinges with a full-length pin, 0-90 deg; facing doors hinge at opposite ends so all can be open at once in the narrow aisle |
 | 7 | Other doors functional | Main double doors 0-105 deg with slide bolt; casement windows 0-150 deg |
 | 8 | No excessively thin walls | Walls 2.8 mm (2.25 mm at board grooves), posts 16 mm, roof 2.4-3.6 mm |
 | 9 | Straightforward assembly | Slide-in panels, drop-in pins, one assembly order (`docs/ASSEMBLY.md`) |
 | 10 | Replaceable parts | No glue anywhere; every part comes out by lifting it or pulling a pin |
-| 11 | Minimal supports / post-processing | Zero support material by design (45 deg rule, teardrop bores, chamfered knuckles) |
+| 11 | Minimal supports / post-processing | Support only under the 28 hinge knuckles of the tall posts (small tree supports, at the owner's request; `knuckle_chamfer = true` makes them support-free). Everything else: 45 deg rule, teardrop bores, short bridges |
 | 12 | PLA / PLA+ | All parts PLA; PETG optional for doors (tougher flexures) |
 
 ## 4. Architecture
@@ -109,8 +109,8 @@ Grid of post centre lines (mm): X0 = 0, X1 = 176, X2 = 292, X3 = 468; Y0 = 0, Y1
 | Stall doors | 4 | One part: boards, bars, neck yoke; click latch; stop bevel |
 | Casements | 4 | 4 panes |
 | Bolt bars | 2 | Slide through the loops of both leaves |
-| Central roof units | 2 | 45 deg, skylights, ridge roll, barge boards; the rear end frame is a truss notched over the mid posts |
-| Side roof units | 4 | 20 deg lean-to, shingles |
+| Central roof | 1 | 45 deg, 243 mm long, four skylights, ridge roll, barge boards notched around the gable-door posts; a truss in the middle is notched over the mid posts |
+| Side roofs | 2 | 20 deg lean-to over both stalls of a side, shingles, two lock fins under the central roof |
 
 Main heights above the table: floor 8, plinth 26, side eaves 124, central eaves 202,
 apex (roof underside) 268, ridge about 275 mm.
@@ -127,8 +127,10 @@ rotational symmetry (front-left = back-right, front-right = back-left).
 * Knuckle hinge with a **separate pin**: 1.75 mm filament by default, or a 2 mm steel rod
   with bigger bores (`config.scad`).
 * The fixed knuckles sit on the posts. Posts print upright, so the bores are round and the
-  knuckle rings lie within layers (strongest direction). Each knuckle has a 45 deg underside
-  so it prints without support. Bore 1.85 mm (snug).
+  knuckle rings lie within layers (strongest direction). The knuckles are full cylinders and
+  print on small tree supports that stand on the knuckle below (`knuckle_chamfer = true` gives a
+  support-free 45 deg underside instead). Bore 1.85 mm (snug). The axial gap between knuckles
+  is 0.8 mm (0.4 mm per side), enough for the slightly rough supported undersides.
 * The moving knuckles sit on the doors. Doors print flat, so these bores are teardrops
   (2.3 mm, free fit). The radial gap to the fixed parts is 0.6 mm; the axial gap is 0.5 mm.
 * The pin is inserted from below. The top fixed knuckle is blind, and the floor under the
@@ -153,14 +155,16 @@ rotational symmetry (front-left = back-right, front-right = back-left).
   the right leaf, clear of the hinge.
 
 ### Removable roof
-* Six units: 2 central "tents" and 4 side panels. All are gravity-seated, with nothing to
-  snap or wear.
-* Central: the slopes rest on the pediment rake and on the bevelled aisle-post tops. The rear
-  end-frame notches straddle the mid posts (locate in X and Y). Tabs on the stall-front beams
+* Three units: one central roof and one side roof per side. All are gravity-seated, with
+  nothing to snap or wear. Each is at most 243 mm long, for the A1's 256 mm bed (the gable
+  overhang is 4 mm for this reason).
+* Central: the slopes rest on the pediment rakes and on the bevelled aisle-post tops. The
+  middle truss straddles the mid posts (locates in X and Y). Tabs on the stall-front beams
   (3.5 mm) enter pockets in the slopes. Lift straight up.
 * Side: 1.6 mm tabs on the gable-wing and partition rakes enter pockets in the panel
-  underside. The side units lift about 4-6 mm under the central eaves and then pull outward
-  (checked: 3 mm up, then 60 mm out), or lift freely once the central unit is off.
+  underside. Two lock fins near the upper edge stand 1 mm under the central roof, so while
+  it is on, a side roof stops after 1.25 mm, before it can rise off its tabs (checked). With
+  the central roof off, the side roofs lift straight off.
 
 ### Structural joints
 * **Panels to posts:** plain grooves, 3.2 mm wide (0.2 mm per side), 5 mm deep. Panels slide
@@ -169,14 +173,14 @@ rotational symmetry (front-left = back-right, front-right = back-left).
   (interior).
 * **Posts to floor:** sockets with 0.2 mm per side. Exterior posts sit 28 mm deep in the
   plinth; interior posts sit 6 mm deep and are braced by the panels on three or four faces.
-* **Floor tile to tile:** sliding fingers, 20 x 10 x 3 mm, in bottom notches (0.25 mm per
-  side), alternating ownership. They lock the tiles vertically **both ways**, so the stable
+* **Floor tile to tile:** sliding fingers, 14 x 10 x 3 mm, in bottom notches (0.25 mm per
+  side, 0.4 mm above), alternating ownership. They lock the tiles vertically **both ways**, so the stable
   can be lifted by its base. The posts then pin the joints horizontally.
 
 ## 6. Printing rules applied
 
-* No support material anywhere. Overhangs are <= 45 deg, bridges are short (<= 20 mm), and
-  horizontal holes are teardrops.
+* Support material only under the hinge knuckles of the posts. Elsewhere overhangs are
+  <= 45 deg, bridges are short (<= 16.4 mm), and horizontal holes are teardrops.
 * Panels print flat with the exterior face up. Raised trims are 1.4 mm high. A filament
   change at Z = 2.8 mm (start of layer 15 at 0.2 mm) makes them black.
 * Posts and the central roof print in their installed orientation. All other parts print flat.

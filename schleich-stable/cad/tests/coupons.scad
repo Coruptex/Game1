@@ -137,7 +137,7 @@ module tile_b() {
         cube([24, L, floor_top]);
         for (i = [0 : 2]) {
             g = tile_fits[i];
-            translate([-1, 15 + i * 30 - finger_w / 2 - g, -1]) cube([finger_l + g + 1, finger_w + 2 * g, finger_h + 0.25 + 1]);
+            translate([-1, 15 + i * 30 - finger_w / 2 - g, -1]) cube([finger_l + g + 1, finger_w + 2 * g, finger_h + finger_zgap + 1]);
             translate([17, 15 + i * 30, 0]) rotate([0, 0, 90]) engrave_top(str(round(g * 100)), floor_top, 4);
         }
     }

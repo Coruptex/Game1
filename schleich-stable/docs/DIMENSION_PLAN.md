@@ -72,7 +72,7 @@ the textures (10 mm boards, 9 mm shingle rows, cobbles).
 | Main door opening | 100 mm wide; 132 mm high at the springing, 160 mm at the crown |
 | Windows | casement (gable wings) 44 x 60 mm; side walls 36 x 48 mm, barred |
 | Roof | 6 lift-off units: 2 central 45 deg "tents", each about 150 x 127 mm at the eaves; 4 side 20 deg lean-to panels, each about 193 x 127 mm along the slope |
-| Roof overhang | 12 mm at the outer eaves, 9 mm at the central eaves, 10 mm at the gables |
+| Roof overhang | 12 mm at the outer eaves, 9 mm at the central eaves, 10 mm at the gables (later 4 mm, see section 7) |
 | Assembled footprint | 489 x 253 mm = 0.124 m2 (v1: 0.202 m2, **-39 %**) |
 | Estimated material | about **2.3 kg PLA** (+-15 %): grey 0.6, white 0.65, black 0.5, roof 0.5 kg. About **85-95 h** at 0.20 mm. These figures are scaled from the v1 slicer results; the real slicer estimate after modelling is in `PRINT_PLAN.md`. |
 | Parts | 54 printed pieces from 26 STL files (v1: 28), 12 filament pins |
@@ -151,4 +151,12 @@ Changes made during modelling:
   70 mm the passage was only 60 mm (2.4 mm side room for the widest horse). It is now 62 mm.
 * **Neck yoke 34 x 20 to 36 x 30 mm.** The shallower yoke started above the head height of
   most figures, so a horse could not look out.
+
+Changed later at the owner's request (2026-11-07):
+
+* **Roof in 3 units instead of 6** (one central roof, one side roof per side). To fit the
+  A1's 256 mm bed in one piece, the gable overhang went from 10 to **4 mm**; each roof unit is
+  242.8 mm long. The central roof now locks the side roofs (lock fins).
+* **Hinge knuckles on the posts as full cylinders,** printed with small tree supports, and
+  0.8 mm axial play between knuckles.
 

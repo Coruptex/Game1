@@ -31,10 +31,17 @@ fit_tab    = 0.25;
 fit_socket = 0.20;
 // Clearance per side for floor-tile interlock fingers
 fit_tile   = 0.25;
-// Axial gap between hinge knuckles
-hinge_gap  = 0.50;
+// Axial gap between hinge knuckles. 0.8 leaves room for the slightly
+// rough underside that support material leaves on the post knuckles.
+hinge_gap  = 0.80;
 // Radial gap between a door knuckle and the post / frame beside it
 swing_gap  = 0.60;
+
+/* [Hinge knuckles on the posts] */
+// false: full knuckles, printed with (tree) supports under each knuckle;
+// true:  45 deg underside, prints without support but each knuckle bears
+//        the pin about 4 mm shorter
+knuckle_chamfer = false;
 
 /* [Hinge pins] */
 // Pin diameter: 1.75 = a piece of filament, 2.0 = steel rod / nail
@@ -89,7 +96,7 @@ tile_step   = 1.2;
 // Roof overhang beyond walls (eaves and gables)
 overhang_eave  = 12;     // side roofs, beyond the exterior walls
 overhang_c     = 9;      // central roof, beyond the aisle posts (horizontal)
-overhang_gable = 10;
+overhang_gable = 4;      // keeps the one-piece roof units at 243 mm long (A1 bed 256 mm, room for a brim)
 
 /* [Openings] */
 // Main entrance: arch spring height and crown height (Z, world).

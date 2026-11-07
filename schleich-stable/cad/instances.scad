@@ -47,9 +47,8 @@ instances = [
     ["stall_door_FR", "stall_door", "door"], ["stall_door_BL", "stall_door", "door"],
     ["casement_FL", "casement_A", "door"], ["casement_BR", "casement_A", "door"],
     ["casement_FR", "casement_B", "door"], ["casement_BL", "casement_B", "door"],
-    ["roof_central_F", "roof_central", "roof"], ["roof_central_B", "roof_central", "roof"],
-    ["roof_side_FL", "roof_side_A", "roof"], ["roof_side_BR", "roof_side_A", "roof"],
-    ["roof_side_FR", "roof_side_B", "roof"], ["roof_side_BL", "roof_side_B", "roof"]
+    ["roof_central", "roof_central", "roof"],
+    ["roof_side_L", "roof_side_A", "roof"], ["roof_side_R", "roof_side_B", "roof"]
 ];
 
 function q_of(n) = str(n[len(n) - 2], n[len(n) - 1]);
@@ -104,9 +103,9 @@ module inst(n, ang = 0) {
     else if (n == "bolt_bar_B") rot180_c() bolt_bar_world(ang);
     else if (has(n, "stall_door_")) stall_quad(q) stall_door_world(ang);
     else if (has(n, "casement_")) quad(q) casement_world(ang);
-    else if (n == "roof_central_F") c_tent_world();
-    else if (n == "roof_central_B") c_tent_back_world();
-    else if (has(n, "roof_side_")) quad(q) side_roof_world();
+    else if (n == "roof_central") c_tent_world();
+    else if (n == "roof_side_L") side_roof_world();
+    else if (n == "roof_side_R") mirror_x_c() side_roof_world();
 }
 
 // unique printable parts, in print orientation

@@ -37,8 +37,8 @@ module md_window2d() {
             md_outline2d(10);
             translate([x0, y0]) square([x1 - x0, 200]);
         }
-        translate([(x0 + x1) / 2 - 1.2, 0]) square([2.4, 300]);         // muntins
-        translate([0, (y0 + md_top((x0 + x1) / 2) - 10) / 2 - 1.2]) square([200, 2.4]);
+        translate([(x0 + x1) / 2 - 1.5, 0]) square([3.0, 300]);         // muntins
+        translate([0, (y0 + md_top((x0 + x1) / 2) - 10) / 2 - 1.5]) square([200, 3.0]);
     }
 }
 module md_trims2d() {
@@ -118,7 +118,7 @@ module sd_openings2d() {
     difference() {
         intersection() {
             translate([11, 80]) square([sd_w - 19, sd_y1 - 7 - 80]);
-            for (x = [11 : 10.5 : sd_w - 8]) translate([x + 3, 0]) square([7.5, 300]);
+            for (x = [11 : 10.5 : sd_w - 8]) translate([x + 3.5, 0]) square([7, 300]);   // 3.5 mm bars
         }
         translate([xm, sd_y1 - yoke_d + yoke_w / 2]) union() { circle(d = yoke_w + 10, $fn = 64); translate([-yoke_w / 2 - 5, 0]) square([yoke_w + 10, 50]); }
     }
@@ -157,7 +157,7 @@ module stall_door_world(ang = 0) {
 module stall_door_print(right = false) { translate([right ? sd_w + 1 : 0, 0, 0]) stall_door_axis(right); }
 
 // ================================================================ casement
-cs_t = 2.4;
+cs_t = 3.0;                                   // casement frame thickness
 cs_seg = [win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2];   // = gable wing hinge
 module cs_outline2d() {          // in local x (axis at 0), y = world Z
     translate([-gw_hinge_x, 0]) intersection() {
@@ -175,8 +175,8 @@ module casement_axis(right = false) {
             // four panes
             translate([0, 0, -1]) linear_extrude(cs_t + 2) difference() {
                 offset(delta = -4) cs_outline2d();
-                translate([-gw_hinge_x + gw_win_xc - 1.1, 0]) square([2.2, 300]);
-                translate([0, win_sill_z + win_h / 2 - 1.1]) square([300, 2.2]);
+                translate([-gw_hinge_x + gw_win_xc - 1.5, 0]) square([3.0, 300]);
+                translate([0, win_sill_z + win_h / 2 - 1.5]) square([300, 3.0]);
             }
         }
     }

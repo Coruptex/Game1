@@ -35,9 +35,11 @@ front half rotated by 180 deg.
 ## Before you start
 
 1. Print and check the test coupons (`TESTING.md`). Copy any changed values into `cad/config.scad`.
-2. Remove brims. Make sure the **post grooves** are clean: a 2.8 mm panel strip should slide in
+2. Snip the small tree supports off the hinge knuckles of the tall posts (pliers). The gaps
+   between the knuckles must be clean: a door knuckle has to slide in without force.
+3. Remove brims. Make sure the **post grooves** are clean: a 2.8 mm panel strip should slide in
    by hand.
-3. Test each hinge pin: it should be snug in the post knuckles and turn freely in the door
+4. Test each hinge pin: it should be snug in the post knuckles and turn freely in the door
    knuckles. Straighten the filament for the pins by pulling it gently. Cut the ends square.
 
 ## 1. Floor (6 tiles)
@@ -110,18 +112,21 @@ back of the pediment.
 
 ## 7. Roof
 
-The roof is six loose units that sit by gravity. Nothing snaps.
+The roof is three units: one side roof per side and one central roof. Nothing snaps, and
+nothing needs force.
 
-1. **Side roofs first:** `roof_side_A` at front-left and back-right, `roof_side_B` at
-   front-right and back-left. Each rests on the side wall, the gable wing and the partition.
-   Lower it so the small tabs on the gable wing and partition drop into the pockets
-   underneath.
-2. **Central roof** (`roof_central` x2): lower each unit straight down. The notches in the
-   rear truss straddle the two mid posts, and the tabs on the stall-front beams find the
-   pockets.
+1. **Side roofs first:** `roof_side_A` on the left, `roof_side_B` on the right. Each rests on
+   the side walls, both gable wings and the partition. Lower it so the small tabs on the gable
+   wings and the partition drop into the pockets underneath. The two short fins near its upper
+   edge point up.
+2. **Central roof** (`roof_central`): lower it straight down. The notches in its middle truss
+   straddle the two mid posts, and the tabs on the stall-front beams find the pockets.
 
-**To open:** lift a central unit straight up. With the central unit off, the side units lift
-straight up. With it on, lift a side unit about 3 mm and pull it outward.
+The central roof now **locks the side roofs:** their fins sit 1 mm under it, so they cannot
+lift off their tabs or slide out while it is on.
+
+**To open:** lift the central roof straight up (hold it by the ridge), then lift the side
+roofs straight up.
 
 ![Roof units seated on the posts](images/roof_detail.png)
 
@@ -135,10 +140,8 @@ slide it right by about 13 mm.
 
 * **Through the stall door:** open it and lead the horse in or out head first. The opening
   leaves about 4-5 mm on each side for the widest figures (53 mm).
-* **From above:** lift off the side roof of that stall. A typical horse (up to about 150 mm
-  long) lifts straight out if it stands back from the stall front. The longest figures
-  (up to 170 mm) nearly fill the stall, and the central eave overhangs their head. Lift the
-  central roof unit too, or tilt the horse tail-first.
+* **From above:** lift off the central roof, then the side roof. Both stalls of that side are
+  then open from above, and every horse, even a 170 mm one, lifts straight out.
 
 ![Design-horse proxies in the stalls](images/horses.png)
 

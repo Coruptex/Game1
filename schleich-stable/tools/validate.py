@@ -190,35 +190,32 @@ def check_swing(placed, report):
 
 
 def check_roof_lift(placed, report):
+    """central roof: lifts straight off. Side roofs: LOCKED while the central
+    roof is on (stopped before they rise off their tabs), free once it is off"""
     res = []
     roofs = [n for n in placed if n.startswith("roof_")]
     others = [n for n in placed if not n.startswith("roof_")]
-    for r in sorted(roofs):
-        tm, m, bb = placed[r]
-        blocked = None
-        for dz in [0.5, 1, 2, 3, 4, 6, 8, 12]:
-            mt = m.translate((0, 0, dz))
-            bbt = bb + np.array([0, 0, dz])
-            for s in others + [x for x in roofs if x != r]:
+    tab_h = dims()["tab_h_side"]
+    steps = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 6, 8, 12]
+
+    def first_block(m, bb, against):
+        for dz in steps:
+            mt = m.translate((0, 0, dz)); bbt = bb + np.array([0, 0, dz])
+            for s in against:
                 ts, ms, bs = placed[s]
                 if bbox_overlap(bbt, bs, 0.2) and inter_vol(mt, ms) > TOL:
-                    blocked = {"dz": dz, "by": s}
-                    break
-            if blocked:
-                break
-        slide = None
+                    return {"dz": dz, "by": s}
+        return None
+    for r in sorted(roofs):
+        tm, m, bb = placed[r]
+        blocked = first_block(m, bb, others + [x for x in roofs if x != r])
         if r.startswith("roof_side"):
-            # lift 3 mm (off the 1.6 mm tabs), then slide outward 60 mm
-            sx = -1 if r.endswith(("FL", "BL")) else 1
-            for dx in range(0, 65, 5):
-                mt = m.translate((sx * dx, 0, 3)); bbt = bb + np.array([sx * dx, 0, 3])
-                hit = next((s for s in others + [x for x in roofs if x != r]
-                            if bbox_overlap(bbt, placed[s][2], 0.2) and inter_vol(mt, placed[s][1]) > TOL), None)
-                if hit:
-                    slide = {"dx": dx, "by": hit}
-                    break
-        res.append({"part": r, "lifts_12mm_freely": blocked is None, "blocked": blocked,
-                    "slides_out": (slide is None) if r.startswith("roof_side") else None, "slide_blocked": slide})
+            free = first_block(m, bb, others + [x for x in roofs if x not in (r, "roof_central")])
+            res.append({"part": r, "lifts_12mm_freely": blocked is None, "blocked": blocked,
+                        "locked_by_central": bool(blocked and blocked["by"] == "roof_central" and blocked["dz"] < tab_h),
+                        "free_without_central": free is None, "tab_h": tab_h})
+        else:
+            res.append({"part": r, "lifts_12mm_freely": blocked is None, "blocked": blocked})
     report["roof_lift"] = res
     return res
 
@@ -379,14 +376,14 @@ def check_horses(placed, report):
     typ = place_horse(horse_proxy(150, 45, 110), (d["X1"] - d["bay_x_stall"] + wt / 2 + 1.6 + 150, d["Y1"] / 2), ft + 0.05, "+x")
     tblock = None
     for dx, dz in up:
-        g = gaps_to(typ.translate([0, 0, dz]), placed, [n for n in solid if n != "roof_side_FL"], 0.5)
+        g = gaps_to(typ.translate([0, 0, dz]), placed, [n for n in solid if n != "roof_side_L"], 0.5)
         if g and g[0][0] < 0:
             tblock = {"dx": 0, "dz": dz, "by": g[0][1]}
             break
     res["lift_out_FL"] = [
         {"how": "typical horse 150 x 45 x 110 mm standing against the outer wall: straight up, side roof off", "blocked": tblock},
-        {"how": "design horse: straight up, side roof off", "blocked": path_block(up, {"roof_side_FL"})},
-        {"how": "design horse: straight up, side roof and central roof off", "blocked": path_block(up, {"roof_side_FL", "roof_central_F"})}]
+        {"how": "design horse: straight up, side roof off", "blocked": path_block(up, {"roof_side_L"})},
+        {"how": "design horse: straight up, side roof and central roof off", "blocked": path_block(up, {"roof_side_L", "roof_central"})}]
     # led out through the open stall door FL (90 deg), lifted over the 3 mm sill
     door = os.path.join(ROOT, "build", "swing", "stall_door_FL_090.stl")
     if os.path.exists(door):
@@ -514,14 +511,18 @@ def write_md(rep, path):
                 gap = f"{g[0]} mm ({g[1]})" if g else "> 20 mm"
             L.append(f"| {p['what']} | {p['opening_mm']} | {'yes' if p['passes'] else '**NO**'} | {gap} |")
         L.append(f"\nThe rider height ({h['rider_h']:g} mm above the floor) is an estimate.")
-    L += ["", "## Roof lift-off (others in place)", "",
-          "Central units lift straight up. Side units lift a few mm (off their 1.6 mm tabs) under the",
-          "central eave, then slide outward (checked: 3 mm up, then 60 mm out).", "",
-          "| roof unit | lifts 12 mm straight up | first contact going up | 3 mm up + slides 60 mm out |", "|---|---|---|---|"]
+    L += ["", "## Roof lift-off and lock (others in place)", "",
+          "The central roof lifts straight up. Each side roof must be LOCKED while the central roof is on",
+          "(its lock fins meet the central roof before the side roof rises off its tabs) and lift freely",
+          "once the central roof is off.", "",
+          "| roof unit | first contact going up | locked by the central roof | lifts 12 mm freely without the central roof |", "|---|---|---|---|"]
     for r in rep["roof_lift"]:
-        so = "" if r.get("slides_out") is None else ("yes" if r["slides_out"] else f"**no** {r['slide_blocked']}")
-        L.append(f"| {r['part']} | {'yes' if r['lifts_12mm_freely'] else 'no'} | "
-                 f"{(str(r['blocked']['dz']) + ' mm, ' + r['blocked']['by']) if r['blocked'] else ''} | {so} |")
+        fc = (str(r['blocked']['dz']) + ' mm, ' + r['blocked']['by']) if r['blocked'] else 'none (lifts 12 mm)'
+        if r["part"].startswith("roof_side"):
+            L.append(f"| {r['part']} | {fc} | {'yes' if r['locked_by_central'] else '**no**'} (tabs {r['tab_h']:g} mm) | "
+                     f"{'yes' if r['free_without_central'] else '**no**'} |")
+        else:
+            L.append(f"| {r['part']} | {fc} | - | {'yes' if r['lifts_12mm_freely'] else '**no**'} |")
     L += ["", "## Panel extraction (slide straight up, roof off)", "", "| panel | slides out | blocked |", "|---|---|---|"]
     for r in rep["extraction"]:
         L.append(f"| {r['part']} | {'yes' if r['slides_out'] else '**no**'} | {r['blocked'] or ''} |")

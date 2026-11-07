@@ -8,7 +8,7 @@
 // captures the pin once the post stands in its socket.
 
 dk_door = 7.0;      // knuckle OD for doors
-dk_win  = 5.2;      // knuckle OD for casement windows
+dk_win  = 6.4;      // knuckle OD for casement windows (2 mm wall around the bore)
 
 // [za, zb] of segment i, gaps trimmed symmetrically at inner boundaries
 function kn_seg(z0, z1, n, i) =
@@ -25,18 +25,22 @@ module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5
     difference() {
         union() for (i = [0 : 2 : n - 1]) {
             s = kn_seg(z0, z1, n, i);
-            intersection() {
-                translate([0, 0, s[0]]) linear_extrude(s[1] - s[0]) hull() {
-                    circle(d = d, $fn = 48);
-                    translate(web_dir * (web_len + 0.5)) square(d * 0.9, center = true);
-                }
-                // underside rises at 45 deg away from the post face -> printable
-                // upright without support (the bottom face carries no load)
+            // knuckle_chamfer: underside rises at 45 deg away from the post face,
+            // printable without support; otherwise a full knuckle (needs support)
+            if (knuckle_chamfer) intersection() {
+                knuckle_body_z(s, d, web_dir, web_len);
                 knuckle_underside_cut(s[0], web_dir, web_len);
             }
+            else knuckle_body_z(s, d, web_dir, web_len);
         }
         // bore: through the whole stack except a 1.6 mm cap on top
         translate([0, 0, z0 - 1]) cylinder(d = bore, h = (z1 - z0) + 1 - (blind_top ? 1.6 : -2), $fn = 24);
+    }
+}
+module knuckle_body_z(s, d, web_dir, web_len) {
+    translate([0, 0, s[0]]) linear_extrude(s[1] - s[0]) hull() {
+        circle(d = d, $fn = 48);
+        translate(web_dir * (web_len + 0.5)) square(d * 0.9, center = true);
     }
 }
 module knuckle_underside_cut(z, web_dir, web_len) {

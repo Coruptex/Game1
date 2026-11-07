@@ -6,9 +6,10 @@
 
 ext_out  = 10.5;                 // floor/plinth beyond the outer post lines
 tile_gap = 0.15;                 // clearance per side at tile-to-tile joints
-finger_w = 20;
+finger_w = 14;                   // notch roof bridges 14.5 mm (was 20)
 finger_l = 10;
 finger_h = 3.0;
+finger_zgap = 0.4;               // vertical play over the finger (notch roof may sag a little)
 
 function tile_rect(id) =
     let(c = id[0], r = id[1],
@@ -35,17 +36,17 @@ tile_joints = [
 function joint_posts(j) =
     j[0] == "x" ? [j[2] < Y0 ? Y0 : j[2], j[3] > Y2 ? Y2 : j[3]]
                 : [j[2] < X0 ? X0 : j[2], j[3] > X3 ? X3 : j[3]];
-// about one finger per 32 mm of joint between the posts (at least 2)
+// about one finger per 26 mm of joint between the posts (at least 2)
 function finger_centres(j) =
     let(p = joint_posts(j), lo = p[0] + PW2 + 3, hi = p[1] - PW2 - 3,
-        n = max(2, round((hi - lo) / 32)), s = (hi - lo) / n)
+        n = max(2, round((hi - lo) / 26)), s = (hi - lo) / n)
     [for (k = [0 : n - 1]) lo + s * (k + 0.5)];
 
 // one finger as a world-space box. owner_low: owned by the tile on the low
 // side of the joint (it then protrudes into the high side). grow > 0 gives
 // the matching notch (with clearance) instead.
 module finger_box(j, c, owner_low, grow = 0) {
-    w = finger_w + 2 * grow; l = finger_l + grow; h = finger_h + (grow > 0 ? 0.25 : 0);
+    w = finger_w + 2 * grow; l = finger_l + grow; h = finger_h + (grow > 0 ? finger_zgap : 0);
     r = grow > 0 ? 0 : 1;          // fingers root 1 mm inside their tile
     a = owner_low ? j[1] - r : j[1] - l;
     z0 = grow > 0 ? -1 : 0;        // notches open through the bottom

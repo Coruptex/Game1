@@ -84,7 +84,7 @@ gw_x1 = X1 - PW2 + panel_in;
 gw_y0 = Z_plinth - base_groove_d + 0.2;
 gw_win_xc = (X0 + X1) / 2;
 // casement hinge on the corner side (left) of the window
-gw_hinge_x = gw_win_xc - win_w / 2 - 4;
+gw_hinge_x = gw_win_xc - win_w / 2 - 5;
 // side-roof locating tabs on the rakes of gable wings and partitions
 rake_tabs = [gw_x0 + 45, gw_x1 - 45];
 cs_lift = 0.6;                   // casement axis lift above the wall face
@@ -126,15 +126,25 @@ module partition_local() {
             polygon([[x0, 0], [x1, 0], [x1, z_side_roof(x1)], [x0, z_side_roof(x0)]]);
             for (xc = rake_tabs) tab2d_on_slope(xc, z_side_roof(xc), slope);
         }
-        // bar window: openings between vertical bars
-        intersection() {
-            translate([x0 + 14, pt_bars[0]]) square([x1 - x0 - 28, pt_bars[1] - pt_bars[0]]);
-            for (x = [x0 + 14 : 11 : x1 - 14]) translate([x + 3, 0]) square([8, 400]);
+        // bar window: openings between vertical bars (4 mm bars)
+        pt_openings2d(x0, x1);
+        // trims: rails of the bar window and the bars themselves (raised to
+        // 4.2 mm, black with the trim colour change)
+        union() {
+            for (y = [pt_bars[0] - 6, pt_bars[1]]) translate([x0 + 8, y]) square([x1 - x0 - 16, 6]);
+            difference() {
+                translate([x0 + 14, pt_bars[0] - 1]) square([x1 - x0 - 28, pt_bars[1] - pt_bars[0] + 2]);
+                pt_openings2d(x0, x1);
+            }
         }
-        // trims: top & bottom rails of the bar window
-        for (y = [pt_bars[0] - 6, pt_bars[1]]) translate([x0 + 8, y]) square([x1 - x0 - 16, 6]);
         union() {}
         union() {}
+    }
+}
+module pt_openings2d(x0, x1) {
+    intersection() {
+        translate([x0 + 14, pt_bars[0]]) square([x1 - x0 - 28, pt_bars[1] - pt_bars[0]]);
+        for (x = [x0 + 14 : 11 : x1 - 14]) translate([x + 4, 0]) square([7, 400]);
     }
 }
 module partition_place() { translate([0, Y1 + wall_t / 2, 0]) panel_to_world() children(); }

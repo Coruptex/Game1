@@ -42,22 +42,23 @@ L = ["# Print plan (Bambu Lab A1)", "",
      "| Setting | Value | Why |", "|---|---|---|",
      "| Material | PLA or PLA+ (PETG optional for doors) | stiff, easy, low warp; PETG flexes more forgivingly in the latch tongues |",
      "| Nozzle | 0.4 mm | details (board grooves 1.1 mm, latch 1.8 mm tongue) are sized for it |",
-     "| Layer height | 0.20 mm (Bambu \"0.20mm Standard @BBL A1\") | 0.16 mm for the doors is optional |",
+     "| Layer height | 0.20 mm (Bambu \"0.20mm Standard @BBL A1\"); floor tiles 0.24 mm | the floor tiles are about 20 % faster at 0.24 mm, with no visible loss |",
      "| Wall loops | 3 | stronger panels, grooves and sockets |",
      "| Top / bottom shells | 5 / 4 | flat textured surfaces close well |",
      "| Sparse infill | 15 % grid (gyroid also fine) | floor tiles and plinth are modelled solid |",
-     "| Supports | **off** for every part | everything is designed support-free |",
+     "| Supports | only the post plate and test plate T1: **tree (slim)**, threshold 30 deg, may rest on the model, no support on bridges | the hinge knuckles on the posts are full cylinders; each one's small tree stands on the knuckle below. Everything else prints without support |",
      "| Brim | 8 mm for the posts (upright), 5 mm for the central roof units | tall, narrow footprints |",
      "| Speed | the two post plates: printer speed mode **Silent** (50 %) | the A1 moves the bed under these tall posts; lower accelerations keep them standing |",
      "| Plate | Textured PEI, 65 C (Bambu PLA default) | textured underside looks good on panels |",
      "| Seam | Aligned or back | |",
      "| Part cooling | Bambu PLA default | 45 deg overhangs on the central roof need good cooling |", "",
-     "### Black trim on white panels (optional)", "",
+     "Ready-made Bambu Studio process presets for exactly these settings are in `slicer/bambu_studio/`",
+     "(File > Import > Import Configs). Step by step, in German: [BAMBU_STUDIO.md](BAMBU_STUDIO.md).", "",
+     "### Black trim on white panels", "",
      "White panels carry raised trims (window frames, rails, the door arch, bars) from **Z = 2.8 mm**.",
-     "In Bambu Studio's preview, right-click the layer slider at 2.8 mm, the last white layer, and choose",
-     "**Add color change** (AMS / AMS lite) or **Add pause** (no AMS: swap to black when it",
-     "pauses). Plates marked \"trim\" below benefit from this. The trim can also be left white or",
-     "painted.", "",
+     "In Bambu Studio's preview, put the layer slider on the layer at **3.0 mm** (the first trim layer),",
+     "right-click and choose **Change filament** > black (AMS / AMS lite: automatic). Without an AMS,",
+     "use **Add pause** there and swap to black by hand. Plates marked \"trim\" below get this.", "",
      "## Plates", "",
      "Print the test plates **T1/T2 first** (see `TESTING.md`) and adjust `config.scad` if needed.", "",
      "![All print plates (rendered from the plate files)](images/plates.png)", "",
@@ -91,8 +92,10 @@ L += ["", "Filament to have on hand (estimate + 10 % for purge, brims and failed
       "* Posts stand upright (grooves and hinge bores print round and strong). The 216 mm posts are the most",
       "  delicate prints on the A1, because its bed moves under them: 8 mm brim, clean plate (wash with dish soap),",
       "  speed mode Silent, and watch the first hour. PrusaSlicer flags them with \"Low bed adhesion\"; this is",
-      "  the height-to-footprint ratio, not a geometry error. The hinge knuckles have 45 deg undersides and need no support.",
-      "* The central roof units print standing on their eave edges, as installed. Use a 5 mm brim and keep the plate clean.",
+      "  the height-to-footprint ratio, not a geometry error. The hinge knuckles are full cylinders printed on small",
+      "  tree supports (snip them off with pliers; the gaps between the knuckles must be clean so the doors fit).",
+      "  `knuckle_chamfer = true` in `config.scad` gives support-free 45 deg undersides instead.",
+      "* The central roof prints in one piece standing on its eave edges, as installed (243 mm long, ridge along Y). Use a 5 mm brim and keep the plate clean.",
       "* Everything else prints flat. The exterior or show face is up.",
       "* If the first layer of the large panels lifts at the corners: clean the plate (soap and water), raise the bed temperature by 5 C, add a 3 mm brim.", ""]
 open(os.path.join(ROOT, "docs", "PRINT_PLAN.md"), "w").write("\n".join(L) + "\n")
@@ -125,3 +128,70 @@ B += ["", "Mirror pairs (`_A` / `_B`, `_L` / `_R`) are different files. Each is 
       "* Optional: black acrylic paint pen for trims if you print single-colour", ""]
 open(os.path.join(ROOT, "docs", "BOM.md"), "w").write("\n".join(B) + "\n")
 print("wrote docs/PRINT_PLAN.md, docs/BOM.md")
+
+# ------------------------------------------------- Bambu Studio guide (German)
+SLOT = {"grey": "3 Hellgrau", "black": "2 Schwarz", "white": "1 Weiß", "roof": "4 Dunkelgrau", "any": "beliebig"}
+
+
+def preset_for(pid):
+    if "floor" in pid:
+        return "Stall 0.24mm Boden"
+    if "posts" in pid or pid.startswith("T1"):
+        return "Stall 0.20mm Pfosten Stuetzen"
+    if "roof_central" in pid:
+        return "Stall 0.20mm Mitteldach"
+    return "Stall 0.20mm Standard"
+
+
+def extra_for(pid, p):
+    if p.get("note") == "trim":
+        return "Filamentwechsel bei **3,0 mm** auf Slot 2 (Schwarz)"
+    if "posts_tall" in pid:
+        return "Baumstützen unter den Scharnieraugen; am Drucker Geschwindigkeit **Leise** (Silent)"
+    if "posts" in pid:
+        return "keine Stützen nötig (Brim 8 mm)"
+    if pid.startswith("T1"):
+        return "Stützen unter den Scharnieraugen der Pfosten-Stücke"
+    return ""
+
+
+G = ["# Drucken mit Bambu Studio (A1 mit AMS lite)", "",
+     "Erzeugt von `tools/report.py`. Die Zeiten sind Schätzungen aus PrusaSlicer mit A1-ähnlichen",
+     "Einstellungen; Bambu Studio zeigt nach dem Slicen seine eigenen Werte.", "",
+     "## Einmal einrichten", "",
+     "1. **Presets importieren:** Bambu Studio > Datei > Importieren > *Konfigurationen importieren*,",
+     "   dann alle vier Dateien aus `slicer/bambu_studio/` wählen. Sie erscheinen beim Prozess unter",
+     "   den Benutzer-Presets. Sie bauen auf den Bambu-Profilen „0.20mm Standard @BBL A1“ und",
+     "   „0.24mm Draft @BBL A1“ auf und ändern nur das, was dieser Stall braucht.",
+     "2. **AMS lite belegen:** Slot 1 Weiß, Slot 2 Schwarz, Slot 3 Hellgrau, Slot 4 Dunkelgrau.",
+     "3. Drucker *Bambu Lab A1 0.4 nozzle*, Platte *Textured PEI Plate*, Filament z. B. *Bambu PLA Basic*.", "",
+     "## Jede Platte", "",
+     "1. Die Datei aus `3mf/` öffnen. Fragt Bambu Studio, ob nur die Geometrie geladen werden soll: ja.",
+     "2. Prozess-Preset aus der Tabelle wählen.",
+     "3. Alle Teile markieren (Strg+A), Rechtsklick > *Filament ändern* > Slot aus der Tabelle.",
+     "4. Nur bei den Wandplatten: in der Vorschau den Ebenen-Schieberegler auf **3,00 mm** stellen,",
+     "   Rechtsklick > *Filament wechseln* > Slot 2 (Schwarz). Ab dort druckt der A1 die erhabenen",
+     "   Zierleisten schwarz, das AMS wechselt selbst.",
+     "5. Slicen, prüfen, drucken.", "",
+     "| Platte | Teile | Preset | AMS-Slot | Besonderheit | Zeit (ca.) |", "|---|---|---|---|---|---|"]
+for pid, p in plates.items():
+    names = ", ".join(sorted(set(p["parts"]), key=p["parts"].index))
+    G.append(f"| `{pid}` | {names} | {preset_for(pid)} | {SLOT.get(p['colour'], p['colour'])} | {extra_for(pid, p)} | {hm(p.get('time_s', 0))} |")
+G += ["", "## Stützen an den Pfosten", "",
+      "* Unter jedem Scharnierauge eines hohen Pfostens entsteht eine kleine Baumstütze. Sie steht auf",
+      "  dem Auge darunter, genau in der Lücke, in die später das Auge der Tür kommt.",
+      "* **Entfernen:** mit einer Spitzzange greifen und herausdrehen, Reste mit einem Cutter glätten.",
+      "  Die Lücke muss sauber sein, sonst klemmt die Tür. Etwas Spiel (0,4 mm je Seite) ist eingeplant.",
+      "* Das Stiftloch bleibt frei. Falls doch ein Rest drin ist: mit dem Filamentstift oder einem",
+      "  1,8-mm-Bohrer von Hand durchstoßen.",
+      "* Ohne Stützen geht es auch: `knuckle_chamfer = true` in `cad/config.scad` setzen und neu",
+      "  exportieren, dann haben die Augen unten eine 45-Grad-Schräge.", "",
+      "## Falls der Import der Presets nicht klappt", "",
+      "Die Einstellungen von Hand, jeweils auf Basis des genannten Bambu-Profils:", "",
+      "| Preset | Basis | Änderungen |", "|---|---|---|",
+      "| Stall 0.20mm Standard | 0.20mm Standard @BBL A1 | Wandlinien 3, untere Schichten 4, Stützen aus, Prime-Tower aus |",
+      "| Stall 0.20mm Pfosten Stuetzen | 0.20mm Standard @BBL A1 | Wandlinien 4, Füllung 25 %; Stützen an: Typ Baum (auto), Stil *Tree Slim*, Schwellwinkel 30°, *nur auf der Druckplatte* aus, *Brücken nicht stützen* an; Brim außen 8 mm |",
+      "| Stall 0.20mm Mitteldach | 0.20mm Standard @BBL A1 | Wandlinien 3, Stützen aus, Brim außen 5 mm |",
+      "| Stall 0.24mm Boden | 0.24mm Draft @BBL A1 | Wandlinien 3, untere Schichten 4, Stützen aus, kein Brim |", ""]
+open(os.path.join(ROOT, "docs", "BAMBU_STUDIO.md"), "w").write("\n".join(G) + "\n")
+print("wrote docs/BAMBU_STUDIO.md")

@@ -11,6 +11,12 @@ sys.path.insert(0, os.path.dirname(__file__))
 from build import read_instances, unique_parts  # noqa: E402
 
 # parts printed upright / standing on thin edges get a brim
+# parts / plates that need support (the full hinge knuckles on the posts;
+# the test plate T1 has the same knuckles). Supports may rest on the model:
+# each knuckle's support stands on the knuckle below, in the door's gap.
+SUPPORT = {"post_jamb_L", "post_jamb_R", "post_mid", "plate_T1"}
+SUPPORT_ARGS = ["--support-material", "--support-material-auto", "--support-material-style", "organic",
+                "--support-material-threshold", "30", "--support-material-contact-distance", "0.2"]
 BRIM = {"post_corner": 8, "post_sidemid": 8, "post_jamb_L": 8, "post_jamb_R": 8, "post_mid": 8,
         "roof_central": 5, "plate_T1": 3, "plate_T2": 3}
 
@@ -26,7 +32,9 @@ def slice_one(args):
     name, stl = args
     out = os.path.join(tempfile.gettempdir(), f"slice_{os.getpid()}_{name}.gcode")
     cmd = ["prusa-slicer", "--export-gcode", "--load", INI, "--center", "128,128",
-           "--brim-width", str(BRIM.get(name, 0)), "-o", out, stl]
+           "--brim-width", str(BRIM.get(name, 0)), *(SUPPORT_ARGS if name in SUPPORT else []),
+           # floor tiles use the 0.24 mm preset (slicer/bambu_studio/Stall_0.24mm_Boden.json)
+           *(["--layer-height", "0.24"] if "floor" in name else []), "-o", out, stl]
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0 or not os.path.exists(out):
         return name, {"error": (r.stdout + r.stderr)[-500:]}

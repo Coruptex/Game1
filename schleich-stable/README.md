@@ -6,8 +6,9 @@ A compact, sturdy, modular toy stable with four boxes, a cobbled drive-through a
 working doors and windows, and a removable roof. Its dimensions are derived from the
 horse figures (see [docs/DIMENSION_PLAN.md](docs/DIMENSION_PLAN.md)): every stall fits the
 largest common Schleich horse plus room for a hand, and no more.
-It is designed for FDM printing on a **Bambu Lab A1** in PLA, with **no support material**
-and **no glue, screws or magnets**. It is inspired by the hand-painted Schleich stable sold by
+It is designed for FDM printing on a **Bambu Lab A1** (with AMS lite for the black trims) in
+PLA, with support only under the hinge knuckles of the posts, and **no glue, screws or
+magnets**. It is inspired by the hand-painted Schleich stable sold by
 mymodelhorse.com, but it is an original design and is not affiliated with Schleich.
 
 | | |
@@ -16,9 +17,9 @@ mymodelhorse.com, but it is an original design and is not affiliated with Schlei
 | Stalls | 4, each 173 x 113 mm inside, for horses up to 170 x 53 x 120 mm (checked in the validation with a horse proxy) |
 | Aisle / main door | 113 mm aisle; arched double doors 100 mm wide, 160 mm clear at the crown |
 | Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke and click latch; left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
-| Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows, 6 lift-off roof units |
-| Parts | 54 printed pieces from 26 STL files; 12 hinge pins cut from 1.75 mm filament |
-| Print | 26 plates, about **80 h** and **2.3 kg PLA** (PrusaSlicer estimate with A1-equivalent settings) |
+| Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows, 3 lift-off roof units (the central roof locks the side roofs) |
+| Parts | 51 printed pieces from 26 STL files; 12 hinge pins cut from 1.75 mm filament |
+| Print | 23 plates, about **81 h** and **2.4 kg PLA** (PrusaSlicer estimate with A1-equivalent settings); Bambu Studio presets in `slicer/bambu_studio/` |
 
 This is the compact version (v2). The first, full-size version was 565 x 357 x 329 mm with
 3.4 kg / 116 h of printing. Section 4 of the dimension plan explains where the space was
@@ -33,7 +34,7 @@ saved and why nothing was simply scaled down.
 1. **Print the test coupons** `3mf/T1_test_hinges_latches.3mf` and `3mf/T2_test_fits.3mf`.
    Follow [docs/TESTING.md](docs/TESTING.md) to pick the clearances for your printer.
 2. If you changed values in `cad/config.scad`, regenerate (see below).
-3. **Print plates `P01`-`P26`** from `3mf/`, or the single STLs in `stl/`. Settings, colours
+3. **Print plates `P01`-`P23`** from `3mf/`, or the single STLs in `stl/`. Settings, colours
    and order are in [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md).
 4. **Assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
 
@@ -45,7 +46,8 @@ assembled positions, for viewing only; print from the `P..` plates.
 
 ## Documentation
 
-* [docs/ANALYSE.md](docs/ANALYSE.md) (Deutsch): Druckbarkeit, gefundene Mängel, Scharniere, Stärken und Schwächen
+* [docs/ANALYSE.md](docs/ANALYSE.md) (Deutsch): Druckbarkeit, Überarbeitung, Scharniere, Stärken und Schwächen
+* [docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md) (Deutsch): Presets importieren, AMS lite belegen, jede Platte Schritt für Schritt
 * [docs/DIMENSION_PLAN.md](docs/DIMENSION_PLAN.md): horse sizes, how each dimension follows from them, comparison with the reference and v1
 * [docs/SPEC.md](docs/SPEC.md): reference analysis, requirements, dimensions, mechanisms, CAD workflow
 * [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md): Bambu Studio settings, plates, time and filament per plate
@@ -68,6 +70,7 @@ cad/            OpenSCAD source (parametric)
 stl/            printable parts (print orientation), stl/tests/ coupon plates
 3mf/            ready-arranged A1 plates (one colour per plate)
 tools/          build, validate, plates/slicing, report, render and Blender scripts
+slicer/         Bambu Studio process presets (import once)
 blender/        Blender scene of the assembled stable (generated)
 docs/           documentation and renders
 ```

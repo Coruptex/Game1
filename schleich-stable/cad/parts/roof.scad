@@ -1,19 +1,21 @@
-// ROOF -- dark grey / black.
+// ROOF -- dark grey / black. Three lift-off units.
 //
-// Central roof: two "tent" units (front + back, identical). Each is printed
-// in its INSTALLED orientation standing on its eave edges: 45 deg slopes and
-// 45 deg shingle butts need no support. Its rear end frame is a truss that
-// rests on the bevelled tops of the mid aisle posts; notches in it straddle
-// those posts and LOCATE the roof. Tabs on the stall-front beams enter
-// pockets in the slopes.
+// Central roof: ONE "tent" over the whole aisle, printed in its INSTALLED
+// orientation standing on its eave edges: 45 deg slopes and 45 deg shingle
+// butts need no support. A truss in the middle rests on the bevelled tops of
+// the mid aisle posts; notches in it straddle those posts and LOCATE the
+// roof. Tabs on the stall-front beams enter pockets in the slopes.
 //
-// Side roofs: four lean-to panels printed flat (shingles up). Located by
-// shallow tabs on the gable-wing and partition rakes.
+// Side roofs: one lean-to panel per side, printed flat (shingles up),
+// located by shallow tabs on the gable-wing and partition rakes. Two lock
+// fins near the upper edge sit 1 mm under the central roof: while the
+// central roof is on, a side roof can neither lift off its tabs nor slide
+// out. Lift the central roof first; then the side roofs lift straight off.
 
 c_t     = roof_t + tile_step;            // max slab thickness
 c_row   = 9;
-cy0     = Y0 - wall_t / 2 - overhang_gable;   // front edge of the front tent
-cy1     = Y1;                                  // rear end (meets the other tent)
+cy0     = Y0 - wall_t / 2 - overhang_gable;   // front edge
+cy1     = Y2 + wall_t / 2 + overhang_gable;   // back edge
 c_xe    = X1 - PW2 - overhang_c;               // eave point of the underside (left)
 c_len   = (XC - c_xe) / cos(pitch_c) + 8;      // slab length along the slope
 frame_t = 2.4;                                 // end-frame thickness
@@ -29,8 +31,10 @@ module c_slope_raw() {
 }
 // skylight on the left slope: opening + raised frame (local slope frame)
 sky_w = 26; sky_h = 32; sky_s = 0.45 * c_len;  // size, position along slope
+// one skylight per slope over each half of the aisle
 module c_skylight(cut = true) {
-    translate([c_xe, (cy0 + cy1) / 2, Z_c_low]) rotate([0, -pitch_c, 0])
+    for (yc = [(cy0 + Y1) / 2, (Y1 + cy1) / 2])
+    translate([c_xe, yc, Z_c_low]) rotate([0, -pitch_c, 0])
         translate([sky_s, 0, 0])
             if (cut) difference() {
                 translate([-sky_h / 2, -sky_w / 2, -5]) cube([sky_h, sky_w, 20]);
@@ -44,8 +48,9 @@ module c_under2d(grow = 0) {
     // grow > 0 lifts the sloped edges into the slab so unions fuse
     polygon([[c_xe - grow, Z_c_low], [2 * XC - c_xe + grow, Z_c_low], [XC, Z_c_apex + grow * 1.414]]);
 }
+// truss in the middle (over the mid posts at Y1)
 module c_end_frame() {
-    translate([0, cy1, 0]) rotate([90, 0, 0]) linear_extrude(frame_t) difference() {
+    translate([0, Y1 + frame_t / 2, 0]) rotate([90, 0, 0]) linear_extrude(frame_t) difference() {
         c_under2d(0.8);
         // notches around the mid posts (bearing on their bevelled tops)
         for (x = [X1, X2]) translate([x - PW2 - fit_socket, Z_c_low - 1]) square([post_w + 2 * fit_socket, 40]);
@@ -62,21 +67,25 @@ module c_end_frame() {
         }
     }
 }
-// barge board under the front edge
+// barge boards under the front and back edges, notched around the tops of
+// the gable-door posts (the short gable overhang puts them above the posts)
 module c_barge() {
-    translate([0, cy0 + 2.4, 0]) rotate([90, 0, 0]) linear_extrude(2.4) intersection() {
-        difference() { c_under2d(0.8); translate([0, -8]) c_under2d(); }   // 8 mm deep band along the slopes
-        translate([0, Z_c_low + eps]) square([1000, 300]);
+    for (y = [cy0 + 2.4, cy1]) translate([0, y, 0]) rotate([90, 0, 0]) linear_extrude(2.4) difference() {
+        intersection() {
+            difference() { c_under2d(0.8); translate([0, -8]) c_under2d(); }   // 8 mm deep band along the slopes
+            translate([0, Z_c_low + eps]) square([1000, 300]);
+        }
+        for (x = [X1, X2]) translate([x - PW2 - 0.5, Z_c_low - 1]) square([post_w + 1, 300]);
     }
 }
 // pockets for the stall-front beam tabs
 module c_tab_pockets() {
-    for (x = [X1, X2]) for (u = sf_tabs)
+    for (x = [X1, X2]) for (u = concat(sf_tabs, [for (t = sf_tabs) t + bay_y]))
         translate([x - wall_t / 2 - fit_tab, u - tab_w / 2 - fit_tab, sf_vtop - 1])
             cube([wall_t + 2 * fit_tab, tab_w + 2 * fit_tab, tab_h_c + 1.3]);
 }
 
-module c_tent_world() {          // front tent, world coordinates
+module c_tent_world() {          // world coordinates
     difference() {
         union() {
             for (m = [0, 1]) intersection() {
@@ -92,7 +101,8 @@ module c_tent_world() {          // front tent, world coordinates
             c_barge();
         }
         c_tab_pockets();
-        // rounded front eave corners (plan view)
+        // rounded eave corners (plan view), front and back
+        for (my = [0, 1]) translate([0, my == 0 ? 0 : cy0 + cy1, 0]) mirror([0, my, 0])
         for (m = [0, 1]) translate([m == 0 ? 0 : 2 * XC, 0, 0]) mirror([m, 0, 0])
             // outermost eave edge is c_t*sqrt(2) beyond the underside eave point
             translate([c_xe - c_t * 1.4143, cy0, Z_c_low - 1]) linear_extrude(40) fillet_cutter2d(4);
@@ -100,8 +110,6 @@ module c_tent_world() {          // front tent, world coordinates
         translate([-500, -500, Z_c_low - 100]) cube([2000, 2000, 100]);
     }
 }
-// back tent = front tent rotated 180 deg about the building centre
-module c_tent_back_world() { translate([XC, Y1, 0]) rotate([0, 0, 180]) translate([-XC, -Y1, 0]) c_tent_world(); }
 module c_tent_print() { translate([-XC, -cy0, -Z_c_low]) c_tent_world(); }
 
 // ---------------------------------------------------------- side roof
@@ -109,28 +117,44 @@ s_xe   = X0 - wall_t / 2 - overhang_eave;          // eave edge (world X)
 s_x1   = X1 - PW2 - 0.5;                           // upper edge, just clear of posts
 s_len  = (s_x1 - s_xe) / cos(pitch_side);
 s_y0   = Y0 - wall_t / 2 - overhang_gable;
-s_y1   = Y1;
+s_y1   = Y2 + wall_t / 2 + overhang_gable;
+// lock fins: blades under the central eave, lock_gap below its underside
+lock_gap = 1.0;
+lock_x   = c_xe + 3;                 // 3 mm inside the central eave edge
+lock_t   = 2.4;
+lock_len = 30;
+lock_y   = [(Y0 + Y1) / 2, (Y1 + Y2) / 2];   // middle of each stall
 s_row  = 9;
 // placement of the front-left panel: local x up the slope, y = world Y, z normal
 module s_place() { translate([s_xe, s_y0, z_side_roof(s_xe)]) rotate([0, -pitch_side, 0]) children(); }
 module s_unplace() { rotate([0, pitch_side, 0]) translate([-s_xe, -s_y0, -z_side_roof(s_xe)]) children(); }
-// world pockets for the rake tabs (gable wing at Y0, partition at Y1)
+// world pockets for the rake tabs (gable wings at Y0 and Y2, partition at Y1)
 module s_tab_pockets_world() {
     slope = tan(pitch_side);
-    for (yt = [Y0, Y1]) for (xt = rake_tabs)
+    for (yt = [Y0, Y1, Y2]) for (xt = rake_tabs)
         translate([xt, yt, z_side_roof(xt)]) multmatrix([[1, 0, 0, 0], [0, 1, 0, 0], [slope, 0, 1, 0], [0, 0, 0, 1]])
             translate([-tab_w / 2 - fit_tab, -wall_t / 2 - fit_tab, -2]) cube([tab_w + 2 * fit_tab, wall_t + 2 * fit_tab, 2 + tab_h_side + 0.3]);
 }
+// lock fins in world coordinates: vertical blades standing in the side
+// roof, top edge parallel to the central roof's underside
+module s_lock_fins_world() {
+    xa = lock_x - lock_t / 2; xb = lock_x + lock_t / 2;
+    for (yc = lock_y) translate([0, yc + lock_len / 2, 0]) rotate([90, 0, 0]) linear_extrude(lock_len)
+        polygon([[xa, z_side_roof(xa) + 1.0], [xb, z_side_roof(xb) + 1.0],
+                 [xb, z_c_roof(xb) - lock_gap], [xa, z_c_roof(xa) - lock_gap]]);
+}
 module side_roof_local() {
     difference() {
-        intersection() {
-            shingle_slab(s_len, s_y1 - s_y0, roof_t, tile_step, s_row);
-            // round the exposed eave / verge corners (child safety)
-            translate([0, 0, -1]) linear_extrude(10) union() {
-                translate([0, 0]) rrect(s_len, s_y1 - s_y0, 4);
-                translate([s_len / 2, 0]) square([s_len / 2, s_y1 - s_y0]);
-                translate([0, (s_y1 - s_y0) / 2]) square([s_len, (s_y1 - s_y0) / 2]);
+        union() {
+            intersection() {
+                shingle_slab(s_len, s_y1 - s_y0, roof_t, tile_step, s_row);
+                // round the exposed eave corners, front and back (child safety)
+                translate([0, 0, -1]) linear_extrude(10) union() {
+                    rrect(s_len, s_y1 - s_y0, 4);
+                    translate([s_len / 2, 0]) square([s_len / 2, s_y1 - s_y0]);
+                }
             }
+            s_unplace() s_lock_fins_world();
         }
         shingle_joints(s_len, s_y1 - s_y0, s_row);
         s_unplace() s_tab_pockets_world();

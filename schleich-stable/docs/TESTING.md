@@ -9,7 +9,9 @@ clearance variants. The value engraved on each variant is the parameter it tests
 | T1 | `3mf/T1_test_hinges_latches.3mf` (`stl/tests/plate_T1.stl`) | ~3 h | 3 hinge post stubs, 3 hinge leaves, 3 latch pairs |
 | T2 | `3mf/T2_test_fits.3mf` (`stl/tests/plate_T2.stl`) | ~1.5 h | groove post + wall strip, socket plate, tile interlock, roof-tab plate + key |
 
-Print them with the same filament and settings you will use for the stable.
+Print them with the same filament and settings you will use for the stable. T1 needs supports
+under the knuckles of its post stubs, like the real posts: in Bambu Studio use the preset
+"Stall 0.20mm Pfosten Stuetzen" (see `BAMBU_STUDIO.md`), and T2 with "Stall 0.20mm Standard".
 Source: `cad/tests/coupons.scad`. Change the variant lists at its top to test other values.
 
 None of these coupons has been printed yet. The clearances are calculated starting points.

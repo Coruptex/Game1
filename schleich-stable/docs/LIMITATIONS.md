@@ -11,7 +11,8 @@
 | Hinge pins pass through all knuckles | **Digitally**: virtual 1.75 mm pins, no contact |
 | Latch engages (barb seated when closed, 0.8 mm interference while passing) | **Digitally**: fine sweep of the stall-door angle |
 | Roof units lift off; panels slide out of their grooves | **Digitally**: translation sweeps |
-| No support material needed | **Digitally**: down-facing area per part (only bridges of at most 3.3 mm, and the 20 mm floor-notch bridges, remain) and PrusaSlicer's stability check. The 45 deg knuckle undersides on the posts were wrong in earlier exports and were fixed on 2026-11-07 |
+| Support material only where intended | **Digitally**: down-facing area per part and PrusaSlicer's stability check. Only the flat undersides of the post hinge knuckles need support (owner's choice; `knuckle_chamfer = true` removes it). Elsewhere only bridges of at most 16.4 mm remain |
+| Side roofs locked by the central roof | **Digitally**: lift sweep, the side roof stops after 1.25 mm, before it clears its 1.6 mm tabs; it lifts freely once the central roof is off |
 | Print time and filament | **Estimated** with PrusaSlicer 2.7.2 using A1-equivalent settings, not Bambu Studio |
 | Fits (grooves, sockets, bores, latch, tile fingers, tabs) | **Not physically tested.** Calculated starting values; print the coupons |
 | Latch force (~2 N), strain (~0.45 %) and fatigue life | **Calculated only** (beam theory, typical PLA properties) |
@@ -40,21 +41,19 @@
 * **Tight on purpose:** the stalls are sized to the largest common figures (170 mm long), so
   the longest horses have only 1.6 mm at each end and must stand straight. Typical horses
   (130-155 mm) have 9-21 mm at each end.
-* **Taking out the longest horses from above:** the central eave overhangs the front 20 mm of
-  each stall. A 170 mm horse with its head at the stall front cannot be lifted straight up
-  with only the side roof off. Lift the central unit as well, tilt the horse tail-first, or
-  lead it out through the stall door. Typical horses standing back from the stall front lift
-  straight out (checked).
+* **Getting at the horses from above** means lifting the central roof first (it locks the side
+  roofs), then a side roof. Then every horse, including a 170 mm one, lifts straight out.
 * **Tall posts:** the six 216 mm posts print upright, which is the strongest orientation for
   their grooves and hinge rings. They stand on 14 x 14 mm, and the A1 moves its bed under
-  them; PrusaSlicer flags them (and the central roof units) with "Low bed adhesion". Use an
-  8 mm brim, a clean plate and speed mode Silent, and watch the first hour. The posts are
-  spaced 60 mm apart, so one that comes loose does not knock over the others.
+  them; PrusaSlicer flags them (and the central roof) with "Low bed adhesion". Use an 8 mm
+  brim, a clean plate and speed mode Silent, and watch the first hour. The posts are spaced
+  60 mm apart, so one that comes loose does not knock over the others. Their hinge knuckles
+  print on small tree supports; snip these off and check that the gaps are clean.
 * **The central roof prints standing on its 5 mm eave strips** with 45 deg slopes. It needs
   good part cooling. If the underside sags on your printer, enable tree supports for that part
   only.
-* **Side-roof removal with the central roof in place:** lift about 3 mm, then pull outward
-  (checked: free over 60 mm). Removing the central unit first is easier.
+* **Roof order:** the side roofs cannot come off while the central roof is on (by design: the
+  roof no longer slides off when the stable is tilted). Lift the central roof first.
 * **Main doors open to about 105 deg**, then stop against the door post. They do not fold
   flat against the wall.
 * **Stall doors open about 90 deg into the aisle.** Facing doors hinge at opposite ends, so
@@ -74,6 +73,6 @@
   work, faster with `--backend manifold`, but that was not tested here.
 * **Main door height:** 160 mm clear at the crown. The rider height is an estimate, and a tall
   rider figure with a raised arm may touch the arch.
-* **Small parts:** hinge pins (30-126 mm x 1.75 mm) and the two 37 mm bolt bars are captured
-  when assembled. They are still a hazard for children under 3. This is a printed toy without
-  certification; supervise young children.
+* **Small parts:** hinge pins (30-126 mm x 1.75 mm) are captured when assembled; the two 37 mm
+  bolt bars are loose (two spares are on the door plate). Not for children under 3. This is a
+  printed toy without certification.

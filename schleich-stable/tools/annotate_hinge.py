@@ -31,7 +31,7 @@ def label(lines, x, y, tip):
 
 label(["Pfosten: feste Scharnieraugen,", "enges Loch 1,85 mm:", "hier klemmt der Stift"], 860, 110, (402, 95))
 label(["Tür: bewegliches Auge,", "weites Loch 2,3 mm:", "dreht sich um den Stift"], 860, 330, (395, 215))
-label(["45°-Schräge unter jedem Auge:", "druckt ohne Stützmaterial"], 860, 560, (395, 345))
+label(["Unterseite jedes Auges: hier", "setzt beim Druck eine kleine", "Baumstütze an (abbrechen)"], 860, 540, (395, 345))
 label(["Stift = Stück 1,75-mm-Filament.", "Von unten bis zum Anschlag", "einschieben. Steht der Pfosten", "im Boden, kann er nicht", "mehr herausfallen."], 860, 740, (384, 480))
 out = os.path.join(ROOT, "docs", "images", "scharnier.png")
 im.save(out, optimize=True)

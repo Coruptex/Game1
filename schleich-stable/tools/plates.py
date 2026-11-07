@@ -27,13 +27,14 @@ GROUPS = [
     # upright posts: 8 mm brim; wide spacing so a post that comes loose on the
     # moving bed (A1 = bed slinger) cannot knock over its neighbours
     ("posts_short", "black", 8, "upright", 40, [("post_corner", 4), ("post_sidemid", 2)]),
-    ("posts_tall", "black", 8, "upright", 60, [("post_jamb_L", 2), ("post_jamb_R", 2), ("post_mid", 2)]),
+    ("posts_tall", "black", 8, "upright, supports", 60, [("post_jamb_L", 2), ("post_jamb_R", 2), ("post_mid", 2)]),
     ("walls", "white", 0, "trim", GAP, [("stall_front", 4), ("partition", 2), ("gable_wing_A", 2), ("gable_wing_B", 2),
                                           ("pediment", 2), ("side_wall", 4)]),
+    # 2 bolt bars + 2 spares (small, easily lost)
     ("doors", "black", 0, "", GAP, [("main_leaf_A", 2), ("main_leaf_B", 2), ("stall_door", 4),
-                                     ("casement_A", 2), ("casement_B", 2), ("bolt_bar", 2)]),
-    ("roof_central", "roof", 5, "", GAP, [("roof_central", 2)]),
-    ("roof_side", "roof", 0, "", GAP, [("roof_side_A", 2), ("roof_side_B", 2)]),
+                                     ("casement_A", 2), ("casement_B", 2), ("bolt_bar", 4)]),
+    ("roof_central", "roof", 5, "", GAP, [("roof_central", 1)]),   # 243 mm + 2 x 5 mm brim fits the bed
+    ("roof_side", "roof", 0, "", GAP, [("roof_side_A", 1), ("roof_side_B", 1)]),
 ]
 TEST_PLATES = [("T1_test_hinges_latches", "any", 3, "", [("tests/plate_T1", None, None, 0)]),
                ("T2_test_fits", "any", 3, "", [("tests/plate_T2", None, None, 0)])]
@@ -189,6 +190,8 @@ def main():
         import slice as sl
         for pid, _, brim in jobs:
             sl.BRIM[pid] = brim
+            if "supports" in out[pid]["note"] or pid.startswith("T1"):
+                sl.SUPPORT.add(pid)
         with cf.ProcessPoolExecutor(4) as ex:
             for pid, r in ex.map(slice_one, [(p, s) for p, s, _ in jobs]):
                 out[pid].update(r)

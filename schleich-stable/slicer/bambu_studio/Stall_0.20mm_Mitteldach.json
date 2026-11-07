@@ -1,0 +1,15 @@
+{
+    "type": "process",
+    "from": "User",
+    "is_custom_defined": "0",
+    "version": "1.9.0.0",
+    "name": "Stall 0.20mm Mitteldach @BBL A1",
+    "inherits": "0.20mm Standard @BBL A1",
+    "print_settings_id": "Stall 0.20mm Mitteldach @BBL A1",
+    "wall_loops": "3",
+    "enable_support": "0",
+    "brim_type": "outer_only",
+    "brim_width": "5",
+    "brim_object_gap": "0.1",
+    "enable_prime_tower": "0"
+}

@@ -1,150 +1,115 @@
 # Analyse: Druckbarkeit, Mängel, Stärken und Schwächen
 
-Stand 7. November 2026, kompakte Version. Geprüft wurde die exportierte Geometrie, also genau
-die Teile, die gedruckt werden: mit `tools/validate.py`, zusätzlichen Prüfungen und dem
-Stabilitätscheck von PrusaSlicer. **Gedruckt wurde noch nichts.** Passungen und Kräfte sind
-berechnet, nicht gemessen. Deshalb zuerst die beiden Testplatten T1 und T2 drucken (`TESTING.md`).
+Stand 7. November 2026, kompakte Version nach der Überarbeitung (Abschnitt 1). Geprüft wurde
+die exportierte Geometrie, also genau die Teile, die gedruckt werden: mit `tools/validate.py`,
+zusätzlichen Prüfungen und dem Stabilitätscheck von PrusaSlicer. **Gedruckt wurde noch nichts.**
+Passungen und Kräfte sind berechnet, nicht gemessen. Deshalb zuerst die beiden Testplatten
+T1 und T2 drucken (`TESTING.md`).
+
+Für ein Kind von 9 Jahren gebaut: zerlegbar, ohne Kleber, robust für viel Spiel.
 
 ## Kurzfazit
 
-* **Gut druckbar auf dem Bambu Lab A1:** Alle 26 verschiedenen Teile passen (das breiteste ist
-  197 mm, das längste 207 mm, das höchste 216 mm). Kein Teil braucht Stützmaterial. Fertige
-  Druckplatten liegen als 3MF bei.
-* **Ein echter Fehler wurde gefunden und behoben** (Abschnitt 2): Die Scharnieraugen an den
-  Pfosten hatten flache statt 45-Grad-Unterseiten.
-* **Heikelster Druck:** die sechs 216 mm hohen Pfosten. Das Druckbett des A1 bewegt sich unter ihnen.
-* **Fürs Spielen:** Die Grundkonstruktion ist kräftig. Dach und Wände sind aber nur gesteckt.
-  Fensterflügel, Riegel und Stifte sind die Schwachstellen.
+* **Gut druckbar auf dem Bambu Lab A1:** 23 Druckplatten, alle Teile passen aufs Bett. Stützen
+  nur unter den Scharnieraugen der hohen Pfosten. Für Bambu Studio gibt es fertige Presets und
+  eine Schritt-für-Schritt-Anleitung mit AMS-lite-Belegung ([BAMBU_STUDIO.md](BAMBU_STUDIO.md)).
+* **Die Schwachstellen sind überarbeitet:** Das Dach besteht jetzt aus 3 Teilen und ist
+  verriegelt. Fenster, Gitterstäbe und Bodenverbindung sind kräftiger.
+* **Heikelster Druck bleibt die Platte mit den sechs 216 mm hohen Pfosten**, weil das
+  Druckbett des A1 sich unter ihnen bewegt.
 
-## 1. Druckbarkeit auf dem A1
+## 1. Was überarbeitet wurde
+
+| Schwachstelle | Vorher | Jetzt |
+|---|---|---|
+| Dach | 6 Teile, nur aufgelegt; fiel beim Kippen leicht ab | **3 Teile** (Mitteldach, zwei Seitendächer). Das Mitteldach **verriegelt** die Seitendächer: Zwei kurze Sperrrippen stehen 1 mm unter dem Mitteldach. Solange es drauf ist, kommt ein Seitendach nach 1,25 mm Anheben nicht weiter, also nicht aus seinen 1,6 mm hohen Zapfen heraus (geprüft). Jedes Dachteil ist 242,8 mm lang und passt aufs 256-mm-Bett; dafür ist der Dachüberstand an den Giebeln von 10 auf 4 mm geschrumpft |
+| Scharnieraugen an den Pfosten | 45-Grad-Schräge unten (ohne Stützen druckbar) | **volle Augen**, gedruckt mit kleinen Baumstützen (dein Wunsch). Jede Stütze steht auf dem Auge darunter, also kurz und leicht zu entfernen. 0,8 statt 0,5 mm Spiel zwischen den Augen, damit Stützreste die Tür nicht bremsen. Die Schräge bleibt als Option (`knuckle_chamfer` in `cad/config.scad`) |
+| Fensterflügel | Scharnierwand 1,45 mm, Rahmen 2,4 mm | Scharnieraugen 6,4 statt 5,2 mm (Wand 2,05 mm), Rahmen 3,0 mm, Sprossen 3,0 mm |
+| Gitterstäbe | 3 mm breit, an der Trennwand nur 2,8 mm dick | Trennwand: 4 mm breit und erhaben, 4,2 mm dick (schwarz); Boxentür: 3,5 mm; Sprossen der Tore: 3,0 mm |
+| Bodenplatten-Verbindung | 20 mm breite Zungen, 20,5 mm Brücke, 0,25 mm Luft | 14 mm breite Zungen, mehr pro Fuge, 14,5 mm Brücke und 0,4 mm Luft nach oben. Hängt die Brücke etwas durch, klemmt nichts. PrusaSlicer meldet keine langen Brücken mehr |
+| Druck der hohen Pfosten | 26 mm Abstand | 60 mm Abstand (ein umfallender Pfosten reißt die anderen nicht mit), 8 mm Brim, Druckgeschwindigkeit „Leise“ |
+| Riegel | 2 Stück, lose | dazu 2 Ersatzriegel auf der Türplatte |
+| Slicer | nur Hinweise | 4 Bambu-Studio-Presets, Druckplatten-Tabelle mit Preset, AMS-Slot und Farbwechsel |
+
+Unverändert und geprüft: Alle Pferde passen (Designpferd 170 x 53 x 120 mm in jeder Box, durch
+Boxentür und Tor). Keine Teile überschneiden sich. Alle Türen und Fenster schwenken frei, auch
+alle gleichzeitig. Alle 12 Stifte laufen frei, der Klick-Verschluss rastet.
+
+## 2. Druckbarkeit auf dem A1
 
 | Teile | Druckrichtung | Bewertung | Was zu beachten ist |
 |---|---|---|---|
-| Bodenplatten (6) | flach | sehr gut | große Auflagefläche. Unten werden die Aussparungen für die Steckzungen 20 mm überbrückt (PrusaSlicer: „Long bridging extrusions“). Für PLA ist das machbar, aber dort sind nur 0,25 mm Luft: Hängt die Brücke durch, klemmen die Platten beim Zusammenschieben. Testplatte T2 prüft genau diese Verbindung |
-| Wände, Trennwände, Boxenfronten, Giebel (16) | flach, Schauseite oben | sehr gut | für schwarze Zierleisten Farbwechsel bei 2,8 mm (AMS lite oder Pause) |
-| Seitendächer (4) | flach, Schindeln oben | sehr gut | große Auflagefläche |
-| Türen, Fensterflügel, Riegel (14) | flach | gut | Scharnierbohrungen sind tropfenförmig und brauchen keine Stütze |
+| Bodenplatten (6) | flach, 0,24 mm Schichten | sehr gut | große Auflagefläche; unten 14,5-mm-Brücken über den Zungen-Aussparungen |
+| Wände, Trennwände, Boxenfronten, Giebel (16) | flach, Schauseite oben | sehr gut | Filamentwechsel bei 3,0 mm für schwarze Zierleisten (macht das AMS lite) |
+| Türen, Fensterflügel, Riegel (14 + 2 Ersatz) | flach | gut | Scharnierbohrungen tropfenförmig, keine Stützen |
 | Kurze Pfosten (6, 118 mm) | stehend | gut | 8 mm Brim |
-| Hohe Pfosten (6, 216 mm) | stehend | **heikel** | stehen auf nur 14 x 14 mm; PrusaSlicer meldet „Low bed adhesion“. 8 mm Brim, Platte mit Spülmittel reinigen, Druckmodus **Silent**, die erste Stunde zuschauen |
-| Mitteldach (2) | stehend wie eingebaut, 45 Grad | gut, etwas heikel | steht auf zwei 5 mm breiten Streifen; 5 mm Brim, gute Kühlung; PrusaSlicer meldet ebenfalls „Low bed adhesion“ |
+| Hohe Pfosten (6, 216 mm) | stehend | **anspruchsvoll** | stehen auf nur 14 x 14 mm; Baumstützen unter 28 Scharnieraugen; 8 mm Brim, Modus „Leise“, Platte mit Spülmittel waschen, die erste Stunde zuschauen |
+| Mitteldach (1) | stehend wie eingebaut, 45 Grad | gut | steht auf zwei 5 mm breiten, 243 mm langen Streifen; 5 mm Brim |
+| Seitendächer (2) | flach, Schindeln oben | sehr gut | 243 x 193 mm; Sperrrippen zeigen nach oben |
 
-Zahlen dazu: Ein hoher Pfosten ist 216 mm hoch und steht auf 202 mm² (Verhältnis Höhe zu
-Wurzel der Auflagefläche 15). Das Mitteldach kommt auf 2,3, alle anderen Teile liegen unter 1.
-Die stehenden Pfosten sind trotzdem die richtige Wahl: Nur so werden die Nuten und
-Scharnierbohrungen rund, maßhaltig und fest. Liegend bräuchten die Scharnieraugen Stützen.
-
-## 2. Gefundene Mängel
-
-1. **Behoben: flache Unterseiten an den Scharnieraugen der Pfosten.** Jedes feste Scharnierauge
-   (28 Stück an 6 Pfosten) sollte unten eine 45-Grad-Schräge haben. Die Schräge war in
-   `cad/lib/hinges.scad` falsch herum gedreht und hatte keine Wirkung. Jedes Auge begann
-   deshalb als flacher, bis zu 7,6 mm frei überstehender Absatz. Beim Drucken hängt so ein
-   Absatz durch oder wellt sich, und die Düse kann daran hängen bleiben. Bei einem 216 mm hohen
-   Pfosten kann das den ganzen Pfosten umwerfen. Dieser Fehler war auch in der großen Version.
-   Jetzt wächst jedes Auge Schicht für Schicht (5, 25, 51, 92 mm² auf den ersten 8 mm).
-   Die Überhangfläche der Türpfosten sank von 317 auf 27 mm² (nur noch die Deckel der
-   Stiftlöcher, 1,85 mm). PrusaSlicer meldet die Warnungen „Loose extrusions“ und „Floating
-   bridge anchors“ nicht mehr.
-2. **Geprüft, unkritisch:** Zwei der zwölf Scharnierstifte stehen teilweise über einer 0,6 mm
-   tiefen Pflasterfuge. Die Fuge ist mit 1,1 mm schmaler als der Stift (1,75 mm); er liegt
-   sicher auf.
-3. **Konstruktionsentscheidungen, die beim Spielen auffallen werden:** Dach und Wände sind nur
-   gesteckt. Die Fensterstifte halten nur durch Klemmung. Der Riegel ist ein loses Teil.
-   Siehe Schwächen.
+Die Pfosten stehend zu drucken ist richtig: Nur so werden Nuten und Scharnierbohrungen rund und
+fest, und die Ringe der Scharnieraugen liegen in der Schicht (stärkste Richtung).
 
 ## 3. So funktionieren die Scharniere
 
-Ja: Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
+Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 
 ![So funktioniert das Scharnier](images/scharnier.png)
 
-* Am Pfosten sitzen feste **Scharnieraugen** mit einem engen Loch (1,85 mm): Dort klemmt der
-  Stift. Die Tür hat ihre Augen in den Lücken dazwischen, mit einem weiteren Loch (2,3 mm):
-  Dort dreht sie sich frei um den Stift.
-* **Zuschneiden:** 4 x 126 mm (Haupttüren), 4 x 122 mm (Boxentüren), 4 x 30 mm (Fenster).
-  Filament von der Rolle gerade ziehen, Enden mit dem Seitenschneider gerade abschneiden und
-  leicht entgraten. Frisches, trockenes Filament nehmen; altes PLA wird spröde. PETG-Filament
-  ist zäher.
-* **Einbau Türen:** Tür so an den Pfosten halten, dass ihre Augen in den Lücken sitzen. Stift
-  **von unten** durch alle Augen schieben, bis er oben anschlägt (das oberste Loch ist
-  geschlossen). Dann den Pfosten in den Boden stecken: Der Boden verschließt das Loch unten,
-  der Stift kann nicht mehr herausfallen.
-* **Einbau Fenster:** Stift **von oben** in das Fensterscharnier stecken. Er steht unten auf
-  einem geschlossenen Loch.
-* **Vorher testen:** Testplatte T1 hat drei Lochgrößen für jede Seite. Passt der Stift nicht,
-  den Wert in `cad/config.scad` ändern (`bore_fixed`, `bore_free`) und neu exportieren.
-* **Ausbauen:** Pfosten herausziehen, Stift nach unten herausdrücken.
+* Am Pfosten sitzen feste **Scharnieraugen** mit engem Loch (1,85 mm): Dort klemmt der Stift.
+  Die Tür hat ihre Augen in den Lücken dazwischen, mit weitem Loch (2,3 mm): Sie dreht sich frei
+  um den Stift.
+* **Nach dem Druck:** die kleinen Baumstützen unter den Augen mit einer Spitzzange herausdrehen,
+  Reste mit dem Cutter glätten. Ein Türauge muss ohne Kraft in die Lücke gleiten.
+* **Zuschneiden:** 4 x 126 mm (Tore), 4 x 122 mm (Boxentüren), 4 x 30 mm (Fenster). Filament gerade
+  ziehen, Enden sauber abknipsen und leicht entgraten. Frisches, trockenes Filament nehmen;
+  PETG-Filament ist zäher.
+* **Einbau Türen:** Tür an den Pfosten halten, Stift **von unten** bis zum Anschlag durchschieben,
+  dann den Pfosten in den Boden stecken. Der Boden hält den Stift von unten.
+* **Einbau Fenster:** Stift **von oben** einstecken; er steht unten auf einem geschlossenen Loch.
+* **Testen:** Testplatte T1 hat drei Lochgrößen je Seite (`bore_fixed`, `bore_free`).
 
 ## 4. Stärken
 
-* **Passt zu echten Schleich-Pferden:** Jede Box fasst auch den größten gängigen Schleich
-  (Shire, 17 cm). Geprüft wurde das mit einem Pferde-Platzhalter, der größer ist als jede echte
-  Figur. Die Türen sind groß genug, um Pferde hinein- und herauszuführen.
+* **Passt zu echten Schleich-Pferden,** auch zum größten gängigen (Shire, 17 cm).
 * **Kompakt:** 49 x 25 cm Grundfläche, 27,6 cm hoch.
-* **Viel Spielwert:** 4 Boxentüren mit Klick-Verschluss und Halsausschnitt, zwei Doppeltore mit
-  Riegel (die Stallgasse ist durchfahrbar), 4 Fenster zum Öffnen, das Dach in 6 Teilen
-  abnehmbar.
-* **Kräftige Grundkonstruktion:** 16-mm-Pfosten, 2,8 mm starke Wände in Nuten, 8 mm Boden aus
-  verzahnten Platten.
-* **Echte Scharniere mit Stift** statt gedruckter Clips oder Print-in-Place-Gelenke. Das hält
-  viel mehr aus. Geht trotzdem eine Tür kaputt, druckt man nur diese eine nach (etwa 22 g).
-* **Druckfreundlich:** keine Stützen, kein Kleber, keine Schrauben, keine Magnete; alle Teile
-  passen auf den A1.
-* **Schön:** Bretter, Schindeln, Pflaster und Sockelsteine, schwarz-weiß wie die Vorlage.
-* **Anpassbar und geprüft:** Alle Maße stehen in einer Datei. Die Prüfung (Kollisionen,
-  Türschwenk, Stifte, Verschluss, Dach, Pferde) läuft nach jeder Änderung automatisch.
+* **Viel Spielwert:** 4 Boxentüren mit Klick-Verschluss und Halsausschnitt, zwei Doppeltore
+  mit Riegel, 4 Fenster zum Öffnen, das Dach mit zwei Griffen ab (Mitteldach, dann Seitendach).
+* **Kräftig:** 16-mm-Pfosten, Wände in Nuten, verzahnter 8-mm-Boden, kräftigere Fenster und
+  Gitter, verriegeltes Dach.
+* **Echte Stift-Scharniere;** jedes Teil einzeln ersetzbar, nichts geklebt.
+* **Fertig für Bambu Studio:** Presets, Plattenliste, AMS-Belegung.
 
-## 5. Schwächen (für ein Geschenk, mit dem viel gespielt wird)
+## 5. Schwächen, die bleiben
 
-* **Noch nicht gedruckt:** Passungen und Verschlusskraft sind berechnet. Die Testplatten
-  kosten rund 4,5 h und klären das vorher.
-* **Hohe Pfosten:** das Druckrisiko auf dem A1 (Abschnitt 1).
-* **Dach liegt nur auf:** Wer den Stall am Dach anhebt oder kippt, hat das Dach in der Hand.
-  Immer am Boden tragen.
-* **Wände sind gesteckt:** Ohne Dach kann man jede Wand nach oben herausziehen. Bei wildem
-  Spiel geht der Stall eher auseinander als kaputt. Wer das nicht will, kann ihn verkleben;
-  dann lässt er sich aber nicht mehr zerlegen.
-* **Zierlichste Teile:** die Fensterflügel (2,4 mm Rahmen, Scharnierwand nur etwa 1,5 mm) und
-  die Gitterstäbe. Türen, die mit Gewalt über ihren Anschlag gedrückt werden (Haupttore 105
-  Grad, Boxentüren 90 bis 105 Grad), können am Scharnierauge brechen.
-* **Kleinteile:** 12 Stifte (1,75 mm dick, 30 bis 126 mm lang) und 2 Riegel (37 mm). Eingebaut
-  sind die Stifte gefangen, die Riegel nicht. **Nicht für Kinder unter 3 Jahren.** Ein gedrucktes
-  Spielzeug hat keine Spielzeug-Zertifizierung (EN 71).
-* **Knapp für die größten Pferde:** 1,6 mm Luft an jedem Ende. Ein 17-cm-Pferd mit dem Kopf an
-  der Boxentür lässt sich nur senkrecht herausheben, wenn zusätzlich das Mitteldach abgenommen
-  ist (oder man es schräg herausnimmt). Normale Pferde (bis etwa 15 cm), die nicht ganz vorn
-  an der Tür stehen, lassen sich direkt nach oben herausheben.
-* **PLA:** wird bei etwa 55 °C weich (Auto im Sommer, Fensterbank in der Sonne) und kann mit der
-  Zeit spröde werden. Türen und Stifte aus PETG halten mehr aus.
-* **Aufwand:** 26 Druckplatten, rund 80 h und 2,33 kg Filament (PrusaSlicer-Schätzung mit
-  A1-Einstellungen; Bambu Studio weicht etwas ab), dazu etwa 1 bis 2 Stunden Zusammenbau.
+* **Noch nicht gedruckt:** T1 und T2 (zusammen etwa 5 h) klären die Passungen vorher.
+* **Hohe Pfosten** bleiben der anspruchsvollste Druck (Abschnitt 2).
+* **Stützen entfernen:** 28 kleine Bäume an den Pfosten, etwa 15 Minuten Arbeit.
+* **Wände sind gesteckt** (zerlegbar, wie gewünscht). Mit Dach sind sie gehalten; ohne Dach kann
+  man sie herausziehen. Den Stall immer am Boden tragen.
+* **Das Mitteldach liegt auf.** Es hält beim normalen Tragen; auf den Kopf gestellt fällt es ab.
+* **Türen nicht mit Gewalt über den Anschlag drücken** (Tore 105 Grad, Boxentüren 90 bis
+  105 Grad); das belastet die Scharnieraugen.
+* **PLA** wird bei etwa 55 °C weich (Auto im Sommer, sonnige Fensterbank).
+* **Aufwand:** 23 Platten, rund 81 h und 2,4 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
+  zeigt eigene Werte), dazu 1 bis 2 Stunden Zusammenbau.
 
-## 6. Empfehlungen
+## 6. Drucken
 
-* **Vor dem Druck:** T1 und T2 drucken und auswerten (`TESTING.md`).
-* **Beim Druck:** Hohe Pfosten mit 8 mm Brim im Modus Silent, Platte vorher mit Spülmittel
-  waschen. Türen und Fensterflügel gern in PETG.
-* **Beim Zusammenbau:** Die Nuten müssen sauber sein; eine Wand muss sich von Hand einschieben
-  lassen. Erst Boden, dann Pfosten mit Türen, dann Wände, dann Dach (`ASSEMBLY.md`).
-* **Beim Verschenken:** zeigen, dass man den Stall am Boden trägt und das Dach zum Spielen
-  abnimmt. Die Riegel bei kleinen Kindern weglassen.
+Siehe [BAMBU_STUDIO.md](BAMBU_STUDIO.md): Presets importieren, AMS lite belegen (1 Weiß,
+2 Schwarz, 3 Hellgrau, 4 Dunkelgrau), je Platte Preset und Slot wählen, bei den Wandplatten
+Filamentwechsel bei 3,0 mm. Reihenfolge: T1, T2, dann Pfosten, Boden, Wände, Türen, Dach.
 
 ## 7. Die Blender-Datei
 
 ![Alle Blickrichtungen](images/ansichten_alle.jpg)
 
-`blender/stall_kompakt.blend` (erstellt mit Blender 4.0, öffnet sich in 4.0 und neuer) enthält
-die exportierten Druckteile in Einbaulage, keine nachgebaute Geometrie. Erzeugt wird sie mit
-`tools/make_blend.py`.
+`blender/stall_kompakt.blend` (ab Blender 4.0) enthält die exportierten Druckteile in Einbaulage,
+keine nachgebaute Geometrie. Erzeugt wird sie mit `tools/make_blend.py`.
 
-* **Sammlungen** (Outliner, Augen-Symbol zum Ein- und Ausblenden):
-  „Stall (zusammengebaut)“ mit Boden, Pfosten, Wänden, Türen und Dach.
-  Ausgeblendet: „Tueren offen (90 Grad)“, „Scharnierstifte“ (orange: wo das Filament steckt),
-  „Pferd-Platzhalter“ und „Druckplatten“ (alle Platten auf 256-mm-Betten, rechts neben dem
-  Stall).
-* **Ansichten:** 10 Kameras (Vorne, Hinten, Links, Rechts, vier Schrägansichten, Oben, Unten).
-  Kamera im Outliner anklicken, dann Strg+Ziffernblock 0. Frei drehen: mittlere Maustaste;
-  Pos1-Taste zeigt alles.
-* **Maße** in Millimetern. **F12** rendert die aktive Kamera.
-* Für ältere Blender-Versionen oder ohne Blender: `docs/assembly_preview.glb` (glTF-Import oder
-  ein beliebiger glTF-Viewer).
+* **Sammlungen** (Outliner, Augen-Symbol): „Stall (zusammengebaut)“ mit Boden, Pfosten, Wänden,
+  Türen und Dach. Ausgeblendet: „Tueren offen (90 Grad)“, „Scharnierstifte“ (orange),
+  „Pferd-Platzhalter“ und „Druckplatten“ (alle Platten auf 256-mm-Betten, rechts neben dem Stall).
+* **Ansichten:** 10 Kameras. Kamera im Outliner anklicken, dann Strg+Ziffernblock 0. Frei drehen:
+  mittlere Maustaste; Pos1 zeigt alles. Maße in Millimetern, F12 rendert.
+* Ohne Blender: `docs/assembly_preview.glb` in einem beliebigen glTF-Viewer.

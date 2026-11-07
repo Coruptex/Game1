@@ -67,7 +67,7 @@ def load_stable(roof=True, door=None, roof_dz=0.0, side_out=0.0, skip=(), only=N
         if n.startswith("roof_"):
             if not roof: continue
             if n.startswith("roof_side"):
-                sgn = -1 if n.endswith(("FL", "BL")) else 1
+                sgn = -1 if n.endswith("_L") else 1
                 imp(f, "roof", roof_dz * 0.55, (sgn * side_out, 0))
             else:
                 imp(f, "roof", roof_dz)
@@ -104,7 +104,7 @@ V = {
                          only=["post_jamb_FL", "stall_door_FL", "stall_front_FL", "floor_AF", "floor_LF",
                                "gable_wing_FL", "post_mid_FL", "partition_L", "post_corner_FL", "side_wall_FL"]),
     "roof_detail": dict(cam_tgt=rel((0, 252, 205), (0, 0, 238)), lens=40, roof_dz=40 * K,
-                        only=["roof_central_F", "post_mid_FL", "post_mid_FR", "stall_front_FL", "stall_front_FR",
+                        only=["roof_central", "post_mid_FL", "post_mid_FR", "stall_front_FL", "stall_front_FR",
                               "stall_front_BL", "stall_front_BR", "floor_AF", "floor_AB", "partition_L", "partition_R",
                               "pediment_F", "post_jamb_FL", "post_jamb_FR"]),
     # design-horse proxies (tools/validate.py) in the stalls, roof off
