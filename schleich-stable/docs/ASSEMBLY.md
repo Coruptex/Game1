@@ -66,7 +66,7 @@ will rest on the floor, which keeps them in.
 | `post_jamb_R` (2) | `main_leaf_B` | none |
 | `post_mid` (2) | none | `stall_door` |
 
-![Hinges and latch on a door post](images/hinge_detail.png)
+![How a hinge works: post knuckles, door knuckle and the filament pin pushed up from below](images/scharnier.png)
 
 ## 3. Posts
 

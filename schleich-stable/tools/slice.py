@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from build import read_instances, unique_parts  # noqa: E402
 
 # parts printed upright / standing on thin edges get a brim
-BRIM = {"post_corner": 5, "post_sidemid": 5, "post_jamb_L": 5, "post_jamb_R": 5, "post_mid": 5,
+BRIM = {"post_corner": 8, "post_sidemid": 8, "post_jamb_L": 8, "post_jamb_R": 8, "post_mid": 8,
         "roof_central": 5, "plate_T1": 3, "plate_T2": 3}
 
 
@@ -31,6 +31,9 @@ def slice_one(args):
     if r.returncode != 0 or not os.path.exists(out):
         return name, {"error": (r.stdout + r.stderr)[-500:]}
     res = {}
+    # PrusaSlicer's print-stability check ("Low bed adhesion", "Loose extrusions" ...)
+    m = re.search(r"Detected print stability issues:\s*\n\s*\S+\.stl\s*\n([^\n]+)", r.stdout + r.stderr)
+    res["stability"] = m.group(1).strip() if m else ""
     with open(out, errors="ignore") as f:
         for line in f:
             if line.startswith("; estimated printing time (normal mode)"):

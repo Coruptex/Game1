@@ -47,7 +47,8 @@ L = ["# Print plan (Bambu Lab A1)", "",
      "| Top / bottom shells | 5 / 4 | flat textured surfaces close well |",
      "| Sparse infill | 15 % grid (gyroid also fine) | floor tiles and plinth are modelled solid |",
      "| Supports | **off** for every part | everything is designed support-free |",
-     "| Brim | 5 mm for the posts (upright) and the central roof units | tall, narrow footprints |",
+     "| Brim | 8 mm for the posts (upright), 5 mm for the central roof units | tall, narrow footprints |",
+     "| Speed | the two post plates: printer speed mode **Silent** (50 %) | the A1 moves the bed under these tall posts; lower accelerations keep them standing |",
      "| Plate | Textured PEI, 65 C (Bambu PLA default) | textured underside looks good on panels |",
      "| Seam | Aligned or back | |",
      "| Part cooling | Bambu PLA default | 45 deg overhangs on the central roof need good cooling |", "",
@@ -60,13 +61,13 @@ L = ["# Print plan (Bambu Lab A1)", "",
      "## Plates", "",
      "Print the test plates **T1/T2 first** (see `TESTING.md`) and adjust `config.scad` if needed.", "",
      "![All print plates (rendered from the plate files)](images/plates.png)", "",
-     "| Plate (3MF) | Parts | Colour | Est. time | Est. filament |", "|---|---|---|---|---|"]
+     "| Plate (3MF) | Parts | Colour | Est. time | Est. filament | Slicer stability note |", "|---|---|---|---|---|---|"]
 tot_t = defaultdict(float); tot_g = defaultdict(float)
 for pid, p in plates.items():
     names = ", ".join(p["parts"])
     col = PLATE_COLOUR.get(p["colour"], p["colour"]) + (" + black trim (optional)" if p.get("note") == "trim" else "")
     extra = f" ({p['note']})" if p.get("note") and p["note"] != "trim" else ""
-    L.append(f"| `{pid}.3mf` | {names}{extra} | {col} | {hm(p.get('time_s', 0))} | {p.get('filament_g', 0):.0f} g |")
+    L.append(f"| `{pid}.3mf` | {names}{extra} | {col} | {hm(p.get('time_s', 0))} | {p.get('filament_g', 0):.0f} g | {p.get('stability', '')} |")
     if pid.startswith("P"):
         tot_t[p["colour"]] += p.get("time_s", 0); tot_g[p["colour"]] += p.get("filament_g", 0)
 L += ["", f"## Totals for the stable ({len(main)} plates, test plates excluded)", "",
@@ -87,7 +88,10 @@ L += ["", "Filament to have on hand (estimate + 10 % for purge, brims and failed
       f"6. **{ids('roof')}** roof.", "",
       "## Orientation notes", "",
       "* All 3MF plates are already oriented and arranged; the individual STLs in `stl/` are in print orientation too.",
-      "* Posts stand upright (grooves and hinge bores print round and strong).",
+      "* Posts stand upright (grooves and hinge bores print round and strong). The 216 mm posts are the most",
+      "  delicate prints on the A1, because its bed moves under them: 8 mm brim, clean plate (wash with dish soap),",
+      "  speed mode Silent, and watch the first hour. PrusaSlicer flags them with \"Low bed adhesion\"; this is",
+      "  the height-to-footprint ratio, not a geometry error. The hinge knuckles have 45 deg undersides and need no support.",
       "* The central roof units print standing on their eave edges, as installed. Use a 5 mm brim and keep the plate clean.",
       "* Everything else prints flat. The exterior or show face is up.",
       "* If the first layer of the large panels lifts at the corners: clean the plate (soap and water), raise the bed temperature by 5 C, add a 3 mm brim.", ""]

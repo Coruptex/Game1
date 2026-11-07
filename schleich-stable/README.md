@@ -37,12 +37,15 @@ saved and why nothing was simply scaled down.
    and order are in [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md).
 4. **Assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
 
-Viewing the assembled model: `docs/assembly_preview.glb` is coloured and opens in any glTF
-viewer. `3mf/assembly_preview.3mf` has all parts at their assembled positions, for viewing
-only; print from the `P..` plates.
+Viewing the assembled model: `blender/stall_kompakt.blend` (Blender 4.0 or newer) has the
+exported parts in place, with open-door poses, hinge pins, horse proxies, the print plates and
+10 named cameras ([views from all directions](docs/images/views/)). `docs/assembly_preview.glb`
+is coloured and opens in any glTF viewer. `3mf/assembly_preview.3mf` has all parts at their
+assembled positions, for viewing only; print from the `P..` plates.
 
 ## Documentation
 
+* [docs/ANALYSE.md](docs/ANALYSE.md) (Deutsch): Druckbarkeit, gefundene Mängel, Scharniere, Stärken und Schwächen
 * [docs/DIMENSION_PLAN.md](docs/DIMENSION_PLAN.md): horse sizes, how each dimension follows from them, comparison with the reference and v1
 * [docs/SPEC.md](docs/SPEC.md): reference analysis, requirements, dimensions, mechanisms, CAD workflow
 * [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md): Bambu Studio settings, plates, time and filament per plate
@@ -64,7 +67,8 @@ cad/            OpenSCAD source (parametric)
   tests/          test coupons
 stl/            printable parts (print orientation), stl/tests/ coupon plates
 3mf/            ready-arranged A1 plates (one colour per plate)
-tools/          build, validate, plates/slicing, report, render scripts
+tools/          build, validate, plates/slicing, report, render and Blender scripts
+blender/        Blender scene of the assembled stable (generated)
 docs/           documentation and renders
 ```
 
@@ -81,6 +85,9 @@ python3 tools/validate.py                 # writes docs/VALIDATION.md (incl. hor
 python3 tools/plates.py                   # arrange plates -> 3mf/, slice for estimates
 python3 tools/report.py                   # writes docs/PRINT_PLAN.md and docs/BOM.md
 python3 tools/render_export.py && tools/render_all.sh   # renders -> docs/images/
+blender -b -P tools/make_blend.py                        # Blender scene -> blender/stall_kompakt.blend
+blender -b blender/stall_kompakt.blend -P tools/render_views.py && python3 tools/views_sheet.py   # all view directions
+blender -b -P tools/render_hinge.py && python3 tools/annotate_hinge.py   # hinge explanation -> docs/images/scharnier.png
 ```
 
 With OpenSCAD 2023 or newer, add `--backend manifold` to `build.py` for a large speed-up.

@@ -11,6 +11,7 @@
 | Hinge pins pass through all knuckles | **Digitally**: virtual 1.75 mm pins, no contact |
 | Latch engages (barb seated when closed, 0.8 mm interference while passing) | **Digitally**: fine sweep of the stall-door angle |
 | Roof units lift off; panels slide out of their grooves | **Digitally**: translation sweeps |
+| No support material needed | **Digitally**: down-facing area per part (only bridges of at most 3.3 mm, and the 20 mm floor-notch bridges, remain) and PrusaSlicer's stability check. The 45 deg knuckle undersides on the posts were wrong in earlier exports and were fixed on 2026-11-07 |
 | Print time and filament | **Estimated** with PrusaSlicer 2.7.2 using A1-equivalent settings, not Bambu Studio |
 | Fits (grooves, sockets, bores, latch, tile fingers, tabs) | **Not physically tested.** Calculated starting values; print the coupons |
 | Latch force (~2 N), strain (~0.45 %) and fatigue life | **Calculated only** (beam theory, typical PLA properties) |
@@ -45,8 +46,10 @@
   lead it out through the stall door. Typical horses standing back from the stall front lift
   straight out (checked).
 * **Tall posts:** the six 216 mm posts print upright, which is the strongest orientation for
-  their grooves and hinge rings. Very tall, narrow prints need a clean plate and a brim. The
-  short and tall posts are on separate plates, so a failure costs one plate.
+  their grooves and hinge rings. They stand on 14 x 14 mm, and the A1 moves its bed under
+  them; PrusaSlicer flags them (and the central roof units) with "Low bed adhesion". Use an
+  8 mm brim, a clean plate and speed mode Silent, and watch the first hour. The posts are
+  spaced 60 mm apart, so one that comes loose does not knock over the others.
 * **The central roof prints standing on its 5 mm eave strips** with 45 deg slopes. It needs
   good part cooling. If the underside sags on your printer, enable tree supports for that part
   only.

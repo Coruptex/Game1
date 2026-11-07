@@ -41,8 +41,10 @@ module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5
 }
 module knuckle_underside_cut(z, web_dir, web_len) {
     a = atan2(web_dir[1], web_dir[0]);
-    // keep z >= z + (distance from the post face, outward)
-    rotate([0, 0, a]) translate([web_len, -50, z]) rotate([0, -45, 0]) translate([-100, 0, 0]) cube([200, 100, 200]);
+    // local x' runs along web_dir, i.e. TOWARD the post face (at x' = web_len).
+    // Keep z >= z + (web_len - x'): the underside rises 45 deg AWAY from the
+    // post face, so every layer of the knuckle rests on the one below.
+    rotate([0, 0, a]) translate([web_len, -50, z]) rotate([0, 45, 0]) translate([-100, 0, 0]) cube([200, 100, 200]);
 }
 // clearance cut for the moving knuckles (used on the fixed part)
 module knuckles_clear_z(z0, z1, n, d = dk_door) {

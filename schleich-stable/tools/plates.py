@@ -24,9 +24,10 @@ GROUPS = [
     ("floor_LB", "grey", 0, "", GAP, [("floor_LB", 1)]),
     ("floor_AB", "grey", 0, "", GAP, [("floor_AB", 1)]),
     ("floor_RB", "grey", 0, "", GAP, [("floor_RB", 1)]),
-    # upright posts: wide spacing for brims and cooling
-    ("posts_short", "black", 5, "upright", 26, [("post_corner", 4), ("post_sidemid", 2)]),
-    ("posts_tall", "black", 5, "upright", 26, [("post_jamb_L", 2), ("post_jamb_R", 2), ("post_mid", 2)]),
+    # upright posts: 8 mm brim; wide spacing so a post that comes loose on the
+    # moving bed (A1 = bed slinger) cannot knock over its neighbours
+    ("posts_short", "black", 8, "upright", 40, [("post_corner", 4), ("post_sidemid", 2)]),
+    ("posts_tall", "black", 8, "upright", 60, [("post_jamb_L", 2), ("post_jamb_R", 2), ("post_mid", 2)]),
     ("walls", "white", 0, "trim", GAP, [("stall_front", 4), ("partition", 2), ("gable_wing_A", 2), ("gable_wing_B", 2),
                                           ("pediment", 2), ("side_wall", 4)]),
     ("doors", "black", 0, "", GAP, [("main_leaf_A", 2), ("main_leaf_B", 2), ("stall_door", 4),

@@ -15,7 +15,8 @@ printed. Bambu Studio's own estimate will differ, possibly by +-20 %.
 | Top / bottom shells | 5 / 4 | flat textured surfaces close well |
 | Sparse infill | 15 % grid (gyroid also fine) | floor tiles and plinth are modelled solid |
 | Supports | **off** for every part | everything is designed support-free |
-| Brim | 5 mm for the posts (upright) and the central roof units | tall, narrow footprints |
+| Brim | 8 mm for the posts (upright), 5 mm for the central roof units | tall, narrow footprints |
+| Speed | the two post plates: printer speed mode **Silent** (50 %) | the A1 moves the bed under these tall posts; lower accelerations keep them standing |
 | Plate | Textured PEI, 65 C (Bambu PLA default) | textured underside looks good on panels |
 | Seam | Aligned or back | |
 | Part cooling | Bambu PLA default | 45 deg overhangs on the central roof need good cooling |
@@ -34,49 +35,49 @@ Print the test plates **T1/T2 first** (see `TESTING.md`) and adjust `config.scad
 
 ![All print plates (rendered from the plate files)](images/plates.png)
 
-| Plate (3MF) | Parts | Colour | Est. time | Est. filament |
-|---|---|---|---|---|
-| `P01_floor_LF.3mf` | floor_LF | grey | 3 h 04 min | 125 g |
-| `P02_floor_AF.3mf` | floor_AF | grey | 1 h 58 min | 63 g |
-| `P03_floor_RF.3mf` | floor_RF | grey | 3 h 03 min | 124 g |
-| `P04_floor_LB.3mf` | floor_LB | grey | 3 h 04 min | 124 g |
-| `P05_floor_AB.3mf` | floor_AB | grey | 1 h 57 min | 62 g |
-| `P06_floor_RB.3mf` | floor_RB | grey | 3 h 05 min | 124 g |
-| `P07_posts_short.3mf` | post_corner, post_corner, post_corner, post_corner, post_sidemid, post_sidemid (upright) | black | 5 h 13 min | 117 g |
-| `P08_posts_tall.3mf` | post_jamb_L, post_jamb_L, post_jamb_R, post_jamb_R, post_mid, post_mid (upright) | black | 10 h 29 min | 229 g |
-| `P09_walls_1.3mf` | partition | white + black trim (optional) | 2 h 05 min | 63 g |
-| `P10_walls_2.3mf` | partition | white + black trim (optional) | 2 h 05 min | 63 g |
-| `P11_walls_3.3mf` | gable_wing_A | white + black trim (optional) | 1 h 59 min | 59 g |
-| `P12_walls_4.3mf` | gable_wing_A | white + black trim (optional) | 1 h 59 min | 59 g |
-| `P13_walls_5.3mf` | gable_wing_B | white + black trim (optional) | 1 h 59 min | 59 g |
-| `P14_walls_6.3mf` | gable_wing_B | white + black trim (optional) | 1 h 59 min | 59 g |
-| `P15_walls_7.3mf` | stall_front, stall_front | white + black trim (optional) | 1 h 49 min | 58 g |
-| `P16_walls_8.3mf` | stall_front, stall_front | white + black trim (optional) | 1 h 49 min | 58 g |
-| `P17_walls_9.3mf` | pediment, pediment, side_wall, side_wall | white + black trim (optional) | 3 h 34 min | 110 g |
-| `P18_walls_10.3mf` | side_wall, side_wall | white + black trim (optional) | 1 h 51 min | 58 g |
-| `P19_doors_1.3mf` | stall_door, stall_door, stall_door, stall_door, casement_A, casement_A, bolt_bar, bolt_bar | black | 3 h 04 min | 96 g |
-| `P20_doors_2.3mf` | casement_B, casement_B, main_leaf_A, main_leaf_A, main_leaf_B, main_leaf_B | black | 3 h 10 min | 95 g |
-| `P21_roof_central_1.3mf` | roof_central | dark grey | 3 h 57 min | 111 g |
-| `P22_roof_central_2.3mf` | roof_central | dark grey | 3 h 57 min | 111 g |
-| `P23_roof_side_1.3mf` | roof_side_A | dark grey | 3 h 10 min | 76 g |
-| `P24_roof_side_2.3mf` | roof_side_A | dark grey | 3 h 10 min | 76 g |
-| `P25_roof_side_3.3mf` | roof_side_B | dark grey | 3 h 10 min | 76 g |
-| `P26_roof_side_4.3mf` | roof_side_B | dark grey | 3 h 10 min | 76 g |
-| `T1_test_hinges_latches.3mf` | plate_T1 | any | 2 h 58 min | 97 g |
-| `T2_test_fits.3mf` | plate_T2 | any | 1 h 27 min | 43 g |
+| Plate (3MF) | Parts | Colour | Est. time | Est. filament | Slicer stability note |
+|---|---|---|---|---|---|
+| `P01_floor_LF.3mf` | floor_LF | grey | 3 h 04 min | 125 g | Long bridging extrusions |
+| `P02_floor_AF.3mf` | floor_AF | grey | 1 h 58 min | 63 g | Long bridging extrusions |
+| `P03_floor_RF.3mf` | floor_RF | grey | 3 h 03 min | 124 g | Floating bridge anchors, Long bridging extrusions |
+| `P04_floor_LB.3mf` | floor_LB | grey | 3 h 04 min | 124 g | Long bridging extrusions |
+| `P05_floor_AB.3mf` | floor_AB | grey | 1 h 57 min | 62 g | Long bridging extrusions |
+| `P06_floor_RB.3mf` | floor_RB | grey | 3 h 05 min | 124 g | Long bridging extrusions |
+| `P07_posts_short.3mf` | post_corner, post_corner, post_corner, post_corner, post_sidemid, post_sidemid (upright) | black | 5 h 07 min | 118 g |  |
+| `P08_posts_tall.3mf` | post_jamb_L, post_jamb_L, post_jamb_R, post_jamb_R, post_mid, post_mid (upright) | black | 10 h 20 min | 224 g | Low bed adhesion |
+| `P09_walls_1.3mf` | partition | white + black trim (optional) | 2 h 05 min | 63 g |  |
+| `P10_walls_2.3mf` | partition | white + black trim (optional) | 2 h 05 min | 63 g |  |
+| `P11_walls_3.3mf` | gable_wing_A | white + black trim (optional) | 1 h 59 min | 59 g |  |
+| `P12_walls_4.3mf` | gable_wing_A | white + black trim (optional) | 1 h 59 min | 59 g |  |
+| `P13_walls_5.3mf` | gable_wing_B | white + black trim (optional) | 1 h 59 min | 59 g |  |
+| `P14_walls_6.3mf` | gable_wing_B | white + black trim (optional) | 1 h 59 min | 59 g |  |
+| `P15_walls_7.3mf` | stall_front, stall_front | white + black trim (optional) | 1 h 49 min | 58 g |  |
+| `P16_walls_8.3mf` | stall_front, stall_front | white + black trim (optional) | 1 h 49 min | 58 g |  |
+| `P17_walls_9.3mf` | pediment, pediment, side_wall, side_wall | white + black trim (optional) | 3 h 34 min | 110 g |  |
+| `P18_walls_10.3mf` | side_wall, side_wall | white + black trim (optional) | 1 h 51 min | 58 g |  |
+| `P19_doors_1.3mf` | stall_door, stall_door, stall_door, stall_door, casement_A, casement_A, bolt_bar, bolt_bar | black | 3 h 04 min | 96 g |  |
+| `P20_doors_2.3mf` | casement_B, casement_B, main_leaf_A, main_leaf_A, main_leaf_B, main_leaf_B | black | 3 h 10 min | 95 g |  |
+| `P21_roof_central_1.3mf` | roof_central | dark grey | 3 h 57 min | 111 g | Low bed adhesion |
+| `P22_roof_central_2.3mf` | roof_central | dark grey | 3 h 57 min | 111 g | Low bed adhesion |
+| `P23_roof_side_1.3mf` | roof_side_A | dark grey | 3 h 10 min | 76 g |  |
+| `P24_roof_side_2.3mf` | roof_side_A | dark grey | 3 h 10 min | 76 g |  |
+| `P25_roof_side_3.3mf` | roof_side_B | dark grey | 3 h 10 min | 76 g |  |
+| `P26_roof_side_4.3mf` | roof_side_B | dark grey | 3 h 10 min | 76 g |  |
+| `T1_test_hinges_latches.3mf` | plate_T1 | any | 2 h 55 min | 96 g | Low bed adhesion |
+| `T2_test_fits.3mf` | plate_T2 | any | 1 h 27 min | 43 g | Long bridging extrusions |
 
 ## Totals for the stable (26 plates, test plates excluded)
 
 | Colour | Time | Filament |
 |---|---|---|
 | grey | 16 h 14 min | 0.62 kg |
-| black | 21 h 58 min | 0.54 kg |
+| black | 21 h 42 min | 0.53 kg |
 | white | 21 h 14 min | 0.65 kg |
 | dark grey | 20 h 38 min | 0.53 kg |
-| **all** | **80 h 05 min** | **2.33 kg** |
+| **all** | **79 h 50 min** | **2.33 kg** |
 
 Filament to have on hand (estimate + 10 % for purge, brims and failed prints): grey 0.68 kg, black 0.59 kg, white 0.71 kg, dark grey 0.58 kg.
-The roof can also use the black spool (black then 1.17 kg).
+The roof can also use the black spool (black then 1.16 kg).
 
 ## Recommended order
 
@@ -90,7 +91,10 @@ The roof can also use the black spool (black then 1.17 kg).
 ## Orientation notes
 
 * All 3MF plates are already oriented and arranged; the individual STLs in `stl/` are in print orientation too.
-* Posts stand upright (grooves and hinge bores print round and strong).
+* Posts stand upright (grooves and hinge bores print round and strong). The 216 mm posts are the most
+  delicate prints on the A1, because its bed moves under them: 8 mm brim, clean plate (wash with dish soap),
+  speed mode Silent, and watch the first hour. PrusaSlicer flags them with "Low bed adhesion"; this is
+  the height-to-footprint ratio, not a geometry error. The hinge knuckles have 45 deg undersides and need no support.
 * The central roof units print standing on their eave edges, as installed. Use a 5 mm brim and keep the plate clean.
 * Everything else prints flat. The exterior or show face is up.
 * If the first layer of the large panels lifts at the corners: clean the plate (soap and water), raise the bed temperature by 5 C, add a 3 mm brim.
