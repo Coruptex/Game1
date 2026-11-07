@@ -36,7 +36,7 @@ Scharnierbohrungen rund, maßhaltig und fest. Liegend bräuchten die Scharnierau
 ## 2. Gefundene Mängel
 
 1. **Behoben: flache Unterseiten an den Scharnieraugen der Pfosten.** Jedes feste Scharnierauge
-   (14 Stück an 6 Pfosten) sollte unten eine 45-Grad-Schräge haben. Die Schräge war in
+   (28 Stück an 6 Pfosten) sollte unten eine 45-Grad-Schräge haben. Die Schräge war in
    `cad/lib/hinges.scad` falsch herum gedreht und hatte keine Wirkung. Jedes Auge begann
    deshalb als flacher, bis zu 7,6 mm frei überstehender Absatz. Beim Drucken hängt so ein
    Absatz durch oder wellt sich, und die Düse kann daran hängen bleiben. Bei einem 216 mm hohen
