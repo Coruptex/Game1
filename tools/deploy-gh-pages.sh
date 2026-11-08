@@ -18,6 +18,8 @@ node tools/build-pwa.js --check
 
 git branch -D gh-pages-deploy 2>/dev/null || true
 git subtree split --prefix protel-hilfe -b gh-pages-deploy
-git push -f origin gh-pages-deploy:gh-pages
+# Normaler Push (kein Überschreiben): Die Historie von gh-pages wächst mit jeder Veröffentlichung weiter.
+# Schlägt er fehl, wurde gh-pages von anderer Stelle verändert – dann bitte zuerst klären, nicht erzwingen.
+git push origin gh-pages-deploy:gh-pages
 git branch -D gh-pages-deploy
 echo "Veröffentlicht. GitHub Pages aktualisiert die Website in der Regel innerhalb weniger Minuten."
