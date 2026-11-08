@@ -110,7 +110,13 @@ protel-hilfe/
 tools/
 ├── build-pwa.js               aktualisiert Dateiliste und Version in sw.js (Node, ohne Abhängigkeiten)
 └── deploy-gh-pages.sh         veröffentlicht protel-hilfe/ im Branch gh-pages
+recherche/
+└── phase-1/                   Quellen- und Themenanalyse Protel Cloud PMS (nicht Teil der App)
 ```
+
+**Recherche-Unterlagen:** `recherche/phase-1/` enthält die Quellen- und Themenanalyse vom 08.11.2026. Dazu gehören Abschlussbericht, Themenkatalog, Quellenverzeichnis und Umsetzungsliste.
+- Der Ordner wird weder in die App noch nach `gh-pages` übernommen.
+- Er enthält keine Texte oder Bilder aus der protel-Hilfe, sondern nur Titel, Links, Datumsangaben und eigene Bewertungen. Näheres steht in `recherche/phase-1/README.md`.
 
 Technik: Die App verwendet reines HTML, CSS und JavaScript ohne externe Bibliotheken.
 Es gibt keine ES-Module, keine Web Worker und kein `fetch` für die Daten, damit alles unter `file://` funktioniert.

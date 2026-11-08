@@ -1,0 +1,46 @@
+﻿Nr.;Welle;Vorgeschlagene Anleitung;Format;Abläufe (IDs);Stufen;Höchstes Versionsrisiko;Anzahl Quellen
+1;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Reservierung über die Reservierungsanfrage oder die Gästekartei anlegen (inkl. Warenkorb, Day Use);Anleitung;RES-20, RES-21, RES-25, RES-34, RES-24;A: 5;mittel;4
+2;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Reservierung im Zimmerplan oder Kategoriespiegel anlegen;Anleitung;ZPL-01, ZPL-02;A: 2;hoch;2
+3;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Reservierung öffnen, finden und kopieren;Anleitung;RES-01, RES-27, GRD-05;A: 3;mittel;3
+4;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Gäste einer Reservierung verwalten (hinzufügen, personalisieren, ändern, entfernen, Hauptgast, Bucher);Anleitung;GST-01, GST-02, GST-03, GST-04, GST-05, GST-06;A: 5, B: 1;mittel;6
+5;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Reservierung ändern: verlängern, Preise, Raten aktualisieren, Logis fixieren, Notizen;Anleitung;RES-03, RES-04, RES-12, RES-22, RES-23, RES-13;A: 6;hoch;5
+6;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Zimmer zuweisen und Reservierung umziehen;Anleitung;RES-40, RES-41, RES-42, RES-07;A: 4;mittel;2
+7;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Reservierungsbestätigung versenden;Anleitung;RES-50;A: 1;mittel;1
+8;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Zahlungsorganisation der Reservierung (Zahlart, hinterlegte Karte);Anleitung;ZAH-10, ZAH-11;A: 2;niedrig;1
+9;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Check-in (Anreiseliste, Suche, Reservierungsdialog, Zimmerplan, Check-in-Wizard);Anleitung;CIN-01, CIN-03, CIN-04, CIN-05, CIN-06;A: 5;niedrig;1
+10;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Gruppen-Check-in;Anleitung;CIN-02;A: 1;mittel;2
+11;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Meldeschein drucken (Wizard, Listen, Dialog, anonyme Mitreisende);Anleitung;CIN-10, CIN-11, CIN-12;A: 2, B: 1;niedrig;1
+12;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Check-out (Abreiseliste, Reservierungsdialog, Zimmerplan) inkl. Kassenanmeldung;Anleitung;COU-01, COU-02, COU-03, COU-05;A: 4;mittel;2
+13;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Vorzeitiger Check-out und Abreise am Anreisetag;Entscheidungsbaum;COU-04, CIN-07;A: 1, B: 1;niedrig;1
+14;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Rechnung abschließen, Rechnungsliste filtern, Rechnungsstatus erkennen;Anleitung;RCH-05, RCH-13, RCH-14;A: 2, B: 1;mittel;3
+15;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Welche Rechnungsart? Proforma, Zwischenrechnung (Inforechnung, Vorausrechnung siehe Welle 2);Entscheidungsbaum;RCH-07, RCH-09;A: 2;niedrig;2
+16;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Umleitungsregeln (Wer zahlt was?) anlegen und aus Vorlage anwenden;Entscheidungsbaum;RCH-20, RCH-21, RCH-22;A: 2, B: 1;niedrig;3
+17;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Rabatt anwenden und Gast von der Ortstaxe befreien;Anleitung;RCH-27, RCH-25;A: 2;niedrig;2
+18;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Reservierung stornieren: Grundablauf, mit/ohne Gebühr, mit Anzahlung, Befehl fehlt, Storno rückgängig;Entscheidungsbaum;STO-01, STO-02, STO-03, STO-05, STO-06;A: 5;hoch;4
+19;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;No-Shows: markieren, Liste, wiedereinsetzen, Richtlinie, mit Anzahlung;Entscheidungsbaum;NOS-01, NOS-03, NOS-04, NOS-06, NOS-07;A: 5;mittel;6
+20;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Anzahlung stornieren oder korrigieren;Anleitung;DEP-02;A: 1;mittel;1
+21;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Kassenabschluss und Kassendifferenzen;Anleitung;KAS-02, KAS-03;A: 2;niedrig;1
+22;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Ein- und Auszahlungen an der Kasse;Anleitung;KAS-04, KAS-05, KAS-06;A: 3;mittel;1
+23;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Passantenrechnung im Shop;Anleitung;KAS-07;A: 1;niedrig;1
+24;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Tagesabschluss ausführen und offene Punkte klären;Entscheidungsbaum;TAB-01, TAB-02, TAB-03;A: 3;niedrig;1
+25;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;KassenSichV im Alltag (nur Deutschland): Anzahlung, Check-out, TSE-Ausfall;Fehlerbehebung;KSV-DE-01, KSV-DE-02, KSV-DE-04;A: 3;niedrig;2
+26;Welle 1 – gut belegt, Versionsrisiko niedrig oder mittel;Störung: Cloud-Status und Statusseite prüfen;Fehlerbehebung;FEH-01, FEH-02;A: 1, B: 1;niedrig;2
+27;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Kasse öffnen/anmelden (Artikel 2020, Anmeldedialog 2023 geändert);Anleitung;KAS-01;A: 1;hoch;1
+28;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Passantenrechnung mit Empfänger / wiederfinden (Artikel 2020);Anleitung;KAS-08, KAS-09;A: 1, B: 1;hoch;2
+29;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Zimmerplan: umziehen, Upgrade/Upsell (Artikel 2022);Entscheidungsbaum;ZPL-06, ZPL-07;A: 2;hoch;1
+30;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Rechnungsübersicht, Leistungen buchen und umbuchen (Artikel 2021/2022);Anleitung;RCH-01, RCH-02, RCH-03, RCH-04;A: 3, B: 1;hoch;4
+31;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Rechnung per E-Mail, Empfänger ändern, Inforechnung, Vorausrechnung (Artikel 2021);Anleitung;RCH-06, RCH-11, RCH-12, RCH-08, RCH-10;A: 5;hoch;5
+32;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Rechnung korrigieren: erneut öffnen, stornieren, leeres Folio löschen (Artikel 2021, Storno seit 2023 geändert);Entscheidungsbaum;RCH-16, RCH-15, RCH-17;A: 3;hoch;3
+33;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Pakete in der Rechnung (Artikel 2021);Anleitung;RCH-30, RCH-31, RCH-32, RCH-33, RCH-34;A: 5;hoch;5
+34;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Zahlung buchen und Zahlungsbeleg nachdrucken (Artikel 2022);Anleitung;ZAH-01, RCH-40;A: 2;hoch;2
+35;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Anzahlung verbuchen (Pay-by-Link-Änderungen 2024/2025);Anleitung;DEP-01;A: 1;hoch;1
+36;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Buchungsbedingungen und zubuchbare Pakete an der Reservierung;Anleitung;RES-08, RES-06;A: 2;hoch;2
+37;Welle 2 – belegt, aber hohes Versionsrisiko: zuerst im System prüfen;Gruppenrechnung, Gruppen-Vorausrechnung, Gruppenmitglied stornieren (Artikel 2020–2022);Anleitung;GRP-07, GRP-10, GRP-11, GRP-16;A: 4;hoch;4
+38;Welle 3 – lizenzabhängig oder nur teilweise dokumentiert;Kreditkarten: autorisieren, erhöhen, stornieren, belasten, erstatten, verwalten (nur mit integrierter Kartenzahlung);Anleitung;ZAH-20, ZAH-21, ZAH-22, ZAH-23, ZAH-24, ZAH-25, ZAH-26, ZAH-27, ZAH-28;A: 7, B: 2;hoch;9
+39;Welle 3 – lizenzabhängig oder nur teilweise dokumentiert;Pay by Link versenden (nur mit Aktivierung);Anleitung;ZAH-29;A: 1;niedrig;1
+40;Welle 3 – lizenzabhängig oder nur teilweise dokumentiert;Digitaler Meldeschein (nur mit Lizenz);Anleitung;CIN-13, CIN-14;A: 2;niedrig;2
+41;Welle 3 – lizenzabhängig oder nur teilweise dokumentiert;Automatische Gebühren und Anzahlungen verstehen (lizenzabhängig);Referenz;STO-04, NOS-05, DEP-03;B: 3;hoch;3
+42;Welle 3 – lizenzabhängig oder nur teilweise dokumentiert;Kontrollberichte für Kasse und Nachtdienst (Berichtskarten);Referenz;BER-10, BER-11, BER-12, BER-13, BER-14, BER-02;B: 6;hoch;7
+43;Welle 3 – lizenzabhängig oder nur teilweise dokumentiert;Weitere P1-Bausteine mit Teildokumentation (Reservierungsstatus, Garantie-/Stornoinfo, Überbuchung, Forderungen, DSGVO im TA, Dialog-Übersicht);Referenz;RES-11, RES-14, RES-18, NOS-02, DSG-03, RES-19, RES-02, RCH-18;B: 8;hoch;8
+44;Welle 4 – Eigendokumentation (Hausprozesse, Konfiguration);Hausprozesse ohne Herstellerdoku (Walk-in, Early/Late, Gutschein, Kaution, abgelehnte Karte, Schichtübergabe, Nachtdienst, Notfall, Debitor);Checkliste;HAUS-01, HAUS-02, HAUS-03, HAUS-04, HAUS-05, HAUS-06, HAUS-07, HAUS-08, HAUS-09, HAUS-12;D: 10;–;0
+45;Welle 4 – Eigendokumentation (Hausprozesse, Konfiguration);Hauskonfiguration und Geräte (Rechte im Haus, Kartenterminal, Schlüsselkarten);Referenz;HAUS-13, HAUS-14, SCH-01;C: 3;niedrig;1

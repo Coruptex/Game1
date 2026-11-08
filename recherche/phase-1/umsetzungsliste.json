@@ -1,0 +1,840 @@
+[
+ {
+  "welle": "W1",
+  "anleitung": "Reservierung über die Reservierungsanfrage oder die Gästekartei anlegen (inkl. Warenkorb, Day Use)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RES-20",
+   "RES-21",
+   "RES-25",
+   "RES-34",
+   "RES-24"
+  ],
+  "stufen": {
+   "A": 5
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 4,
+  "prioritaet": [
+   "P1",
+   "P2"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Reservierung im Zimmerplan oder Kategoriespiegel anlegen",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "ZPL-01",
+   "ZPL-02"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Reservierung öffnen, finden und kopieren",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RES-01",
+   "RES-27",
+   "GRD-05"
+  ],
+  "stufen": {
+   "A": 3
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 3,
+  "prioritaet": [
+   "P1",
+   "P2"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Gäste einer Reservierung verwalten (hinzufügen, personalisieren, ändern, entfernen, Hauptgast, Bucher)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "GST-01",
+   "GST-02",
+   "GST-03",
+   "GST-04",
+   "GST-05",
+   "GST-06"
+  ],
+  "stufen": {
+   "A": 5,
+   "B": 1
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 6,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Reservierung ändern: verlängern, Preise, Raten aktualisieren, Logis fixieren, Notizen",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RES-03",
+   "RES-04",
+   "RES-12",
+   "RES-22",
+   "RES-23",
+   "RES-13"
+  ],
+  "stufen": {
+   "A": 6
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 5,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Zimmer zuweisen und Reservierung umziehen",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RES-40",
+   "RES-41",
+   "RES-42",
+   "RES-07"
+  ],
+  "stufen": {
+   "A": 4
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Reservierungsbestätigung versenden",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RES-50"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Zahlungsorganisation der Reservierung (Zahlart, hinterlegte Karte)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "ZAH-10",
+   "ZAH-11"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Check-in (Anreiseliste, Suche, Reservierungsdialog, Zimmerplan, Check-in-Wizard)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "CIN-01",
+   "CIN-03",
+   "CIN-04",
+   "CIN-05",
+   "CIN-06"
+  ],
+  "stufen": {
+   "A": 5
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Gruppen-Check-in",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "CIN-02"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Meldeschein drucken (Wizard, Listen, Dialog, anonyme Mitreisende)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "CIN-10",
+   "CIN-11",
+   "CIN-12"
+  ],
+  "stufen": {
+   "A": 2,
+   "B": 1
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Check-out (Abreiseliste, Reservierungsdialog, Zimmerplan) inkl. Kassenanmeldung",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "COU-01",
+   "COU-02",
+   "COU-03",
+   "COU-05"
+  ],
+  "stufen": {
+   "A": 4
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Vorzeitiger Check-out und Abreise am Anreisetag",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "COU-04",
+   "CIN-07"
+  ],
+  "stufen": {
+   "A": 1,
+   "B": 1
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Rechnung abschließen, Rechnungsliste filtern, Rechnungsstatus erkennen",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RCH-05",
+   "RCH-13",
+   "RCH-14"
+  ],
+  "stufen": {
+   "A": 2,
+   "B": 1
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 3,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Welche Rechnungsart? Proforma, Zwischenrechnung (Inforechnung, Vorausrechnung siehe Welle 2)",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "RCH-07",
+   "RCH-09"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Umleitungsregeln (Wer zahlt was?) anlegen und aus Vorlage anwenden",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "RCH-20",
+   "RCH-21",
+   "RCH-22"
+  ],
+  "stufen": {
+   "B": 1,
+   "A": 2
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 3,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Rabatt anwenden und Gast von der Ortstaxe befreien",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RCH-27",
+   "RCH-25"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Reservierung stornieren: Grundablauf, mit/ohne Gebühr, mit Anzahlung, Befehl fehlt, Storno rückgängig",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "STO-01",
+   "STO-02",
+   "STO-03",
+   "STO-05",
+   "STO-06"
+  ],
+  "stufen": {
+   "A": 5
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 4,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "No-Shows: markieren, Liste, wiedereinsetzen, Richtlinie, mit Anzahlung",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "NOS-01",
+   "NOS-03",
+   "NOS-04",
+   "NOS-06",
+   "NOS-07"
+  ],
+  "stufen": {
+   "A": 5
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 6,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Anzahlung stornieren oder korrigieren",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "DEP-02"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Kassenabschluss und Kassendifferenzen",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "KAS-02",
+   "KAS-03"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Ein- und Auszahlungen an der Kasse",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "KAS-04",
+   "KAS-05",
+   "KAS-06"
+  ],
+  "stufen": {
+   "A": 3
+  },
+  "hoechstes_risiko": "mittel",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Passantenrechnung im Shop",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "KAS-07"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Tagesabschluss ausführen und offene Punkte klären",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "TAB-01",
+   "TAB-02",
+   "TAB-03"
+  ],
+  "stufen": {
+   "A": 3
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "KassenSichV im Alltag (nur Deutschland): Anzahlung, Check-out, TSE-Ausfall",
+  "format": "Fehlerbehebung",
+  "ablaeufe": [
+   "KSV-DE-01",
+   "KSV-DE-02",
+   "KSV-DE-04"
+  ],
+  "stufen": {
+   "A": 3
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W1",
+  "anleitung": "Störung: Cloud-Status und Statusseite prüfen",
+  "format": "Fehlerbehebung",
+  "ablaeufe": [
+   "FEH-01",
+   "FEH-02"
+  ],
+  "stufen": {
+   "A": 1,
+   "B": 1
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Kasse öffnen/anmelden (Artikel 2020, Anmeldedialog 2023 geändert)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "KAS-01"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Passantenrechnung mit Empfänger / wiederfinden (Artikel 2020)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "KAS-08",
+   "KAS-09"
+  ],
+  "stufen": {
+   "A": 1,
+   "B": 1
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Zimmerplan: umziehen, Upgrade/Upsell (Artikel 2022)",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "ZPL-06",
+   "ZPL-07"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Rechnungsübersicht, Leistungen buchen und umbuchen (Artikel 2021/2022)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RCH-01",
+   "RCH-02",
+   "RCH-03",
+   "RCH-04"
+  ],
+  "stufen": {
+   "A": 3,
+   "B": 1
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 4,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Rechnung per E-Mail, Empfänger ändern, Inforechnung, Vorausrechnung (Artikel 2021)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RCH-06",
+   "RCH-11",
+   "RCH-12",
+   "RCH-08",
+   "RCH-10"
+  ],
+  "stufen": {
+   "A": 5
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 5,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Rechnung korrigieren: erneut öffnen, stornieren, leeres Folio löschen (Artikel 2021, Storno seit 2023 geändert)",
+  "format": "Entscheidungsbaum",
+  "ablaeufe": [
+   "RCH-16",
+   "RCH-15",
+   "RCH-17"
+  ],
+  "stufen": {
+   "A": 3
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 3,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Pakete in der Rechnung (Artikel 2021)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RCH-30",
+   "RCH-31",
+   "RCH-32",
+   "RCH-33",
+   "RCH-34"
+  ],
+  "stufen": {
+   "A": 5
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 5,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Zahlung buchen und Zahlungsbeleg nachdrucken (Artikel 2022)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "ZAH-01",
+   "RCH-40"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Anzahlung verbuchen (Pay-by-Link-Änderungen 2024/2025)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "DEP-01"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Buchungsbedingungen und zubuchbare Pakete an der Reservierung",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "RES-08",
+   "RES-06"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W2",
+  "anleitung": "Gruppenrechnung, Gruppen-Vorausrechnung, Gruppenmitglied stornieren (Artikel 2020–2022)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "GRP-07",
+   "GRP-10",
+   "GRP-11",
+   "GRP-16"
+  ],
+  "stufen": {
+   "A": 4
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 4,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W3",
+  "anleitung": "Kreditkarten: autorisieren, erhöhen, stornieren, belasten, erstatten, verwalten (nur mit integrierter Kartenzahlung)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "ZAH-20",
+   "ZAH-21",
+   "ZAH-22",
+   "ZAH-23",
+   "ZAH-24",
+   "ZAH-25",
+   "ZAH-26",
+   "ZAH-27",
+   "ZAH-28"
+  ],
+  "stufen": {
+   "B": 2,
+   "A": 7
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 9,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W3",
+  "anleitung": "Pay by Link versenden (nur mit Aktivierung)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "ZAH-29"
+  ],
+  "stufen": {
+   "A": 1
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W3",
+  "anleitung": "Digitaler Meldeschein (nur mit Lizenz)",
+  "format": "Anleitung",
+  "ablaeufe": [
+   "CIN-13",
+   "CIN-14"
+  ],
+  "stufen": {
+   "A": 2
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 2,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W3",
+  "anleitung": "Automatische Gebühren und Anzahlungen verstehen (lizenzabhängig)",
+  "format": "Referenz",
+  "ablaeufe": [
+   "STO-04",
+   "NOS-05",
+   "DEP-03"
+  ],
+  "stufen": {
+   "B": 3
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 3,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W3",
+  "anleitung": "Kontrollberichte für Kasse und Nachtdienst (Berichtskarten)",
+  "format": "Referenz",
+  "ablaeufe": [
+   "BER-10",
+   "BER-11",
+   "BER-12",
+   "BER-13",
+   "BER-14",
+   "BER-02"
+  ],
+  "stufen": {
+   "B": 6
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 7,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W3",
+  "anleitung": "Weitere P1-Bausteine mit Teildokumentation (Reservierungsstatus, Garantie-/Stornoinfo, Überbuchung, Forderungen, DSGVO im TA, Dialog-Übersicht)",
+  "format": "Referenz",
+  "ablaeufe": [
+   "RES-11",
+   "RES-14",
+   "RES-18",
+   "NOS-02",
+   "DSG-03",
+   "RES-19",
+   "RES-02",
+   "RCH-18"
+  ],
+  "stufen": {
+   "B": 8
+  },
+  "hoechstes_risiko": "hoch",
+  "quellen": 8,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W4",
+  "anleitung": "Hausprozesse ohne Herstellerdoku (Walk-in, Early/Late, Gutschein, Kaution, abgelehnte Karte, Schichtübergabe, Nachtdienst, Notfall, Debitor)",
+  "format": "Checkliste",
+  "ablaeufe": [
+   "HAUS-01",
+   "HAUS-02",
+   "HAUS-03",
+   "HAUS-04",
+   "HAUS-05",
+   "HAUS-06",
+   "HAUS-07",
+   "HAUS-08",
+   "HAUS-09",
+   "HAUS-12"
+  ],
+  "stufen": {
+   "D": 10
+  },
+  "hoechstes_risiko": "–",
+  "quellen": 0,
+  "prioritaet": [
+   "P1"
+  ]
+ },
+ {
+  "welle": "W4",
+  "anleitung": "Hauskonfiguration und Geräte (Rechte im Haus, Kartenterminal, Schlüsselkarten)",
+  "format": "Referenz",
+  "ablaeufe": [
+   "HAUS-13",
+   "HAUS-14",
+   "SCH-01"
+  ],
+  "stufen": {
+   "C": 3
+  },
+  "hoechstes_risiko": "niedrig",
+  "quellen": 1,
+  "prioritaet": [
+   "P1"
+  ]
+ }
+]
