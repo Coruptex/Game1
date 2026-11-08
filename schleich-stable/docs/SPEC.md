@@ -129,7 +129,7 @@ rotational symmetry (front-left = back-right, front-right = back-left).
 * The fixed knuckles sit on the posts. Posts print upright, so the bores are round and the
   knuckle rings lie within layers (strongest direction). The knuckles are full cylinders and
   print on small tree supports that stand on the knuckle below (`knuckle_chamfer = true` gives a
-  support-free 45 deg underside instead). Bore 1.85 mm (snug). The axial gap between knuckles
+  support-free 45 deg underside instead). Post bore `bore_post` (set from test T3a; 1.75-1.95 were too tight in T1), with a 45 deg lead-in under each knuckle. The axial gap between knuckles
   is 0.8 mm (0.4 mm per side), enough for the slightly rough supported undersides.
 * The moving knuckles sit on the doors. Doors print flat, so these bores are teardrops
   (2.3 mm, free fit). The radial gap to the fixed parts is 0.6 mm; the axial gap is 0.5 mm.
@@ -185,7 +185,7 @@ rotational symmetry (front-left = back-right, front-right = back-left).
   change at Z = 2.8 mm (start of layer 15 at 0.2 mm) makes them black.
 * Posts and the central roof print in their installed orientation. All other parts print flat.
 * Fits are central parameters: `fit_slide`, `fit_tab`, `fit_socket`, `fit_tile`,
-  `bore_fixed`, `bore_free`, `latch_engage`. Coupons let you test each one.
+  `bore_post`, `bore_free`, `bore_win_hold`, `bore_win_free`, `latch_engage`. Coupons let you test each one.
 
 ## 7. Safety
 

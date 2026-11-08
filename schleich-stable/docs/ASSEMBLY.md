@@ -39,8 +39,10 @@ front half rotated by 180 deg.
    between the knuckles must be clean: a door knuckle has to slide in without force.
 3. Remove brims. Make sure the **post grooves** are clean: a 2.8 mm panel strip should slide in
    by hand.
-4. Test each hinge pin: it should be snug in the post knuckles and turn freely in the door
-   knuckles. Straighten the filament for the pins by pulling it gently. Cut the ends square.
+4. Test each hinge pin: it should go through the post knuckles by hand (the bore size comes
+   from test T3a) and turn freely in the door knuckles. Each post knuckle has a small lead-in
+   chamfer underneath that guides the pin. Straighten the filament for the pins by pulling it
+   gently. Cut the ends square.
 
 ## 1. Floor (6 tiles)
 
@@ -75,7 +77,8 @@ will rest on the floor, which keeps them in.
 Push all 12 posts into their sockets: 4 corners, 2 side-mid, 4 gable-door posts and 2 mid
 posts, each with its doors. The four corner posts are identical, as are the two side-mid
 posts. Rotate each one so its grooves line up with the plinth or floor grooves of the walls
-that meet it.
+that meet it. The sloped top of the corner and side-mid posts then rises toward the
+inside of the stable, parallel to the side roof.
 
 * `post_jamb_L` goes at **front-left** and **back-right**. `post_jamb_R` goes at front-right
   and back-left. The main door faces outward. On the jamb_L posts the stall door faces along
@@ -91,8 +94,11 @@ below.
 
 1. `side_wall` (x4), between the corner and side-mid posts. The window trim faces outward.
 2. `gable_wing_A` at front-left and back-right, `gable_wing_B` at front-right and back-left.
-   Hang each casement by dropping a **30 mm** pin into the hinge from the top. The casement
-   can also be fitted later.
+   Hang each casement: hold it closed in front of the window so its two hinge straps lie over
+   the black frame and its two knuckles sit in the gaps of the three wall knuckles (outside the
+   frame), then drop a **30 mm** pin into the hinge from the top. The top wall knuckle is a
+   little tighter and holds the pin; push it down the last few millimetres. The casement can
+   also be fitted later.
 3. `partition` (x2), between a side-mid post and a mid post.
 
 ## 5. Stall fronts

@@ -48,7 +48,8 @@ module win_open2d(xc, ys, w, h) { translate([xc, ys]) round_arch2d(w, h); }
 module win_frame2d(xc, ys, w, h, b = 4, gap = 0) {
     translate([xc, ys]) difference() { offset(delta = gap + b) round_arch2d(w, h); offset(delta = gap) round_arch2d(w, h); }
 }
-module win_sill2d(xc, ys, w, g = 0) { translate([xc - w / 2 - 6 - g, ys - 5 - g]) rrect(w + 12 + 2 * g, 5, 1); }
+// sill under a window; ext = how far it reaches beyond the opening (+ g)
+module win_sill2d(xc, ys, w, g = 0, ext = 6) { translate([xc - w / 2 - ext - g, ys - 5 - g]) rrect(w + 2 * ext + 2 * g, 5, 1); }
 
 // ---------------------------------------------------------------- side wall
 // Left-front instance: lies at X = X0, from Y0 to Y1, exterior toward -X.
@@ -83,11 +84,21 @@ gw_x0 = X0 + PW2 - panel_in;
 gw_x1 = X1 - PW2 + panel_in;
 gw_y0 = Z_plinth - base_groove_d + 0.2;
 gw_win_xc = (X0 + X1) / 2;
-// casement hinge on the corner side (left) of the window
-gw_hinge_x = gw_win_xc - win_w / 2 - 5;
+// fixed black frame band around the casement opening (raised trim)
+win_band_gap = 3.2;              // opening edge -> inner edge of the band
+win_band_w   = 4;                // band width
+cs_lift = 0.6;                   // casement back face above the wall face
+cs_n    = 5;                     // hinge segments: 3 fixed on the wall, 2 on the casement (two straps)
+// The casement hinge sits OUTSIDE the frame band, on the corner side, so the
+// band runs all the way round, with the window open or shut. The moving
+// knuckles (radius dk_win/2 + swing_gap around the axis) clear the band's
+// outer top edge; the casement reaches over the band with two hinge straps.
+cs_ax_h   = cs_lift + kz(dk_win);                          // axis above the wall face
+cs_ax_off = win_band_gap + win_band_w
+          + sqrt(pow(dk_win / 2 + swing_gap, 2) - pow(cs_ax_h - trim_h, 2)) + 0.4;   // opening edge -> axis
+gw_hinge_x = gw_win_xc - win_w / 2 - cs_ax_off;
 // side-roof locating tabs on the rakes of gable wings and partitions
 rake_tabs = [gw_x0 + 45, gw_x1 - 45];
-cs_lift = 0.6;                   // casement axis lift above the wall face
 module gable_wing_outline2d() {
     slope = tan(pitch_side);
     union() {
@@ -99,18 +110,19 @@ module gable_wing_local() {
     board_panel(gw_x0, gw_x1, gw_y0, Z_c_apex) {
         intersection() { gable_wing_outline2d(); translate([gw_x0 - 1, gw_y0]) square([400, 400]); }
         win_open2d(gw_win_xc, win_sill_z, win_w, win_h);
-        difference() {
-            union() {
-                win_frame2d(gw_win_xc, win_sill_z, win_w, win_h, 4, 3.2);
-                win_sill2d(gw_win_xc, win_sill_z, win_w, 3.2);
-            }
-            // keep the hinge strip free for the knuckles
-            translate([gw_hinge_x - 4, win_sill_z + 2]) square([8, win_h - 10]);
+        // 2: the frame band runs all the way round (no gap for the hinge);
+        //    the sill reaches under the hinge on the corner side
+        union() {
+            win_frame2d(gw_win_xc, win_sill_z, win_w, win_h, win_band_w, win_band_gap);
+            win_sill2d(gw_win_xc, win_sill_z, win_w, win_band_gap, cs_ax_off - win_band_gap + 4.5);
         }
-        // 3: fixed knuckles of the casement hinge (axis along local y)
+        // 3: fixed knuckles of the casement hinge (axis along local y), outside the band
         translate([gw_hinge_x, 0, wall_t])
-            knuckles_fixed_y(win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2, 3, dk_win, -1, 3, cs_lift);
-        union() {}
+            knuckles_fixed_y(win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2, cs_n, dk_win, -1, 3, cs_lift);
+        // 4: 0.4 mm relief in the wall face under the moving knuckles (hidden
+        //    by the hinge barrel): 0.7 instead of 0.3 mm clearance while they turn
+        for (i = [1 : 2 : cs_n - 1]) let(s = kn_seg(win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2, cs_n, i))
+            translate([gw_hinge_x - dk_win / 2 - 0.3, s[0] - hinge_gap / 2, wall_t - 0.4]) cube([dk_win + 0.6, s[1] - s[0] + hinge_gap, 1]);
     }
 }
 module gable_wing_place() { translate([0, Y0 + wall_t / 2, 0]) panel_to_world() children(); }

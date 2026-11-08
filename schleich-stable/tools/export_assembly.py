@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Export the assembled stable as one file for viewing (not for printing):
   docs/assembly_preview.glb  coloured, opens in any glTF viewer
-  3mf/assembly_preview.3mf   all 54 parts at their assembled positions
 Needs build/placed/ (tools/build.py --placed) and build/render/ (tools/render_export.py)."""
 import glob, os
 import numpy as np
@@ -19,12 +18,11 @@ def coloured(path, c):
     return m
 
 
-scene, plain = trimesh.Scene(), trimesh.Scene()
+scene = trimesh.Scene()
 for f in sorted(glob.glob(os.path.join(PL, "*.stl"))):
     n = os.path.basename(f)[:-4]
     if n.startswith("pin_"):
         continue
-    plain.add_geometry(trimesh.load(f, force="mesh"), node_name=n, geom_name=n)
     if n.startswith(PANELS):
         scene.add_geometry(coloured(os.path.join(RD, n + "__base.stl"), "white"), node_name=n + "_base", geom_name=n + "_base")
         scene.add_geometry(coloured(os.path.join(RD, n + "__trim.stl"), "black"), node_name=n + "_trim", geom_name=n + "_trim")
@@ -35,6 +33,5 @@ for f in sorted(glob.glob(os.path.join(PL, "*.stl"))):
 scene.apply_transform(trimesh.transformations.rotation_matrix(-np.pi / 2, [1, 0, 0]))
 scene.apply_scale(0.001)
 scene.export(os.path.join(ROOT, "docs", "assembly_preview.glb"))
-plain.export(os.path.join(ROOT, "3mf", "assembly_preview.3mf"))
-for p in ("docs/assembly_preview.glb", "3mf/assembly_preview.3mf"):
+for p in ("docs/assembly_preview.glb",):
     print(p, round(os.path.getsize(os.path.join(ROOT, p)) / 1e6, 1), "MB")

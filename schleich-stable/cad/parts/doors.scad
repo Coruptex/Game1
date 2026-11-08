@@ -159,18 +159,28 @@ module stall_door_print(right = false) { translate([right ? sd_w + 1 : 0, 0, 0])
 // ================================================================ casement
 cs_t = 3.0;                                   // casement frame thickness
 cs_seg = [win_sill_z + 4, win_sill_z + win_h - win_w / 2 - 2];   // = gable wing hinge
+// hinge straps: they bridge the fixed frame band (its top is trim_h above
+// the wall face) with 0.6 mm to spare and stand 0.6 mm proud of the casement
+cs_strap_z = [trim_h - cs_lift + 0.6, cs_t + 0.6];
+cs_strap_x1 = cs_ax_off - 2.5 + 4;           // strap end = inner edge of the hinge-side stile
 module cs_outline2d() {          // in local x (axis at 0), y = world Z
-    translate([-gw_hinge_x, 0]) intersection() {
-        offset(delta = 2.5) win_open2d(gw_win_xc, win_sill_z, win_w, win_h);
-        translate([gw_hinge_x + dk_win / 2 + swing_gap, 0]) square([200, 300]);
-    }
+    translate([-gw_hinge_x, 0]) offset(delta = 2.5) win_open2d(gw_win_xc, win_sill_z, win_w, win_h);
+}
+module cs_straps2d() {
+    for (i = [1 : 2 : cs_n - 1]) let(s = kn_seg(cs_seg[0], cs_seg[1], cs_n, i))
+        hull() {
+            translate([0, s[0]]) square([1, s[1] - s[0]]);
+            translate([cs_strap_x1 - 2.2, (s[0] + s[1]) / 2]) circle(d = 0.75 * (s[1] - s[0]), $fn = 32);
+        }
 }
 module casement_axis(right = false) {
     module c() {
         difference() {
             union() {
                 linear_extrude(cs_t) cs_outline2d();
-                knuckles_moving_y(cs_seg[0], cs_seg[1], 3, dk_win, 1, dk_win / 2 + swing_gap);
+                // moving knuckles; the straps connect them to the frame
+                knuckles_moving_y(cs_seg[0], cs_seg[1], cs_n, dk_win, 1, 0.8);
+                translate([0, 0, cs_strap_z[0]]) linear_extrude(cs_strap_z[1] - cs_strap_z[0]) cs_straps2d();
             }
             // four panes
             translate([0, 0, -1]) linear_extrude(cs_t + 2) difference() {
@@ -178,6 +188,8 @@ module casement_axis(right = false) {
                 translate([-gw_hinge_x + gw_win_xc - 1.5, 0]) square([3.0, 300]);
                 translate([0, win_sill_z + win_h / 2 - 1.5]) square([300, 3.0]);
             }
+            // the straps overlap the knuckles: cut the pin bore again
+            translate([0, (cs_seg[0] + cs_seg[1]) / 2, kz(dk_win)]) hole_y(bore_free, cs_seg[1] - cs_seg[0] + 2);
         }
     }
     if (right) mirror([1, 0, 0]) c(); else c();

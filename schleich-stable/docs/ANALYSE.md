@@ -1,18 +1,21 @@
 # Analyse: Druckbarkeit, Mängel, Stärken und Schwächen
 
-Stand 7. November 2026, kompakte Version nach der Überarbeitung (Abschnitt 1). Geprüft wurde
-die exportierte Geometrie, also genau die Teile, die gedruckt werden: mit `tools/validate.py`,
-zusätzlichen Prüfungen und dem Stabilitätscheck von PrusaSlicer. **Gedruckt wurde noch nichts.**
-Passungen und Kräfte sind berechnet, nicht gemessen. Deshalb zuerst die beiden Testplatten
-T1 und T2 drucken (`TESTING.md`).
+Stand 7. November 2026, ergänzt am 8. November 2026 (Fenster, Scharnier-Passungen, Verschluss,
+Bambu-Studio-Projekte: siehe [AENDERUNGEN.md](AENDERUNGEN.md)). Geprüft wurde die exportierte
+Geometrie, also genau die Teile, die gedruckt werden: mit `tools/validate.py`, zusätzlichen
+Prüfungen und dem Stabilitätscheck von PrusaSlicer. **Gedruckt ist bisher nur die Testplatte T1.**
+Daraus ist das Türloch 2,15 mm bestätigt; die Pfostenlöcher 1,75 bis 1,95 mm waren zu eng. Alle
+anderen Passungen und Kräfte sind berechnet, nicht gemessen. Welche Verbindung wie geprüft ist:
+[VERBINDUNGEN.md](VERBINDUNGEN.md). Als Nächstes: die Testplatten T3a, T3b, T4
+([TESTANLEITUNG.md](TESTANLEITUNG.md)).
 
 Für ein Kind von 9 Jahren gebaut: zerlegbar, ohne Kleber, robust für viel Spiel.
 
 ## Kurzfazit
 
-* **Gut druckbar auf dem Bambu Lab A1:** 23 Druckplatten, alle Teile passen aufs Bett. Stützen
-  nur unter den Scharnieraugen der hohen Pfosten. Für Bambu Studio gibt es fertige Presets und
-  eine Schritt-für-Schritt-Anleitung mit AMS-lite-Belegung ([BAMBU_STUDIO.md](BAMBU_STUDIO.md)).
+* **Gut druckbar auf dem Bambu Lab A1:** 24 Druckplatten, alle Teile passen aufs Bett, auch mit
+  Brim und Stützen. Stützen nur unter den Scharnieraugen der hohen Pfosten. Jede Platte ist ein
+  fertiges Bambu-Studio-Projekt mit allen Einstellungen ([BAMBU_STUDIO.md](BAMBU_STUDIO.md)).
 * **Die Schwachstellen sind überarbeitet:** Das Dach besteht jetzt aus 3 Teilen und ist
   verriegelt. Fenster, Gitterstäbe und Bodenverbindung sind kräftiger.
 * **Heikelster Druck bleibt die Platte mit den sechs 216 mm hohen Pfosten**, weil das
@@ -27,13 +30,14 @@ Für ein Kind von 9 Jahren gebaut: zerlegbar, ohne Kleber, robust für viel Spie
 | Fensterflügel | Scharnierwand 1,45 mm, Rahmen 2,4 mm | Scharnieraugen 6,4 statt 5,2 mm (Wand 2,05 mm), Rahmen 3,0 mm, Sprossen 3,0 mm |
 | Gitterstäbe | 3 mm breit, an der Trennwand nur 2,8 mm dick | Trennwand: 4 mm breit und erhaben, 4,2 mm dick (schwarz); Boxentür: 3,5 mm; Sprossen der Tore: 3,0 mm |
 | Bodenplatten-Verbindung | 20 mm breite Zungen, 20,5 mm Brücke, 0,25 mm Luft | 14 mm breite Zungen, mehr pro Fuge, 14,5 mm Brücke und 0,4 mm Luft nach oben. Hängt die Brücke etwas durch, klemmt nichts. PrusaSlicer meldet keine langen Brücken mehr |
-| Druck der hohen Pfosten | 26 mm Abstand | 60 mm Abstand (ein umfallender Pfosten reißt die anderen nicht mit), 8 mm Brim, Druckgeschwindigkeit „Leise“ |
+| Druck der hohen Pfosten | 26 mm Abstand | 60 mm Abstand (ein umfallender Pfosten reißt die anderen nicht mit), 8 mm Brim, sanftere Geschwindigkeiten im Preset „Pfosten Stuetzen v2“ (am Drucker nichts umstellen) |
 | Riegel | 2 Stück, lose | dazu 2 Ersatzriegel auf der Türplatte |
 | Slicer | nur Hinweise | 4 Bambu-Studio-Presets, Druckplatten-Tabelle mit Preset, AMS-Slot und Farbwechsel |
 
 Unverändert und geprüft: Alle Pferde passen (Designpferd 170 x 53 x 120 mm in jeder Box, durch
 Boxentür und Tor). Keine Teile überschneiden sich. Alle Türen und Fenster schwenken frei, auch
-alle gleichzeitig. Alle 12 Stifte laufen frei, der Klick-Verschluss rastet.
+alle gleichzeitig. Alle 12 Stifte laufen frei. Der Klick-Verschluss rastet im Nennmaß; er ist
+aber empfindlich gegen Toleranzen und soll durch einen Fallriegel ersetzt werden ([VERSCHLUSS.md](VERSCHLUSS.md)).
 
 ## 2. Druckbarkeit auf dem A1
 
@@ -41,9 +45,9 @@ alle gleichzeitig. Alle 12 Stifte laufen frei, der Klick-Verschluss rastet.
 |---|---|---|---|
 | Bodenplatten (6) | flach, 0,24 mm Schichten | sehr gut | große Auflagefläche; unten 14,5-mm-Brücken über den Zungen-Aussparungen |
 | Wände, Trennwände, Boxenfronten, Giebel (16) | flach, Schauseite oben | sehr gut | Filamentwechsel bei 3,0 mm für schwarze Zierleisten (macht das AMS lite) |
-| Türen, Fensterflügel, Riegel (14 + 2 Ersatz) | flach | gut | Scharnierbohrungen tropfenförmig, keine Stützen |
-| Kurze Pfosten (6, 118 mm) | stehend | gut | 8 mm Brim |
-| Hohe Pfosten (6, 216 mm) | stehend | **anspruchsvoll** | stehen auf nur 14 x 14 mm; Baumstützen unter 28 Scharnieraugen; 8 mm Brim, Modus „Leise“, Platte mit Spülmittel waschen, die erste Stunde zuschauen |
+| Türen, Fensterflügel, Riegel (14 + 2 Ersatz) | flach | gut | Scharnierbohrungen tropfenförmig, keine Stützen; Fensterflügel mit 3-mm-Brim |
+| Kurze Pfosten (6, 124 mm) | stehend | gut | 8 mm Brim; Oberkante schräg wie das Seitendach |
+| Hohe Pfosten (6, 216 mm) | stehend | **anspruchsvoll** | stehen auf nur 14 x 14 mm; Baumstützen unter 28 Scharnieraugen; 8 mm Brim, sanfte Beschleunigung (im Projekt gespeichert), Platte mit Spülmittel waschen, die erste Stunde zuschauen |
 | Mitteldach (1) | stehend wie eingebaut, 45 Grad | gut | steht auf zwei 5 mm breiten, 243 mm langen Streifen; 5 mm Brim |
 | Seitendächer (2) | flach, Schindeln oben | sehr gut | 243 x 193 mm; Sperrrippen zeigen nach oben |
 
@@ -56,9 +60,10 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 
 ![So funktioniert das Scharnier](images/scharnier.png)
 
-* Am Pfosten sitzen feste **Scharnieraugen** mit engem Loch (1,85 mm): Dort klemmt der Stift.
-  Die Tür hat ihre Augen in den Lücken dazwischen, mit weitem Loch (2,3 mm): Sie dreht sich frei
-  um den Stift.
+* Am Pfosten sitzen feste **Scharnieraugen**. Ihr Loch wird gerade mit T3a bestimmt; in T1
+  waren 1,75 bis 1,95 mm zu eng. Die Tür hat ihre Augen in den Lücken dazwischen, mit weitem Loch
+  (**2,15 mm, durch deinen Test bestätigt**): Sie dreht sich frei um den Stift. Den Stift hält
+  unten der Boden und oben das geschlossene Ende des obersten Auges.
 * **Nach dem Druck:** die kleinen Baumstützen unter den Augen mit einer Spitzzange herausdrehen,
   Reste mit dem Cutter glätten. Ein Türauge muss ohne Kraft in die Lücke gleiten.
 * **Zuschneiden:** 4 x 126 mm (Tore), 4 x 122 mm (Boxentüren), 4 x 30 mm (Fenster). Filament gerade
@@ -66,14 +71,16 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
   PETG-Filament ist zäher.
 * **Einbau Türen:** Tür an den Pfosten halten, Stift **von unten** bis zum Anschlag durchschieben,
   dann den Pfosten in den Boden stecken. Der Boden hält den Stift von unten.
-* **Einbau Fenster:** Stift **von oben** einstecken; er steht unten auf einem geschlossenen Loch.
-* **Testen:** Testplatte T1 hat drei Lochgrößen je Seite (`bore_fixed`, `bore_free`).
+* **Einbau Fenster:** Stift **von oben** einstecken; er steht unten auf einem geschlossenen Loch,
+  das oberste Wandauge klemmt ihn. Das Scharnier sitzt außerhalb des schwarzen Fensterrahmens.
+* **Testen:** T3a (Pfostenloch, zusammengebautes Scharnier) und T3b (Fenster); die Lochgrößen
+  heißen in `cad/config.scad` `bore_post`, `bore_free`, `bore_win_hold`, `bore_win_free`.
 
 ## 4. Stärken
 
 * **Passt zu echten Schleich-Pferden,** auch zum größten gängigen (Shire, 17 cm).
 * **Kompakt:** 49 x 25 cm Grundfläche, 27,6 cm hoch.
-* **Viel Spielwert:** 4 Boxentüren mit Klick-Verschluss und Halsausschnitt, zwei Doppeltore
+* **Viel Spielwert:** 4 Boxentüren mit Verschluss und Halsausschnitt, zwei Doppeltore
   mit Riegel, 4 Fenster zum Öffnen, das Dach mit zwei Griffen ab (Mitteldach, dann Seitendach).
 * **Kräftig:** 16-mm-Pfosten, Wände in Nuten, verzahnter 8-mm-Boden, kräftigere Fenster und
   Gitter, verriegeltes Dach.
@@ -82,7 +89,11 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 
 ## 5. Schwächen, die bleiben
 
-* **Noch nicht gedruckt:** T1 und T2 (zusammen etwa 5 h) klären die Passungen vorher.
+* **Noch nicht alles getestet:** T1 ist gedruckt. T3a, T3b und T4 (und T2) klären die übrigen
+  Passungen und den neuen Verschluss. Bis dahin sind Pfosten mit Scharnieren, Giebelwände,
+  Fensterflügel, Boxenfronten und Türen gesperrt.
+* **Klick-Verschluss** der Boxentüren: empfindlich gegen Toleranzen. Ersatz durch einen Fallriegel
+  ist vorbereitet (Test T4, [VERSCHLUSS.md](VERSCHLUSS.md)).
 * **Hohe Pfosten** bleiben der anspruchsvollste Druck (Abschnitt 2).
 * **Stützen entfernen:** 28 kleine Bäume an den Pfosten, etwa 15 Minuten Arbeit.
 * **Wände sind gesteckt** (zerlegbar, wie gewünscht). Mit Dach sind sie gehalten; ohne Dach kann
@@ -91,14 +102,15 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 * **Türen nicht mit Gewalt über den Anschlag drücken** (Tore 105 Grad, Boxentüren 90 bis
   105 Grad); das belastet die Scharnieraugen.
 * **PLA** wird bei etwa 55 °C weich (Auto im Sommer, sonnige Fensterbank).
-* **Aufwand:** 23 Platten, rund 81 h und 2,4 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
+* **Aufwand:** 24 Platten, rund 88 h und 2,5 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
   zeigt eigene Werte), dazu 1 bis 2 Stunden Zusammenbau.
 
 ## 6. Drucken
 
-Siehe [BAMBU_STUDIO.md](BAMBU_STUDIO.md): Presets importieren, AMS lite belegen (1 Weiß,
-2 Schwarz, 3 Hellgrau, 4 Dunkelgrau), je Platte Preset und Slot wählen, bei den Wandplatten
-Filamentwechsel bei 3,0 mm. Reihenfolge: T1, T2, dann Pfosten, Boden, Wände, Türen, Dach.
+Siehe [BAMBU_STUDIO.md](BAMBU_STUDIO.md) und [DRUCKPLAN.md](DRUCKPLAN.md): Projektdatei öffnen,
+slicen, drucken. AMS lite: 1 Weiß, 2 Schwarz, 3 Hellgrau, 4 Dunkelgrau. Alles andere, auch der
+Filamentwechsel bei 3,0 mm, steht in den Dateien. Reihenfolge: Tests T3a, T3b, T4 (T2), dann die
+freigegebenen Platten (Boden, Eck- und Seitenpfosten, Wände, Dach), nach den Tests der Rest.
 
 ## 7. Die Blender-Datei
 

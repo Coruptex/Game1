@@ -28,13 +28,74 @@ def tsec(s):
     return t
 
 
+def gcode_scan(path, axes=()):
+    """extrusion footprint (incl. brim, skirt, support) and support statistics
+    from a PrusaSlicer G-code; axes = [(x, y, r, z0, z1)] bore axes: support
+    extrusions inside r around an axis between z0 and z1 are counted"""
+    x = y = z = 0.0
+    e_abs, e_cur = False, 0.0
+    typ = ""
+    lo, hi = [1e9, 1e9], [-1e9, -1e9]
+    sup_n, sup_in_bore, sup_lo, sup_hi = 0, 0, [1e9, 1e9, 1e9], [-1e9, -1e9, -1e9]
+    with open(path, errors="ignore") as f:
+        for line in f:
+            if line.startswith(";TYPE:"):
+                typ = line[6:].strip(); continue
+            if line.startswith("M82"):
+                e_abs = True
+            elif line.startswith("M83"):
+                e_abs = False
+            elif line.startswith("G92"):
+                for tok in line.split(";")[0].split()[1:]:
+                    if tok.startswith("E"):
+                        e_cur = float(tok[1:] or 0)
+                continue
+            if not line.startswith(("G1 ", "G0 ")):
+                continue
+            nx, ny, nz, e = x, y, z, None
+            for tok in line.split(";")[0].split()[1:]:
+                k, v = tok[0], tok[1:]
+                try:
+                    v = float(v)
+                except ValueError:
+                    continue
+                if k == "X": nx = v
+                elif k == "Y": ny = v
+                elif k == "Z": nz = v
+                elif k == "E": e = v
+            extruding = e is not None and ((e - e_cur > 1e-6) if e_abs else (e > 0))
+            if e is not None and e_abs:
+                e_cur = e
+            if extruding and (nx != x or ny != y):
+                for px, py in ((x, y), (nx, ny)):
+                    lo[0] = min(lo[0], px); lo[1] = min(lo[1], py); hi[0] = max(hi[0], px); hi[1] = max(hi[1], py)
+                if typ.startswith("Support"):
+                    sup_n += 1
+                    for i, v in enumerate((nx, ny, nz)):
+                        sup_lo[i] = min(sup_lo[i], v); sup_hi[i] = max(sup_hi[i], v)
+                    for ax, ay, r, z0, z1 in axes:
+                        if z0 <= nz <= z1 and ((nx - ax) ** 2 + (ny - ay) ** 2) ** 0.5 < r:
+                            sup_in_bore += 1
+                            break
+            x, y, z = nx, ny, nz
+    return {"extent_xy": [round(lo[0], 1), round(lo[1], 1), round(hi[0], 1), round(hi[1], 1)],
+            "support_moves": sup_n, "support_in_bores": sup_in_bore,
+            "support_box": [round(v, 1) for v in sup_lo + sup_hi] if sup_n else None}
+
+
 def slice_one(args):
-    name, stl = args
+    """args = (name, stl) or (name, stl, opts); opts: brim (mm), support (bool),
+    layer (mm), walls, infill (%), cli (extra PrusaSlicer options), axes"""
+    name, stl = args[0], args[1]
+    o = args[2] if len(args) > 2 else {"brim": BRIM.get(name, 0), "support": name in SUPPORT,
+                                       "layer": 0.24 if "floor" in name else 0.2}
     out = os.path.join(tempfile.gettempdir(), f"slice_{os.getpid()}_{name}.gcode")
-    cmd = ["prusa-slicer", "--export-gcode", "--load", INI, "--center", "128,128",
-           "--brim-width", str(BRIM.get(name, 0)), *(SUPPORT_ARGS if name in SUPPORT else []),
-           # floor tiles use the 0.24 mm preset (slicer/bambu_studio/Stall_0.24mm_Boden.json)
-           *(["--layer-height", "0.24"] if "floor" in name else []), "-o", out, stl]
+    cmd = ["prusa-slicer", "--export-gcode", "--load", INI, "--dont-arrange", "--skirts", "0",
+           "--brim-width", str(o.get("brim", 0)), *(SUPPORT_ARGS if o.get("support") else []),
+           "--layer-height", str(o.get("layer", 0.2)),
+           *(["--perimeters", str(o["walls"])] if o.get("walls") else []),
+           *(["--fill-density", f"{o['infill']}%"] if o.get("infill") else []),
+           *o.get("cli", []), "-o", out, stl]
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0 or not os.path.exists(out):
         return name, {"error": (r.stdout + r.stderr)[-500:]}
@@ -50,7 +111,10 @@ def slice_one(args):
                 res["filament_g"] = float(line.split("=")[1])
             elif line.startswith("; filament used [mm]"):
                 res["filament_m"] = round(float(line.split("=")[1]) / 1000, 2)
-    os.remove(out)
+    res.update(gcode_scan(out, o.get("axes", ())))
+    keep = os.path.join(ROOT, "build", "gcode")
+    os.makedirs(keep, exist_ok=True)
+    os.replace(out, os.path.join(keep, name + ".gcode"))
     return name, res
 
 
@@ -60,7 +124,6 @@ def main():
     a = ap.parse_args()
     parts = unique_parts(read_instances())
     jobs = [(p, os.path.join(ROOT, "stl", p + ".stl")) for p, _, _ in parts]
-    jobs += [(t, os.path.join(ROOT, "stl", "tests", t + ".stl")) for t in ("plate_T1", "plate_T2")]
     qty = {p: q for p, _, q in parts}
     res = {}
     with cf.ProcessPoolExecutor(a.jobs) as ex:

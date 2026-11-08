@@ -15,7 +15,13 @@
 
 post_bot = 2;                       // posts rest on the socket floor
 post_chamfer = 1.2;
-z_ext_post_top = z_side_roof(X0 - PW2) - 0.6;   // flat top below side roof
+z_ext_post_top = z_side_roof(X0 - PW2) - 0.6;   // top of the outer face, 0.6 mm below the side roof
+// exterior posts (corner, side-mid): the top follows the side-roof pitch,
+// 0.6 mm below its underside (the roof never rests on the posts)
+zt_ext_raw = z_side_roof(X0 + PW2) + 1;          // raw height before the sloped cut
+module cut_above_side_roof() {
+    translate([X0 - PW2 - 1, -1000, z_side_roof(X0 - PW2 - 1) - 0.6]) rotate([0, -pitch_side, 0]) cube([200, 2000, 200]);
+}
 
 // ---- hinge axes (world, closed position) ----
 // main door: leaf exterior face at Y0 - md_face_off, axis on that face
@@ -51,20 +57,22 @@ module post_groove(x, y, face, z0, z1) {
 }
 
 module post_corner_world() {
-    x = X0; y = Y0; zt = z_ext_post_top;
+    x = X0; y = Y0; zt = zt_ext_raw;
     difference() {
         post_body(x, y, post_bot, zt);
         post_groove(x, y, "+x", Z_plinth - base_groove_d, zt + 1);
         post_groove(x, y, "+y", Z_plinth - base_groove_d, zt + 1);
+        cut_above_side_roof();
     }
 }
 module post_sidemid_world() {
-    x = X0; y = Y1; zt = z_ext_post_top;
+    x = X0; y = Y1; zt = zt_ext_raw;
     difference() {
         post_body(x, y, post_bot, zt);
         post_groove(x, y, "-y", Z_plinth - base_groove_d, zt + 1);
         post_groove(x, y, "+y", Z_plinth - base_groove_d, zt + 1);
         post_groove(x, y, "+x", floor_top - floor_groove_d, zt + 1);
+        cut_above_side_roof();
     }
 }
 // cut everything above the central roof underside (aisle posts, left side)

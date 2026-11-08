@@ -14,7 +14,10 @@
 | Support material only where intended | **Digitally**: down-facing area per part and PrusaSlicer's stability check. Only the flat undersides of the post hinge knuckles need support (owner's choice; `knuckle_chamfer = true` removes it). Elsewhere only bridges of at most 16.4 mm remain |
 | Side roofs locked by the central roof | **Digitally**: lift sweep, the side roof stops after 1.25 mm, before it clears its 1.6 mm tabs; it lifts freely once the central roof is off |
 | Print time and filament | **Estimated** with PrusaSlicer 2.7.2 using A1-equivalent settings, not Bambu Studio |
-| Fits (grooves, sockets, bores, latch, tile fingers, tabs) | **Not physically tested.** Calculated starting values; print the coupons |
+| Fits (grooves, sockets, bores, latch, tile fingers, tabs) | **Partly tested.** T1 printed by the owner (Nov 2026): door-side bore 2.15 confirmed, post-side bores 1.75-1.95 all too tight. Everything else is calculated; test plates T2, T3a, T3b, T4 are open (see VERBINDUNGEN.md) |
+| Casement window path | **Digitally**: 5 deg sweep 0-180 deg, free to 175 deg, min. clearance 0.5 mm (0.6 mm to the black frame) |
+| Drop latch (proposed replacement of the click latch) | **Digitally**: kinematic simulation of the T4 rig incl. +-1 mm / +-0.4 mm tolerance cases (`tools/latch_sim.py`); not printed yet |
+| Bambu Studio project files | **Structure, geometry and settings checked by script; supports, brim and space checked with PrusaSlicer.** Bambu Studio itself could not be run in the build environment |
 | Latch force (~2 N), strain (~0.45 %) and fatigue life | **Calculated only** (beam theory, typical PLA properties) |
 | Strength under play loads | **Not tested**; judged from section sizes and load paths |
 | Safety (EN 71 / ASTM F963) | **Not assessed or certified** |
@@ -46,7 +49,8 @@
 * **Tall posts:** the six 216 mm posts print upright, which is the strongest orientation for
   their grooves and hinge rings. They stand on 14 x 14 mm, and the A1 moves its bed under
   them; PrusaSlicer flags them (and the central roof) with "Low bed adhesion". Use an 8 mm
-  brim, a clean plate and speed mode Silent, and watch the first hour. The posts are spaced
+  brim (stored in the project), gentle speeds and accelerations (preset "Pfosten Stuetzen v2",
+  stored in the project) and a clean plate, and watch the first hour. The posts are spaced
   60 mm apart, so one that comes loose does not knock over the others. Their hinge knuckles
   print on small tree supports; snip these off and check that the gaps are clean.
 * **The central roof prints standing on its 5 mm eave strips** with 45 deg slopes. It needs
@@ -66,9 +70,9 @@
   if wanted.
 * **Black trim** needs a filament change at Z = 2.8 mm, or painting. Without it, the panels are
   plain white.
-* **PLA flexure fatigue:** the latch tongue is low-strain by design, but it has not been
-  cycle-tested. A broken tongue means reprinting one stall door (about 22 g). PETG doors are a
-  good upgrade.
+* **Click latch:** sensitive to tolerances (0.8 mm engagement against about +-1 mm of play from
+  the stall front floating in its grooves and the hinge) and to PLA wear. A drop latch is proposed
+  instead (docs/VERSCHLUSS.md, test plate T4); it replaces the click latch only after the test.
 * **OpenSCAD version:** built and tested with OpenSCAD 2021.01 (CGAL). Newer versions should
   work, faster with `--backend manifold`, but that was not tested here.
 * **Main door height:** 160 mm clear at the crown. The rider height is an estimate, and a tall

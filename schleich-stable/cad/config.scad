@@ -46,10 +46,25 @@ knuckle_chamfer = false;
 /* [Hinge pins] */
 // Pin diameter: 1.75 = a piece of filament, 2.0 = steel rod / nail
 pin_d      = 1.75;
-// Bore in the part that HOLDS the pin (post / frame side, snug)
-bore_fixed = 1.85;
-// Bore in the part that ROTATES on the pin (door side, free)
-bore_free  = 2.30;
+// Three kinds of pin bore, each with its own print orientation and test:
+// 1) Bore in the POSTS (printed upright, bore vertical in the print, the
+//    knuckles stand on tree supports). Test T1 (Nov 2026): 1.75 / 1.85 /
+//    1.95 were all too tight. Test T3 tries 2.05 ... 2.45. The posts are
+//    NOT released for printing until T3 has confirmed a value here.
+bore_post  = 1.85;
+// 2) Bore in the DOOR and CASEMENT knuckles (printed flat, teardrop bore,
+//    the pin turns in it). Test T1 (Nov 2026): 2.15 worked best, 2.30 and
+//    2.45 were too loose. Confirmed by test print.
+bore_free  = 2.15;
+// 3) Bores in the flat-printed WINDOW FRAME knuckles on the gable wings
+//    (teardrop): the top knuckle clamps the pin so it cannot slide out
+//    (T3 coupon "Fensterstift" tries 1.85 / 1.95 / 2.05, value provisional),
+//    the lower knuckles are free like the casement.
+bore_win_hold = 1.95;
+bore_win_free = 2.15;
+// Lead-in chamfer at the entry of every post knuckle bore: the pin finds
+// the next knuckle more easily when it is pushed up from below
+bore_leadin = 0.4;
 
 /* [Grid: post centre lines] */
 // Post centre-to-centre: exterior wall -> aisle line (stall depth;

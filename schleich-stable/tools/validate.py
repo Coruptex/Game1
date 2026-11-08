@@ -189,6 +189,46 @@ def check_swing(placed, report):
     return res
 
 
+def check_casement_path(placed, report):
+    """casement FL over its whole opening path (5 deg steps up to 180 deg):
+    first collision and the smallest clearance to the gable wing (frame band,
+    sill, fixed knuckles) and every other part nearby"""
+    files = sorted(glob.glob(os.path.join(ROOT, "build", "swing_fine", "casement_FL_*.stl")))
+    if not files:
+        return None
+    static = [n for n in placed if not n.startswith(("main_leaf_", "stall_door_", "casement_", "bolt_bar"))]
+    rows, free_to, first = [], None, None
+    for f in files:
+        ang = int(os.path.basename(f).rsplit("_", 1)[1][:3])
+        tm = load(f); m = to_mf(tm); bb = tm.bounds
+        worst, best = (0.0, None), (9.9, None)
+        for s in static:
+            ts, ms, bs = placed[s]
+            if not bbox_overlap(bb, bs, 3.0):
+                continue
+            v = inter_vol(m, ms)
+            if v > worst[0]:
+                worst = (v, s)
+            if v <= TOL:
+                g = m.min_gap(ms, 3.0)
+                if g < best[0]:
+                    best = (g, s)
+        hit = worst[0] > TOL
+        rows.append({"angle": ang, "collision": {"with": worst[1], "vol_mm3": round(worst[0], 2)} if hit else None,
+                     "min_gap_mm": round(best[0], 2) if best[1] else None, "nearest": best[1]})
+        if hit and first is None:
+            first = {"angle": ang, "with": worst[1], "vol_mm3": round(worst[0], 2)}
+        if first is None:
+            free_to = ang
+    path = [r for r in rows if r["angle"] <= (free_to or 0) and r["min_gap_mm"] is not None]
+    mn = min(path, key=lambda r: r["min_gap_mm"]) if path else None
+    report["casement_path"] = {"free_to_deg": free_to, "first_collision": first,
+                               "min_gap_mm": mn["min_gap_mm"] if mn else None,
+                               "min_gap_at_deg": mn["angle"] if mn else None,
+                               "min_gap_with": mn["nearest"] if mn else None, "rows": rows}
+    return report["casement_path"]
+
+
 def check_roof_lift(placed, report):
     """central roof: lifts straight off. Side roofs: LOCKED while the central
     roof is on (stopped before they rise off their tabs), free once it is off"""
@@ -467,6 +507,17 @@ def write_md(rep, path):
         for s in rep["swing"]:
             fc = s["first_collision"]
             L.append(f"| {s['part']} | {s['free_to_deg']} deg | " + (f"{fc['angle']} deg with {fc['with']} ({fc['vol_mm3']} mm3)" if fc else "none up to the last tested angle") + " |")
+    cp = rep.get("casement_path")
+    if cp:
+        L += ["", "## Casement FL, whole opening path (5 deg steps)", "",
+              f"Free from 0 to {cp['free_to_deg']} deg; first contact: " +
+              (f"{cp['first_collision']['angle']} deg with {cp['first_collision']['with']} ({cp['first_collision']['vol_mm3']} mm3)" if cp["first_collision"] else "none up to 180 deg") + ".",
+              f"Smallest clearance on the free path: {cp['min_gap_mm']} mm at {cp['min_gap_at_deg']} deg (to {cp['min_gap_with']}).", "",
+              "| angle | nearest part | clearance mm | contact |", "|---|---|---|---|"]
+        for r in cp["rows"]:
+            c = r["collision"]
+            L.append(f"| {r['angle']} | {r['nearest'] or ''} | {r['min_gap_mm'] if r['min_gap_mm'] is not None else ''} | " +
+                     (f"{c['with']} {c['vol_mm3']} mm3" if c else "") + " |")
     ao = rep.get("all_open_90")
     if ao:
         L += ["", f"All {ao['movers']} moving parts open at 90 deg at the same time: " +
@@ -536,6 +587,9 @@ def main():
     print("loading placed ...", flush=True); placed = load_placed()
     print("interference ...", flush=True); check_interference(placed, rep)
     print("swing ...", flush=True); check_swing(placed, rep)
+    print("casement path ...", flush=True); cp = check_casement_path(placed, rep)
+    if cp:
+        print("   casement path:", {k: v for k, v in cp.items() if k != "rows"})
     print("pins / latch ...", flush=True)
     pins_placed = {k: v for k, v in placed.items()}
     check_pins(pins_placed, rep); check_latch(placed, rep)

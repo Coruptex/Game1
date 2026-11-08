@@ -17,7 +17,16 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CAD = os.path.join(ROOT, "cad", "stable.scad")
 SWING_ANGLES = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
 LATCH_ANGLES = [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6]          # fine sweep, stall door FL
+CASE_ANGLES = list(range(0, 181, 5))                         # fine sweep, casement FL (whole opening path)
 PINS = [f"pin_{k}_{q}" for k in ("main", "stall", "case") for q in ("FL", "FR", "BL", "BR")]
+# single test coupons -> stl/tests/<name>.stl: (name, coupon part, bore override)
+TEST_PARTS = ([(n, n, None) for n in ("groove_post", "panel_strip", "socket_plate", "tile_a", "tile_b", "tab_plate", "tab_key")]
+              + [(f"T3a_post_{b:.2f}", "hinge_post", b) for b in (2.05, 2.15, 2.25, 2.35, 2.45)]
+              + [("T3b_leaf_2.15", "hinge_leaf", 2.15), ("T3b_window_section", "window_section", None),
+                 ("T3b_stand", "test_stand", None)]
+              + [(f"T3b_pin_{b:.2f}", "win_pin_coupon", b) for b in (1.85, 1.95, 2.05)]
+              + [("T4_frame", "rig_frame", None), ("T4_door", "rig_door", None), ("T4_lever", "fl_lever", None),
+                 ("T4_stand", "test_stand", None), ("T4_bolt_test", "bolt_test_plate", None)])
 
 
 def read_instances():
@@ -87,8 +96,11 @@ def main():
                          {"part": f'"{n}"', "mode": '"placed"', "door_ang": 0}, a.backend))
     if not a.no_parts and (not a.only or "tests" in a.only):
         coupons = os.path.join(ROOT, "cad", "tests", "coupons.scad")
-        for t in ("plate_T1", "plate_T2"):
-            jobs.append((os.path.join(ROOT, "stl", "tests", t + ".stl"), {"part": f'"{t}"', "__file": coupons}, a.backend))
+        for name, part, bore in TEST_PARTS:
+            d = {"part": f'"{part}"', "__file": coupons}
+            if bore:
+                d["coupon_bore"] = bore
+            jobs.append((os.path.join(ROOT, "stl", "tests", name + ".stl"), d, a.backend))
     if a.placed:
         for n in PINS:
             if a.only and n not in a.only:
@@ -108,6 +120,10 @@ def main():
         for ang in LATCH_ANGLES:
             jobs.append((os.path.join(ROOT, "build", "latch", f"stall_door_FL_{ang:04.1f}.stl"),
                          {"part": '"stall_door_FL"', "mode": '"placed"', "door_ang": ang}, a.backend))
+    if a.swing and (not a.only or "casement_FL" in a.only):
+        for ang in CASE_ANGLES:
+            jobs.append((os.path.join(ROOT, "build", "swing_fine", f"casement_FL_{ang:03d}.stl"),
+                         {"part": '"casement_FL"', "mode": '"placed"', "door_ang": ang}, a.backend))
     # longest first for better packing
     jobs.sort(key=lambda j: ("floor" not in j[0], "roof" not in j[0]))
     t0 = time.time()

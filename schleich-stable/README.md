@@ -16,10 +16,10 @@ mymodelhorse.com, but it is an original design and is not affiliated with Schlei
 | Size | **489 x 253 mm** base; **497 x 268 x 276 mm** overall (roof eaves and door bolts) |
 | Stalls | 4, each 173 x 113 mm inside, for horses up to 170 x 53 x 120 mm (checked in the validation with a horse proxy) |
 | Aisle / main door | 113 mm aisle; arched double doors 100 mm wide, 160 mm clear at the crown |
-| Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke and click latch; left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
-| Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows, 3 lift-off roof units (the central roof locks the side roofs) |
+| Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: click latch, a drop latch (test plate T4) is proposed to replace it; left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
+| Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows (hinge outside the window frame, which runs all the way round), 3 lift-off roof units (the central roof locks the side roofs) |
 | Parts | 51 printed pieces from 26 STL files; 12 hinge pins cut from 1.75 mm filament |
-| Print | 23 plates, about **81 h** and **2.4 kg PLA** (PrusaSlicer estimate with A1-equivalent settings); Bambu Studio presets in `slicer/bambu_studio/` |
+| Print | 24 plates, about **88 h** and **2.5 kg PLA** (PrusaSlicer estimate with the same settings); every plate is a ready **Bambu Studio project** in `bambu/` |
 
 This is the compact version (v2). The first, full-size version was 565 x 357 x 329 mm with
 3.4 kg / 116 h of printing. Section 4 of the dimension plan explains where the space was
@@ -31,29 +31,37 @@ saved and why nothing was simply scaled down.
 
 ## Quick start
 
-1. **Print the test coupons** `3mf/T1_test_hinges_latches.3mf` and `3mf/T2_test_fits.3mf`.
-   Follow [docs/TESTING.md](docs/TESTING.md) to pick the clearances for your printer.
-2. If you changed values in `cad/config.scad`, regenerate (see below).
-3. **Print plates `P01`-`P23`** from `3mf/`, or the single STLs in `stl/`. Settings, colours
-   and order are in [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md).
+1. **Print the test plates** in `bambu/TEST/` (T3a, T3b, T4; T2 if not printed yet) and follow
+   [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md) (German). T1 has been printed already.
+2. Enter the confirmed fits in `cad/config.scad` and regenerate (see below). Plates that wait for
+   a test (posts with hinges, gable walls, casements, stall fronts, doors) get their project
+   files only then.
+3. **Print the released plates** in `bambu/PRODUKTION/`: open the project in Bambu Studio, slice,
+   print ([docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md), order and status in
+   [docs/DRUCKPLAN.md](docs/DRUCKPLAN.md)).
 4. **Assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
+
+What changed in this round: [docs/AENDERUNGEN.md](docs/AENDERUNGEN.md) (German).
 
 Viewing the assembled model: `blender/stall_kompakt.blend` (Blender 4.0 or newer) has the
 exported parts in place, with open-door poses, hinge pins, horse proxies, the print plates and
 10 named cameras ([views from all directions](docs/images/views/)). `docs/assembly_preview.glb`
-is coloured and opens in any glTF viewer. `3mf/assembly_preview.3mf` has all parts at their
-assembled positions, for viewing only; print from the `P..` plates.
+is coloured and opens in any glTF viewer.
 
 ## Documentation
 
 * [docs/ANALYSE.md](docs/ANALYSE.md) (Deutsch): Druckbarkeit, Überarbeitung, Scharniere, Stärken und Schwächen
-* [docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md) (Deutsch): Presets importieren, AMS lite belegen, jede Platte Schritt für Schritt
+* [docs/AENDERUNGEN.md](docs/AENDERUNGEN.md) (Deutsch): Änderungsliste dieser Runde
+* [docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md) (Deutsch): die fertigen Bambu-Studio-Projekte öffnen, prüfen, drucken
+* [docs/DRUCKPLAN.md](docs/DRUCKPLAN.md) (Deutsch): alle Platten mit Status, Preset, AMS-Slot, Zeit, Filament, Reihenfolge
+* [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md) (Deutsch): Teststücke T2, T3a, T3b, T4: was zusammengehört, was getestet wird, woran man ein gutes Ergebnis erkennt
+* [docs/VERSCHLUSS.md](docs/VERSCHLUSS.md) (Deutsch): Klickverschluss erklärt, Vergleich, Empfehlung Fallriegel
+* [docs/VERBINDUNGEN.md](docs/VERBINDUNGEN.md) (Deutsch): alle Verbindungen, rechnerisch geprüft oder durch Testdruck bestätigt
 * [docs/DIMENSION_PLAN.md](docs/DIMENSION_PLAN.md): horse sizes, how each dimension follows from them, comparison with the reference and v1
 * [docs/SPEC.md](docs/SPEC.md): reference analysis, requirements, dimensions, mechanisms, CAD workflow
-* [docs/PRINT_PLAN.md](docs/PRINT_PLAN.md): Bambu Studio settings, plates, time and filament per plate
 * [docs/BOM.md](docs/BOM.md): parts list with quantities, pin lengths, tools
 * [docs/ASSEMBLY.md](docs/ASSEMBLY.md): step by step, plus a placement map
-* [docs/TESTING.md](docs/TESTING.md): how to read the test coupons
+* [docs/TESTING.md](docs/TESTING.md): the test coupons and how they map to `config.scad`
 * [docs/VALIDATION.md](docs/VALIDATION.md): digital checks (generated)
 * [docs/LIMITATIONS.md](docs/LIMITATIONS.md): assumptions, what is and is not verified
 
@@ -64,13 +72,14 @@ cad/            OpenSCAD source (parametric)
   config.scad     ALL dimensions and tolerances
   stable.scad     main file: pick `part` (assembly or a printable part)
   instances.scad  where every part sits in the assembly, which STL it uses
-  lib/            textures, hinges, latch, helpers
+  lib/            textures, hinges, click latch, drop latch (test), helpers
   parts/          floor, posts, panels, frames, doors, roof
   tests/          test coupons
-stl/            printable parts (print orientation), stl/tests/ coupon plates
-3mf/            ready-arranged A1 plates (one colour per plate)
+stl/            printable parts (print orientation, current model state; parts that still wait
+                for a test result are marked in docs/DRUCKPLAN.md), stl/tests/ test coupons
+bambu/          Bambu Studio projects: TEST/ (print first), PRODUKTION/ (released plates)
 tools/          build, validate, plates/slicing, report, render and Blender scripts
-slicer/         Bambu Studio process presets (import once)
+slicer/         Bambu Studio process presets (the projects carry them already)
 blender/        Blender scene of the assembled stable (generated)
 docs/           documentation and renders
 ```
@@ -85,8 +94,11 @@ Blender (renders only).
 python3 tools/build.py                    # all printable STLs -> stl/ (about 1 min with OpenSCAD 2021)
 python3 tools/build.py --placed --swing   # + assembled poses for validation -> build/
 python3 tools/validate.py                 # writes docs/VALIDATION.md (incl. horse-fit checks)
-python3 tools/plates.py                   # arrange plates -> 3mf/, slice for estimates
-python3 tools/report.py                   # writes docs/PRINT_PLAN.md and docs/BOM.md
+python3 tools/latch_sim.py                # drop latch test rig: kinematic check
+python3 tools/plates.py                   # plates -> Bambu Studio projects in bambu/, slice checks
+python3 tools/report.py                   # writes docs/DRUCKPLAN.md, docs/BOM.md, slicer presets
+blender -b -P tools/render_window.py -- 150 && python3 tools/annotate_window.py   # window close-ups
+blender -b -P tools/render_latch.py && python3 tools/annotate_latch.py           # latch images
 python3 tools/render_export.py && tools/render_all.sh   # renders -> docs/images/
 blender -b -P tools/make_blend.py                        # Blender scene -> blender/stall_kompakt.blend
 blender -b blender/stall_kompakt.blend -P tools/render_views.py && python3 tools/views_sheet.py   # all view directions
@@ -100,7 +112,8 @@ or F6 + Export STL. `part = "assembly"` shows the whole stable; `door_ang`, `sho
 
 ### Customising
 Everything is driven by `cad/config.scad`: the design horse (`horse_l/w/h`), fits
-(`fit_slide`, `fit_socket`, `fit_tile`, `fit_tab`), hinge bores and pin size, `latch_engage`,
+(`fit_slide`, `fit_socket`, `fit_tile`, `fit_tab`), hinge bores (`bore_post`, `bore_free`,
+`bore_win_hold`, `bore_win_free`) and pin size, `latch_engage`,
 wall/post/floor sizes, bay sizes (stall depth and width, aisle), heights and roof pitches,
 openings and textures. After a change, rebuild **and re-run the validation**: it reports
 collisions, swing ranges, horse clearances and parts that no longer fit the bed. The plates

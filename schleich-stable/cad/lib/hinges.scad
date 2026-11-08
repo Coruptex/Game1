@@ -21,7 +21,7 @@ function kn_seg(z0, z1, n, i) =
 // Placed with the axis at the origin. web_dir: unit vector (2D) pointing
 // from the axis to the face the knuckles are attached to; web_len: distance
 // from the axis to that face.
-module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5, blind_top = true, bore = bore_fixed) {
+module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5, blind_top = true, bore = bore_post) {
     difference() {
         union() for (i = [0 : 2 : n - 1]) {
             s = kn_seg(z0, z1, n, i);
@@ -35,6 +35,9 @@ module knuckles_fixed_z(z0, z1, n, d = dk_door, web_dir = [-1, 0], web_len = 3.5
         }
         // bore: through the whole stack except a 1.6 mm cap on top
         translate([0, 0, z0 - 1]) cylinder(d = bore, h = (z1 - z0) + 1 - (blind_top ? 1.6 : -2), $fn = 24);
+        // 45 deg lead-in at the entry (underside) of every fixed knuckle
+        for (i = [0 : 2 : n - 1]) let(s = kn_seg(z0, z1, n, i))
+            translate([0, 0, s[0] - 0.01]) cylinder(d1 = bore + 2 * bore_leadin, d2 = bore, h = bore_leadin + 0.01, $fn = 24);
     }
 }
 module knuckle_body_z(s, d, web_dir, web_len) {
@@ -74,12 +77,15 @@ module knuckles_moving_y(y0, y1, n, d = dk_door, web_dir = 1, web_len = 4, bore 
         translate([0, (y0 + y1) / 2, kz(d)]) hole_y(bore, (y1 - y0) + 2);
     }
 }
-// fixed side on a flat part (window frames): even segments, snug bore,
-// blind at the BOTTOM (y0) end, open at the top: the pin is dropped in from
-// above and rests on the blind end.
+// fixed side on a flat part (window frames): even segments, blind at the
+// BOTTOM (y0) end, open at the top: the pin is dropped in from above and
+// rests on the blind end. The top knuckle has the narrower bore_hold and
+// clamps the pin, the others have the free bore.
 // lift: raises the axis above the panel face (the moving knuckle's flat
 // underside must clear the face while it rotates: lift + kz(d) >= d/2 + 0.3)
-module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3, lift = 0) {
+module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3, lift = 0,
+                        bore = bore_win_free, bore_hold = bore_win_hold) {
+    top = kn_seg(y0, y1, n, n - 1);
     difference() {
         union() for (i = [0 : 2 : n - 1]) {
             s = kn_seg(y0, y1, n, i);
@@ -91,8 +97,12 @@ module knuckles_fixed_y(y0, y1, n, d = dk_win, web_dir = -1, web_len = 3, lift =
                 translate([-d / 2 + 0.6, 0, -0.3]) cube([d - 1.2, s[1] - s[0], lift + 0.6]);
             }
         }
+        // free bore from the blind bottom up to the top knuckle
         translate([0, y0 + 1.4, lift + kz(d)]) rotate([-90, 0, 0])
-            linear_extrude((y1 - y0) + 1 - 1.4) mirror([0, 1]) teardrop2d(bore_fixed);
+            linear_extrude(top[0] - y0 - 1.4 + 0.3) mirror([0, 1]) teardrop2d(bore);
+        // clamping bore through the top knuckle
+        translate([0, top[0] - 0.5, lift + kz(d)]) rotate([-90, 0, 0])
+            linear_extrude(y1 - top[0] + 1.5) mirror([0, 1]) teardrop2d(bore_hold);
     }
 }
 // clearance for moving knuckles inside a flat fixed part

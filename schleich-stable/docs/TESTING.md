@@ -1,28 +1,45 @@
 # Test coupons: print these first
 
-The stable needs about 80 printing hours, so check the fits before committing to it.
-Two small plates reproduce every risky mechanism at **full scale**, each with several
-clearance variants. The value engraved on each variant is the parameter it tests.
+The stable needs about 88 printing hours, so check the fits before committing to it. The test
+plates reproduce every risky mechanism at **full scale**, each with several clearance
+variants. The value engraved on each variant is the parameter it tests. Step-by-step
+instructions in German: [TESTANLEITUNG.md](TESTANLEITUNG.md).
 
-| Plate | File | Est. time | Contents |
+| Plate | Bambu Studio project | Contents | Status |
 |---|---|---|---|
-| T1 | `3mf/T1_test_hinges_latches.3mf` (`stl/tests/plate_T1.stl`) | ~3 h | 3 hinge post stubs, 3 hinge leaves, 3 latch pairs |
-| T2 | `3mf/T2_test_fits.3mf` (`stl/tests/plate_T2.stl`) | ~1.5 h | groove post + wall strip, socket plate, tile interlock, roof-tab plate + key |
+| T1 | (printed) | 3 hinge post stubs 1.75/1.85/1.95, 3 hinge leaves 2.15/2.30/2.45, 3 click-latch pairs | **printed Nov 2026:** leaf 2.15 best (larger too loose) -> `bore_free = 2.15`; all three post stubs too tight |
+| T2 | `bambu/TEST/TEST_T2_Boden_Passungen.3mf` | socket plate, tile interlock (floor settings, 0.24 mm layers) | open (only if not printed yet) |
+| T3a | `bambu/TEST/TEST_T3a_Pfosten_Scharnier.3mf` | 5 post stubs 2.05/2.15/2.25/2.35/2.45 (upright, tree supports, same preset as the posts), groove post | open |
+| T3b | `bambu/TEST/TEST_T3b_Tuer_Fenster.3mf` | 2 door leaves 2.15, gable-wing window section + production casement + stand, window pin clamps 1.85/1.95/2.05, wall strip, roof-tab plate + key | open |
+| T4 | `bambu/TEST/TEST_T4_Verschluss.3mf` | drop-latch test rig (frame, door, lever, stand), main-door bolt loops + bolt bar | open |
 
-Print them with the same filament and settings you will use for the stable. T1 needs supports
-under the knuckles of its post stubs, like the real posts: in Bambu Studio use the preset
-"Stall 0.20mm Pfosten Stuetzen" (see `BAMBU_STUDIO.md`), and T2 with "Stall 0.20mm Standard".
-Source: `cad/tests/coupons.scad`. Change the variant lists at its top to test other values.
+Every project carries the same printer, filament and process settings as the production plates
+of the same part type. Source: `cad/tests/coupons.scad` (single coupons are exported by
+`tools/build.py`, arranged by `tools/plates.py`).
 
-None of these coupons has been printed yet. The clearances are calculated starting points.
+Fit parameters and the coupons that set them:
 
-## T1-a Hinge: post side (`bore_fixed`)
+| Parameter (`config.scad`) | Print orientation | Coupon |
+|---|---|---|
+| `bore_post` | upright (posts) | T3a post stubs; T3a + T3b leaf assembled |
+| `bore_free` | flat (doors, casements) | T1 (confirmed 2.15) |
+| `bore_win_hold`, `bore_win_free` | flat (gable-wing window frame) | T3b pin clamps, window section |
+| drop latch (`cad/lib/droplatch.scad`) | flat | T4 rig |
+| main-door bolt loops | flat | T4 bolt plate |
+| `fit_slide` | upright post, flat panel | T3a groove post + T3b wall strip |
+| `fit_socket` | flat floor, upright post | T2 socket plate + T3a groove post |
+| `fit_tile` | flat floor (0.24 mm) | T2 tiles |
+| `fit_tab` | flat | T3b tab plate + key |
+
+The sections below describe the original T1/T2 coupons, which are reused in T2/T3.
+
+## T1-a Hinge: post side (now `bore_post`, tested again in T3a)
 Post stubs engraved **1.75 / 1.85 / 1.95** (bore in mm). Push a straight piece of 1.75 mm
 filament up from below.
 * **Good:** it goes in with light force and stays put when the stub is turned upside down.
 * Too tight (you cannot push it in): use the next larger value.
 * Too loose (it falls out): use the next smaller value.
-* Set `bore_fixed` in `config.scad`.
+* Set `bore_post` in `config.scad`.
 
 ## T1-b Hinge: door side (`bore_free`)
 Leaves engraved **2.15 / 2.3 / 2.45**. Fit a leaf between the knuckles of the post stub you
@@ -30,10 +47,10 @@ chose and push the pin through.
 * **Good:** the leaf swings 0 to 90 deg under its own weight or with a fingertip, without
   noticeable wobble.
 * It binds: use a larger value. It wobbles a lot: use a smaller one.
-* Also check that the knuckle gaps (0.5 mm) do not rub. If they do, increase `hinge_gap`.
+* Also check that the knuckle gaps (0.8 mm) do not rub. If they do, increase `hinge_gap`.
 * Set `bore_free`.
 
-## T1-c Click latch (`latch_engage`)
+## T1-c Click latch (`latch_engage`) -- to be replaced by the drop latch (T4, see VERSCHLUSS.md)
 Pairs engraved **0.6 / 0.8 / 1.0** (barb overlap in mm). Lay the stile piece flat on the
 table, engraved face up. Hold the door piece, also engraved face up, with its tongue edge
 facing the stile's notched edge, 1 mm apart, and about 3 mm above the table. Push it straight
