@@ -62,7 +62,8 @@ Datenschutz: Bitte keine personenbezogenen Gästedaten, Passwörter oder Kartend
 ## Veröffentlichung (GitHub Pages, kostenlos)
 
 - Die Website ist der Inhalt von `protel-hilfe/` im Branch **`gh-pages`** (nur fertige Dateien, inkl. `.nojekyll`).
-- Einmalige Einstellung im Repository: **Settings → Pages → Build and deployment → Source: „Deploy from a branch“ → Branch `gh-pages`, Ordner `/ (root)` → Save.**
+- GitHub Pages hat sich beim ersten Anlegen des Branches `gh-pages` automatisch eingeschaltet. Falls die Website einmal nicht erreichbar ist,
+  im Repository prüfen: **Settings → Pages → Source: „Deploy from a branch“ → Branch `gh-pages`, Ordner `/ (root)`.**
 - Neue Version veröffentlichen: Änderungen committen, dann `tools/deploy-gh-pages.sh` (prüft die PWA-Dateiliste und überträgt `protel-hilfe/` nach `gh-pages`).
 - Nach Änderungen an App-Dateien vorher `node tools/build-pwa.js` ausführen (aktualisiert Dateiliste und Versionskennung im Service Worker).
 
