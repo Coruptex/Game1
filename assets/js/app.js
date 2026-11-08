@@ -5,6 +5,8 @@
   const { esc, fmtDate, debounce } = PH.util;
   const icon = PH.icon;
   const T = PH.model.TYPES;
+  /** Text je nach Umgebung: PC-Version (file://) oder Web/App */
+  const txt = (pc, web) => (PH.env.isFile ? pc : web);
 
   const state = {
     kb: null,
@@ -61,7 +63,7 @@
     state.dirty = false;
     state.baseRevision = state.bundled.meta.revision;
     try { await PH.store.clearLocal(); } catch (e) { console.warn(e); }
-    if (!silent) PH.ui.toast('Wissensdatenbank aus dem App-Ordner geladen (Stand ' + fmtDate(state.bundled.meta.updated, true) + ').', 'success');
+    if (!silent) PH.ui.toast('Wissensdatenbank ' + txt('aus dem App-Ordner', 'aus der veröffentlichten Version') + ' geladen (Stand ' + fmtDate(state.bundled.meta.updated, true) + ').', 'success');
     refresh();
   }
 
@@ -98,23 +100,44 @@
   async function exportForFolder() {
     const rev = PH.model.newRevision();
     const kb = Object.assign({}, state.kb, { meta: Object.assign({}, state.kb.meta, { revision: rev, updated: PH.model.now() }) });
-    PH.util.download('wissensdatenbank.js', PH.model.toJS(kb), 'text/javascript;charset=utf-8');
+    const result = await PH.util.saveFile('wissensdatenbank.js', PH.model.toJS(kb), 'text/javascript;charset=utf-8');
+    if (result === 'cancelled') {
+      PH.ui.toast('Export abgebrochen – es wurde nichts verändert.', 'info');
+      return;
+    }
     setKB(kb);
-    state.baseRevision = rev;
-    state.dirty = false;
+    if (PH.env.isFile) {
+      // PC-Version: Die exportierte Datei ersetzt die Datei im App-Ordner → lokaler Stand gilt als verteilt
+      state.baseRevision = rev;
+      state.dirty = false;
+    }
+    state.prefs.lastBackup = PH.model.now();
+    savePrefs();
     await persist();
     renderSidebar();
     updateChrome();
-    const folder = folderPath();
-    await PH.ui.dialog({
-      title: 'Datei wurde erstellt',
-      body: '<p>Die Datei <code>wissensdatenbank.js</code> wurde in Ihren Download-Ordner gespeichert. So verteilen Sie den neuen Stand:</p>' +
+    const how = result === 'shared' ? 'über „Teilen“ weitergegeben' : 'in Ihren Download-Ordner gespeichert';
+    let body;
+    if (PH.env.isFile) {
+      const folder = folderPath();
+      body = '<p>Die Datei <code>wissensdatenbank.js</code> wurde ' + how + '. So verteilen Sie den neuen Stand:</p>' +
         '<ol class="steps-plain">' +
         '<li>Download-Ordner öffnen (im Browser: {{Strg+J}}).</li>' +
         '<li>Die Datei in den Ordner <code>data</code> der App kopieren und die vorhandene Datei <strong>ersetzen</strong>' +
         (folder ? ':<br><code class="path">' + esc(folder) + 'data\\</code>' : '.') + '</li>' +
         '<li>Auf allen Rezeptions-PCs die App neu laden ({{F5}}).</li></ol>' +
-        '<p class="muted small">Heißt die Datei im Download-Ordner z. B. „wissensdatenbank (1).js“, bitte beim Kopieren in „wissensdatenbank.js“ umbenennen.</p>',
+        '<p class="muted small">Heißt die Datei im Download-Ordner z. B. „wissensdatenbank (1).js“, bitte beim Kopieren in „wissensdatenbank.js“ umbenennen.</p>';
+    } else {
+      body = '<p>Die Datei <code>wissensdatenbank.js</code> wurde ' + how + '. Verwendung:</p>' +
+        '<ul class="steps-plain">' +
+        '<li><strong>PC-Version:</strong> Datei in den Ordner <code>data</code> der App kopieren und die vorhandene Datei ersetzen.</li>' +
+        '<li><strong>Veröffentlichte Version:</strong> Datei im Hosting (z. B. GitHub-Repository) unter <code>data/wissensdatenbank.js</code> ersetzen. ' +
+        '<strong>Achtung:</strong> Die Website ist öffentlich erreichbar – nur Inhalte veröffentlichen, die öffentlich sein dürfen.</li>' +
+        '<li><strong>Anderes iPhone/iPad:</strong> Dafür besser die Sicherung (.json) verwenden und auf dem anderen Gerät importieren.</li></ul>';
+    }
+    await PH.ui.dialog({
+      title: 'Datei wurde erstellt',
+      body,
       buttons: [{ label: 'Verstanden', value: true, kind: 'primary', autofocus: true }],
       onOpen: (dlg) => {
         dlg.querySelectorAll('.modal-body li').forEach((li) => { li.innerHTML = li.innerHTML.replace(/\{\{([^{}]+)\}\}/g, (_, k) => '<kbd>' + k + '</kbd>'); });
@@ -123,21 +146,30 @@
     if (location.hash.startsWith('#/verwaltung')) refresh();
   }
 
-  function exportBackup() {
+  async function exportBackup() {
     const d = new Date();
     const stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    PH.util.download('protel-hilfe-sicherung-' + stamp + '.json', PH.model.toJSON(state.kb), 'application/json;charset=utf-8');
-    PH.ui.toast('Sicherung wurde heruntergeladen.', 'success');
+    const result = await PH.util.saveFile('protel-hilfe-sicherung-' + stamp + '.json', PH.model.toJSON(state.kb), 'application/json;charset=utf-8');
+    if (result === 'cancelled') {
+      PH.ui.toast('Sicherung abgebrochen.', 'info');
+      return false;
+    }
+    state.prefs.lastBackup = PH.model.now();
+    savePrefs();
+    PH.ui.toast(result === 'shared' ? 'Sicherung wurde weitergegeben.' : 'Sicherung wurde heruntergeladen.', 'success');
+    if (location.hash.startsWith('#/verwaltung')) refresh();
+    return true;
   }
 
   async function resetToBundled() {
     if (!state.bundled) {
-      PH.ui.toast('Die Datei data/wissensdatenbank.js ist nicht verfügbar.', 'error');
+      PH.ui.toast(txt('Die Datei data/wissensdatenbank.js ist nicht verfügbar.', 'Die veröffentlichte Wissensdatenbank ist nicht verfügbar.'), 'error');
       return;
     }
     const ok = await PH.ui.confirm({
       title: 'Lokale Änderungen verwerfen?',
-      html: 'Alle in diesem Browser gespeicherten Änderungen werden verworfen und der Stand aus <code>data/wissensdatenbank.js</code> (' + fmtDate(state.bundled.meta.updated, true) + ') geladen.',
+      html: 'Alle ' + txt('in diesem Browser', 'auf diesem Gerät') + ' gespeicherten Änderungen werden verworfen und der Stand ' +
+        txt('aus <code>data/wissensdatenbank.js</code>', 'der veröffentlichten Version') + ' (' + fmtDate(state.bundled.meta.updated, true) + ') geladen.',
       okLabel: 'Verwerfen und laden',
       danger: true,
     });
@@ -271,6 +303,8 @@
       b.title = t === 'dark' ? 'Helles Design' : 'Dunkles Design';
       b.setAttribute('aria-label', b.title);
     }
+    const meta = document.getElementById('meta-theme');
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#141b26' : '#ffffff');
   }
 
   function applyEditMode() {
@@ -325,7 +359,7 @@
       '<button type="button" class="btn btn-primary btn-block edit-only" data-global="new-article">' + icon('plus') + 'Neuer Artikel</button>' +
       sideLink('#/verwaltung', 'settings', 'Verwaltung', state.dirty ? '●' : undefined, state.dirty ? 'has-dot' : '') +
       sideLink('#/hilfe', 'help', 'Hilfe zur App') +
-      '<div class="side-foot">' + icon('shield') + '<span>Offline · ohne Cloud<br>Stand ' + fmtDate(kb.meta.updated) + '</span></div>' +
+      '<div class="side-foot">' + icon('shield') + '<span>' + (PH.env.isFile ? 'Offline · ohne Cloud' : 'Offline nutzbar · ohne Cloud') + '<br>Stand ' + fmtDate(kb.meta.updated) + '</span></div>' +
       '</div>';
     markActive();
   }
@@ -346,6 +380,68 @@
       if (on) l.setAttribute('aria-current', 'page');
       else l.removeAttribute('aria-current');
     });
+    const route = (path.replace(/^#\/?/, '').split('/')[0]) || 'home';
+    const tab = { home: 'home', suche: 'search', kategorien: 'cats', kategorie: 'cats', typ: 'cats', alle: 'cats', artikel: 'cats', favoriten: 'favs' }[route] || 'more';
+    document.querySelectorAll('#tabbar .tab-item').forEach((t) => {
+      const on = t.dataset.tab === tab;
+      t.classList.toggle('active', on);
+      if (on) t.setAttribute('aria-current', 'page');
+      else t.removeAttribute('aria-current');
+    });
+  }
+
+  /* ------------------------------------------------------------ Tab-Leiste (Smartphone/Tablet) */
+
+  function renderTabbar() {
+    const el = document.getElementById('tabbar');
+    if (!el) return;
+    const item = (tag, tab, ic, label, href) =>
+      '<' + tag + ' class="tab-item" data-tab="' + tab + '"' + (href ? ' href="' + href + '"' : ' type="button"') + '>' +
+      icon(ic) + '<span>' + label + '</span></' + tag + '>';
+    el.innerHTML =
+      item('a', 'home', 'home', 'Start', '#/') +
+      item('button', 'search', 'search', 'Suchen') +
+      item('a', 'cats', 'grid', 'Kategorien', '#/kategorien') +
+      item('a', 'favs', 'star', 'Favoriten', '#/favoriten') +
+      item('button', 'more', 'menu', 'Mehr');
+    markActive();
+  }
+
+  const isVisible = (el) => !!(el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+
+  /** Suche öffnen – fokussiert synchron, damit iPhone/iPad die Tastatur anzeigt */
+  function openSearch() {
+    document.body.classList.remove('sidebar-open');
+    let input = document.querySelector('#main .hero-search input') || document.querySelector('#main .search-page-box input');
+    if (!isVisible(input)) input = document.querySelector('#topbar-search input');
+    if (isVisible(input)) {
+      input.focus();
+      if (input.select) input.select();
+      return;
+    }
+    location.hash = '#/suche';
+    if (state.leaveGuard && state.leaveGuard()) return; // Rückfrage übernimmt onHashChange
+    render();
+    const inp = document.querySelector('#main .search-page-box input');
+    if (inp) inp.focus();
+  }
+
+  const navStack = [];
+  function trackNav() {
+    const h = location.hash || '#/';
+    if (navStack.length >= 2 && navStack[navStack.length - 2] === h) navStack.pop();
+    else if (navStack[navStack.length - 1] !== h) navStack.push(h);
+    if (navStack.length > 60) navStack.shift();
+  }
+
+  function goBack() {
+    if (navStack.length > 1) {
+      history.back();
+      return;
+    }
+    const m = /^#\/artikel\/([^/?]+)/.exec(location.hash);
+    const a = m && state.byId.get(decodeURIComponent(m[1]));
+    location.hash = a && state.catById.has(a.categoryId) ? '#/kategorie/' + encodeURIComponent(a.categoryId) : '#/';
   }
 
   /* ------------------------------------------------------------ Suchfeld */
@@ -512,6 +608,7 @@
     try {
       switch (parts[0]) {
         case undefined: v = PH.views.home(); break;
+        case 'kategorien': v = PH.views.categories(); break;
         case 'kategorie': v = PH.views.category(parts[1] || '', query); break;
         case 'artikel': v = PH.views.article(parts[1] || '', query); break;
         case 'typ': v = PH.views.typeList(parts[1]); break;
@@ -542,12 +639,13 @@
       console.error(err);
       PH.ui.toast('Fehler beim Anzeigen: ' + err.message, 'error');
     }
+    trackNav();
     markActive();
     document.body.classList.remove('sidebar-open');
     if (keepScroll) window.scrollTo(0, y);
     else {
       window.scrollTo(0, 0);
-      if (parts[0] !== 'suche' && parts[0] !== 'neu') main.focus({ preventScroll: true });
+      if (parts[0] !== 'suche' && parts[0] !== 'neu' && !PH.env.isTouch) main.focus({ preventScroll: true });
     }
     state.currentHash = location.hash;
   }
@@ -564,6 +662,7 @@
       suppressHash = false;
       return;
     }
+    if (location.hash === state.currentHash) return; // bereits angezeigt (z. B. nach openSearch)
     if (state.leaveGuard && state.leaveGuard()) {
       const target = location.hash;
       suppressHash = true;
@@ -588,22 +687,23 @@
   async function showConflict(localKB) {
     const b = state.bundled;
     const choice = await PH.ui.dialog({
-      title: 'Andere Version im App-Ordner gefunden',
+      title: txt('Andere Version im App-Ordner gefunden', 'Neue veröffentlichte Version gefunden'),
       body:
-        '<p>Die Datei <code>data/wissensdatenbank.js</code> im App-Ordner unterscheidet sich von der Version, die in diesem Browser gespeichert ist.</p>' +
+        txt('<p>Die Datei <code>data/wissensdatenbank.js</code> im App-Ordner unterscheidet sich von der Version, die in diesem Browser gespeichert ist.</p>',
+          '<p>Die veröffentlichte Wissensdatenbank unterscheidet sich von der Version mit Ihren Änderungen, die auf diesem Gerät gespeichert ist.</p>') +
         '<dl class="kv">' +
-        '<dt>App-Ordner</dt><dd>Stand ' + fmtDate(b.meta.updated, true) + ' · ' + b.articles.length + ' Artikel</dd>' +
-        '<dt>Dieser PC</dt><dd>Stand ' + fmtDate(localKB.meta.updated, true) + ' · ' + localKB.articles.length + ' Artikel' +
-        (state.dirty ? ' · <strong>mit nicht exportierten Änderungen</strong>' : ' · bereits exportiert, aber im Ordner noch nicht ersetzt') + '</dd>' +
-        '</dl><p>Welche Version möchten Sie verwenden?</p>',
+        '<dt>' + txt('App-Ordner', 'Veröffentlicht') + '</dt><dd>Stand ' + fmtDate(b.meta.updated, true) + ' · ' + b.articles.length + ' Artikel</dd>' +
+        '<dt>' + txt('Dieser PC', 'Dieses Gerät') + '</dt><dd>Stand ' + fmtDate(localKB.meta.updated, true) + ' · ' + localKB.articles.length + ' Artikel' +
+        (state.dirty ? ' · <strong>mit eigenen Änderungen</strong>' : ' · bereits exportiert, aber im Ordner noch nicht ersetzt') + '</dd>' +
+        '</dl><p>Welche Version möchten Sie verwenden? Tipp: Vorher eine Sicherung erstellen – dann geht nichts verloren.</p>',
       buttons: [
-        { label: 'Sicherung herunterladen', value: 'backup', kind: 'ghost', icon: 'download' },
-        { label: 'Lokale Version behalten', value: 'local' },
-        { label: 'Version aus App-Ordner laden', value: 'bundled', kind: 'primary' },
+        { label: 'Sicherung erstellen', value: 'backup', kind: 'ghost', icon: 'download' },
+        { label: txt('Lokale Version behalten', 'Meine Version behalten'), value: 'local' },
+        { label: txt('Version aus App-Ordner laden', 'Veröffentlichte Version laden'), value: 'bundled', kind: 'primary' },
       ],
     });
     if (choice === 'backup') {
-      exportBackup();
+      await exportBackup();
       return showConflict(localKB);
     }
     if (choice === 'bundled') return adoptBundled();
@@ -631,6 +731,21 @@
       PH.ui.toast(state.prefs.editMode ? 'Bearbeitungsmodus eingeschaltet' : 'Bearbeitungsmodus ausgeschaltet', 'info', { timeout: 1800 });
     });
     document.getElementById('btn-menu').addEventListener('click', () => document.body.classList.toggle('sidebar-open'));
+    document.getElementById('btn-back').addEventListener('click', goBack);
+    document.getElementById('tabbar').addEventListener('click', (e) => {
+      const t = e.target.closest('.tab-item');
+      if (!t) return;
+      if (t.dataset.tab === 'search') {
+        e.preventDefault();
+        openSearch();
+      } else if (t.dataset.tab === 'more') {
+        e.preventDefault();
+        document.body.classList.toggle('sidebar-open');
+      } else {
+        document.body.classList.remove('sidebar-open');
+        if (t.getAttribute('href') === location.hash) window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
     document.getElementById('sidebar-backdrop').addEventListener('click', () => document.body.classList.remove('sidebar-open'));
 
     if (window.matchMedia) {
@@ -742,7 +857,12 @@
         state.baseRevision = local.baseRevision || '';
         setKB(localKB);
         if (state.bundled && state.bundled.meta.revision !== state.baseRevision) {
-          if (!state.dirty && state.bundled.meta.updated >= localKB.meta.updated) {
+          if (state.bundled.meta.revision === localKB.meta.revision) {
+            // Die mitgelieferte Datei ist ein Export genau dieses Stands → kein Konflikt
+            state.baseRevision = state.bundled.meta.revision;
+            if (localKB.meta.updated <= state.bundled.meta.updated) state.dirty = false;
+            await persist();
+          } else if (!state.dirty && state.bundled.meta.updated >= localKB.meta.updated) {
             setKB(state.bundled);
             state.hasLocal = false;
             state.baseRevision = state.bundled.meta.revision;
@@ -762,6 +882,7 @@
     const top = document.getElementById('topbar-search');
     if (top) mountSearchBox(top, 'top');
     bindGlobal();
+    renderTabbar();
     renderSidebar();
     updateChrome();
     if (!location.hash) {
@@ -773,6 +894,22 @@
     if (state.bundledError && !state.hasLocal) PH.ui.toast(state.bundledError, 'error', { timeout: 12000 });
     if (PH.store.backend === 'memory') PH.ui.toast('Hinweis: Dieser Browser erlaubt keine dauerhafte Speicherung. Änderungen bitte exportieren.', 'warning', { timeout: 12000 });
     if (conflictKB) showConflict(conflictKB);
+    else remindBackup();
+  }
+
+  /** Erinnert an eine Sicherung, wenn eigene Änderungen nur auf diesem Gerät liegen */
+  function remindBackup() {
+    const p = state.prefs;
+    const DAY = 864e5;
+    const since = (iso) => (iso ? Date.now() - new Date(iso).getTime() : Infinity);
+    if (!state.hasLocal || !state.dirty) return;
+    if (since(p.lastBackup) < 7 * DAY || since(p.backupReminder) < DAY) return;
+    p.backupReminder = PH.model.now();
+    savePrefs();
+    setTimeout(() => PH.ui.toast('Ihre Änderungen sind nur auf diesem ' + txt('PC', 'Gerät') + ' gespeichert. Bitte regelmäßig eine Sicherung erstellen.', 'warning', {
+      timeout: 12000,
+      action: { label: 'Jetzt sichern', onClick: exportBackup },
+    }), 1500);
   }
 
   PH.app = {
@@ -794,6 +931,8 @@
     isFavorite, toggleFavorite, trackView, logSearch,
     commit, refresh, withoutRefs,
     setLeaveGuard: (fn) => { state.leaveGuard = fn || null; },
+    hasUnsavedChanges: () => !!(state.leaveGuard && state.leaveGuard()),
+    openSearch,
     deleteArticle, duplicateArticle, exportForFolder, exportBackup, resetToBundled, openNewArticleDialog,
   };
 

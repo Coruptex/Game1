@@ -149,11 +149,15 @@
         '<p class="muted small">' + icon('image') + esc(size) + '</p>' +
         '</div></div>';
     }
+    const canClip = !!(navigator.clipboard && navigator.clipboard.read);
     return '<div class="dropzone" tabindex="0" data-drop="' + i + '" aria-label="Screenshot für Schritt ' + (i + 1) + ' einfügen">' +
       icon('image') +
       '<div class="dropzone-text"><strong>Screenshot einfügen</strong>' +
-      '<span>Hier klicken und ' + kbdHint('{{Strg+V}}') + ' drücken oder Bilddatei hierher ziehen</span></div>' +
-      '<button type="button" class="btn btn-sm btn-secondary" data-ed="img-pick" data-i="' + i + '">' + icon('upload') + 'Datei wählen …</button>' +
+      '<span class="only-pointer">Hier klicken und ' + kbdHint('{{Strg+V}}') + ' drücken oder Bilddatei hierher ziehen</span>' +
+      '<span class="only-touch">Foto, Kamera oder Datei wählen – oder ein kopiertes Bild einfügen</span></div>' +
+      '<span class="btn-row">' +
+      (canClip ? '<button type="button" class="btn btn-sm btn-secondary" data-ed="img-clip" data-i="' + i + '">' + icon('copy') + 'Aus Zwischenablage</button>' : '') +
+      '<button type="button" class="btn btn-sm btn-secondary" data-ed="img-pick" data-i="' + i + '">' + icon('upload') + 'Datei wählen …</button></span>' +
       '</div>' +
       '<details class="ed-more"><summary>Oder Bild aus dem App-Ordner verlinken</summary>' +
       '<div class="input-row"><input class="input input-sm" data-img-path="' + i + '" placeholder="z. B. bilder/check-in-1.png" aria-label="Bildpfad">' +
@@ -164,7 +168,8 @@
   function stepsSection(d) {
     return '<section class="ed-section card">' +
       '<div class="ed-section-head"><h2 class="ed-section-title">' + icon('guide') + 'Schritte</h2><span class="muted">' + d.steps.length + ' Schritt' + (d.steps.length === 1 ? '' : 'e') + '</span></div>' +
-      '<p class="field-hint">' + icon('image') + 'Screenshot: mit ' + kbdHint('{{Win+Umschalt+S}}') + ' einen Bildschirmausschnitt kopieren, das Bildfeld des Schritts anklicken und ' + kbdHint('{{Strg+V}}') + ' drücken.</p>' +
+      '<p class="field-hint only-pointer">' + icon('image') + 'Screenshot: mit ' + kbdHint('{{Win+Umschalt+S}}') + ' einen Bildschirmausschnitt kopieren, das Bildfeld des Schritts anklicken und ' + kbdHint('{{Strg+V}}') + ' drücken.</p>' +
+      '<p class="field-hint only-touch">' + icon('image') + 'Bilder: „Datei wählen …“ öffnet Fotos, Kamera und Dateien. Ein kopiertes Bildschirmfoto fügen Sie mit „Aus Zwischenablage“ ein.</p>' +
       '<div class="ed-list">' + d.steps.map((s, i) =>
         '<div class="ed-item ed-step" data-step-index="' + i + '">' +
         '<div class="ed-item-head"><span class="step-num">' + (i + 1) + '</span>' +
@@ -412,6 +417,24 @@
     }
   }
 
+  /** Bild aus der Zwischenablage (iPhone/iPad: Safari fragt mit „Einsetzen“ nach) */
+  async function pasteFromClipboard(i) {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const it of items) {
+        const type = it.types.find((t) => /^image\//.test(t));
+        if (type) {
+          const blob = await it.getType(type);
+          await setStepImage(i, new File([blob], 'zwischenablage.' + (type.split('/')[1] || 'png'), { type }));
+          return;
+        }
+      }
+      PH.ui.toast('In der Zwischenablage befindet sich kein Bild.', 'warning');
+    } catch (e) {
+      PH.ui.toast('Kein Zugriff auf die Zwischenablage. Bitte das Bild über „Datei wählen …“ einfügen.', 'warning');
+    }
+  }
+
   function pickFile(i) {
     const inp = document.createElement('input');
     inp.type = 'file';
@@ -635,6 +658,7 @@
         return;
       }
       case 'img-pick': pickFile(i); return;
+      case 'img-clip': pasteFromClipboard(i); return;
       case 'img-remove':
         d.steps[i].image = null;
         st.markerMode = -1;

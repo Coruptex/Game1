@@ -27,5 +27,13 @@ BEARBEITEN
   3. Auf allen PCs die App neu laden (F5).
   Zusätzlich regelmäßig eine Sicherung (.json) exportieren.
 
+IPHONE / IPAD (OFFLINE-APP)
+  1. https://coruptex.github.io/Game1/ einmal mit Internet in Safari öffnen.
+  2. Teilen (ggf. über "•••") -> "Zum Home-Bildschirm".
+  3. Ab jetzt über das Symbol starten – funktioniert vollständig offline.
+  Safari und die installierte App speichern getrennt: nur in der App bearbeiten.
+  Sicherung: Verwaltung -> "Sicherung exportieren" (Teilen-Menü, z. B. "In Dateien sichern").
+  Die Website ist öffentlich: keine vertraulichen Inhalte veröffentlichen.
+
 DATENSCHUTZ
   Keine Gästedaten, Passwörter oder Kartendaten in Artikeln/Screenshots speichern.
