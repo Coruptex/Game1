@@ -30,15 +30,38 @@ if (guard.problems.length) {
 }
 const SW = path.join(APP, 'sw.js');
 const EXCLUDE = new Set(['sw.js', 'LIESMICH.txt']);
+const { isAppFile, isSystemJunk } = require('./pruefe-veroeffentlichung.js');
+const CHECK = process.argv.includes('--check');
 
+// Lizenztexte für die Anzeige in der App (#/lizenzen) aus LIZENZEN.txt erzeugen
+const LIC_JS = path.join(APP, 'assets', 'js', 'lizenzen.js');
+const licText = fs.readFileSync(path.join(APP, 'LIZENZEN.txt'), 'utf8').replace(/\r\n/g, '\n');
+const licRe = /\/\/ <<LIZENZEN>>[\s\S]*?\/\/ <<\/LIZENZEN>>/;
+const licOld = fs.readFileSync(LIC_JS, 'utf8');
+if (!licRe.test(licOld)) {
+  console.error('Markierung <<LIZENZEN>> in assets/js/lizenzen.js nicht gefunden.');
+  process.exit(2);
+}
+const licNew = licOld.replace(licRe, '// <<LIZENZEN>> – automatisch erzeugt aus LIZENZEN.txt (nicht von Hand ändern)\n  PH.LIZENZEN = ' +
+  JSON.stringify(licText) + ';\n  // <</LIZENZEN>>');
+if (licNew !== licOld) {
+  if (CHECK) {
+    console.error('assets/js/lizenzen.js passt nicht zu LIZENZEN.txt. Bitte "node tools/build-pwa.js" ausführen.');
+    process.exit(1);
+  }
+  fs.writeFileSync(LIC_JS, licNew);
+  console.log('assets/js/lizenzen.js aus LIZENZEN.txt aktualisiert.');
+}
+
+// Nur Dateien, die zur App gehören (Positivliste der Veröffentlichungsprüfung); Systemdateien wie Thumbs.db nie
 function walk(dir, base) {
   let out = [];
   for (const name of fs.readdirSync(dir).sort()) {
-    if (name.startsWith('.')) continue;
+    if (name.startsWith('.') || isSystemJunk(name)) continue;
     const full = path.join(dir, name);
     const rel = base ? base + '/' + name : name;
     if (fs.statSync(full).isDirectory()) out = out.concat(walk(full, rel));
-    else if (!EXCLUDE.has(rel)) out.push(rel);
+    else if (!EXCLUDE.has(rel) && isAppFile(rel)) out.push(rel);
   }
   return out;
 }
@@ -64,7 +87,7 @@ if (!re.test(sw)) {
   process.exit(2);
 }
 const next = sw.replace(re, block);
-if (process.argv.includes('--check')) {
+if (CHECK) {
   if (next !== sw) {
     console.error('sw.js ist veraltet. Bitte "node tools/build-pwa.js" ausführen.');
     process.exit(1);

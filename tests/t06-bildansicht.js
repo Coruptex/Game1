@@ -162,6 +162,34 @@ const state = (page) => page.evaluate(() => {
     });
   }
 
+  await L.section('iPhone: lange Bildunterschrift – Schließen bleibt erreichbar', async () => {
+    const ctx = await browser.newContext(Object.assign({}, L.devices['iPhone 13']));
+    const page = await L.openApp(ctx, L.fileUrl(L.APP));
+    await page.evaluate(async () => {
+      const svg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="900"><rect width="640" height="900" fill="#eef3fc"/></svg>');
+      const cap = 'Sehr lange Bildunterschrift zum Testen der Kopfleiste – schematische Darstellung mit vielen Wörtern, die auf einem schmalen Bildschirm nicht in eine Zeile passen (erfunden)';
+      const a = PH.model.normalizeArticle({ id: 'lang-test', type: 'guide', title: 'Langer Text (erfunden)', images: [{ src: svg, caption: cap }], steps: [{ title: 'Eins' }] });
+      await PH.app.commit(Object.assign({}, PH.app.kb, { articles: PH.app.kb.articles.concat(a) }));
+    });
+    await L.go(page, '#/artikel/lang-test', '.article-figures');
+    await page.locator('.article-figures .shot-frame').tap();
+    await page.waitForSelector('.lightbox');
+    await page.waitForTimeout(250);
+    const r = await page.evaluate(() => {
+      const b = document.querySelector('[data-lb="close"]').getBoundingClientRect();
+      const bar = document.querySelector('.lb-bar').getBoundingClientRect();
+      return { right: b.right, top: b.top, bar: bar.width, vw: innerWidth };
+    });
+    L.ok(r.bar <= r.vw + 1, 'Kopfleiste bleibt so breit wie der Bildschirm (' + Math.round(r.bar) + ' ≤ ' + r.vw + ')');
+    L.ok(r.right <= r.vw && r.top >= 0, 'Schließen-Schaltfläche liegt im sichtbaren Bereich');
+    const bb = await page.locator('[data-lb="close"]').boundingBox();
+    await page.touchscreen.tap(bb.x + bb.width / 2, bb.y + bb.height / 2);
+    await page.waitForFunction(() => !document.querySelector('.lightbox'));
+    L.ok(true, 'Schließen per Antippen');
+    L.ok(!page._errors.length, 'keine Konsolenfehler' + (page._errors.length ? ': ' + page._errors.join(' | ') : ''));
+    await ctx.close();
+  });
+
   await browser.close();
   L.done();
 })();

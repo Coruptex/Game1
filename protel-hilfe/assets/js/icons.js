@@ -1,4 +1,11 @@
-/* Protel Hilfe – Symbole (Inline-SVG, keine externen Ressourcen) */
+/* Protel Hilfe – Symbole (Inline-SVG, keine externen Ressourcen)
+ *
+ * Viele Symbole stammen aus „Feather Icons“ (https://github.com/feathericons/feather) oder „Lucide“
+ * (https://lucide.dev) oder sind daran angelehnt:
+ *   Feather Icons – MIT-Lizenz, Copyright (c) 2013-2023 Cole Bemis
+ *   Lucide – ISC-Lizenz, Copyright (c) Lucide Contributors 2022; Teile Copyright (c) Cole Bemis 2013-2022 (Feather, MIT)
+ * Die vollständigen Lizenztexte stehen in LIZENZEN.txt und in der App unter „Hilfe zur App“ → „Lizenzhinweise“ (#/lizenzen).
+ */
 (function () {
   'use strict';
   const PH = (window.PH = window.PH || {});

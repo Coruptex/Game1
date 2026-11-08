@@ -15,7 +15,7 @@
 'use strict';
 
 // <<PWA-BUILD>> – automatisch gepflegt von tools/build-pwa.js (nicht von Hand ändern)
-const VERSION = 'cc707a235e8e';
+const VERSION = 'ecd20fc9273b';
 const ASSETS = [
   'LIZENZEN.txt',
   'assets/css/app.css',
@@ -28,6 +28,7 @@ const ASSETS = [
   'assets/js/app.js',
   'assets/js/editor.js',
   'assets/js/icons.js',
+  'assets/js/lizenzen.js',
   'assets/js/markdown.js',
   'assets/js/model.js',
   'assets/js/pwa.js',

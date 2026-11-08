@@ -62,6 +62,12 @@ const pick = async (page, selector, file) => {
     const labels = await page.locator(step + ' .ed-img .fig-num').allInnerTexts();
     L.eq(labels, ['Abb. 1.1', 'Abb. 1.2', 'Abb. 1.3'], 'Abbildungsnummern im Editor');
     L.ok(await page.locator('.ed-slot .slot-state.state-vorhanden').count() === 1, 'Bildplatz S-TST-01 als „vorhanden“ angezeigt');
+    // Gemeinsamer Bildplatz: „Gleiche Aufnahme wie“
+    const sameInput = page.locator('[data-path="steps.0.slots.1.same"]');
+    L.ok(await sameInput.count() === 1, 'Feld „Gleiche Aufnahme wie“ je Bildplatz vorhanden');
+    await sameInput.fill('S-TST-01');
+    await sameInput.dispatchEvent('input');
+    L.eq(await page.evaluate(() => PH.editor._state().draft.steps[0].slots[1].same), 'S-TST-01', 'Eingabe landet im Bildplatz');
   });
 
   await L.section('Rechte: eigene Screenshots können nicht öffentlich werden', async () => {

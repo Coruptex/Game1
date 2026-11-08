@@ -177,7 +177,7 @@
     });
   }
 
-  const SLOT_KEYS = new Set(['id', 'need', 'title', 'area', 'instruction', 'test']);
+  const SLOT_KEYS = new Set(['id', 'need', 'title', 'area', 'instruction', 'test', 'same']);
 
   function normalizeSlot(sl) {
     if (!isObj(sl)) return null;
@@ -190,6 +190,8 @@
       area: str(sl.area).trim(),
       instruction: str(sl.instruction),
       test: str(sl.test).trim(),
+      // Nummer eines anderen Bildplatzes, dessen Aufnahme hier mitbenutzt wird (z. B. „S-TAB-01“); leer = eigene Aufnahme
+      same: str(sl.same).trim(),
     });
   }
 

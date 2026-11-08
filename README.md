@@ -30,15 +30,16 @@ Alle Ressourcen (Skripte, Design, Symbole, Beispielbilder) liegen im Ordner; zur
 | **Kategorien** | Frei anlegbar, mit Symbol, Farbe und Beschreibung. |
 | **Anleitungen** | Schritt für Schritt, mit **mehreren Bildern je Schritt**, automatischen **Abbildungsnummern** („Abb. 3.1“), Bildunterschriften und nummerierten Markierungen. Schritte lassen sich als „erledigt“ abhaken und in Abschnitte gliedern; Hinweise am Schritt als Tipp, Hinweis, Warnung oder „Wichtig“. Übersichtsbilder je Artikel, Text nach den Schritten (Sonderfälle) und eine **Quellenliste**. |
 | **Bildansicht** | Klick auf ein Bild öffnet die Bildansicht mit **Zoom** (Mausrad, `+`/`−`, Doppelklick, Zwei-Finger-Zoom), Verschieben, Originalgröße und Blättern durch alle Bilder des Artikels (Pfeiltasten, Wischen). Markierungen bleiben in jeder Zoomstufe lesbar. |
-| **Bildplätze und Rechte** | Geplante Screenshots je Schritt (Nummer, Motiv, Bildschirmbereich, Aufnahmeanweisung, Status). Jedes Bild hat eine **Rechteklasse** – neue Bilder sind **intern**; eigene protel-Screenshots können nicht öffentlich gekennzeichnet werden. Liste aller Bildplätze nach Bildschirmbereich (mit CSV) und **Sammelimport** von Screenshots anhand des Dateinamens (`S-CIN-06_….png`). |
-| **Prüfstatus** | Je Artikel Entwurf / In Prüfung / Geprüft / Veraltet mit protel-Version, Prüfdatum und Wiedervorlage; Kennzeichen in Listen, Hinweis im Artikel, Filter und Liste „zu prüfen“. |
+| **Bildplätze und Rechte** | Geplante Screenshots je Schritt (Nummer, Motiv, Bildschirmbereich, Aufnahmeanweisung, Status). Jedes Bild hat eine **Rechteklasse** – neue Bilder sind **intern**; eigene protel-Screenshots können nicht öffentlich gekennzeichnet werden. Liste aller Bildplätze nach Bildschirmbereich (mit CSV) und **Sammelimport** von Screenshots anhand des Dateinamens (`S-CIN-06_….png`). Eine Aufnahme kann mehrere Bildplätze füllen („gleiche Aufnahme wie S-TAB-01“). |
+| **Prüfstatus** | Je Artikel Entwurf / In Prüfung / Geprüft / Veraltet mit protel-Version, Prüfdatum und Wiedervorlage. Ungeprüfte Inhalte sind deutlich gekennzeichnet: Kennzeichen in Listen und Suchergebnissen, Hinweis im Artikel (auch im Ausdruck), Filter und Liste „zu prüfen“. |
 | **Fehlerbehebung** | Fehlermeldungen (kopierbar), Symptome, Ursachen mit „Prüfen“ und „Lösung“ als geführter Ablauf („Problem gelöst“ / „Hat nicht geholfen“) sowie Eskalation. |
 | **Entscheidungsbäume** | Interaktive Assistenten mit Fragen, Antworten und Ergebnissen, dazu Pfadanzeige, Zurück-Funktion und Gesamtübersicht. Der Editor prüft, ob alle Knoten verknüpft und erreichbar sind. |
 | **Bearbeiten** | Editor mit Formatierungsleiste und Vorschau. Screenshots lassen sich per `Strg+V` oder Drag & Drop einfügen und werden automatisch verkleinert. Artikel können dupliziert und gelöscht werden; die App warnt vor dem Verlassen mit ungespeicherten Änderungen. |
-| **Import/Export** | Vollständige Sicherung (JSON), Datendatei für die **interne** PC-Version und eine eigene **öffentliche** Datendatei, die nur ausdrücklich öffentliche Artikel und Bilder enthält. Import mit Vorschau zum Zusammenführen oder Ersetzen; auch Sicherungen früherer App-Versionen. |
+| **Import/Export** | Vollständige Sicherung (JSON), Datendatei für die **interne** PC-Version und eine eigene **öffentliche** Datendatei, die nur ausdrücklich öffentliche Artikel und Bilder enthält. Import mit Vorschau (Anzahl interner Bilder, interner Artikel, Bildplätze und ungeprüfter Entwürfe) zum Zusammenführen oder Ersetzen; auch Sicherungen früherer App-Versionen. |
 | **Datensicherheit** | Vor riskanten Aktionen (Import, Ersetzen, Laden einer neuen Version, Umstellung des Datenformats, Sammelimport) legt die App automatisch einen **Wiederherstellungspunkt** an (Verwaltung: wiederherstellen, herunterladen, löschen). Interne Inhalte werden beim Erscheinen einer neuen öffentlichen Version nie stillschweigend ersetzt – empfohlen wird das Zusammenführen. |
 | **Pflege** | Die Verwaltung zeigt Suchanfragen ohne Treffer, Artikel mit offenen Platzhaltern, unvollständige Entscheidungsbäume und veraltete Artikel. Dazu kommen ein Suchtest und ein Synonym-Editor. |
 | **Komfort** | Favoriten, zuletzt angesehene Artikel, Druckansicht, Hell- und Dunkelmodus, responsives Layout (Desktop, Tablet, Smartphone) und Tastaturbedienung. |
+| **Lizenzhinweise** | Die Lizenztexte der Symbolbibliotheken (Feather Icons, MIT; Lucide, ISC) stehen in `LIZENZEN.txt` und in der App unter *Hilfe zur App → Lizenzhinweise anzeigen* (auch offline und auf iPhone/iPad). |
 | **iPhone/iPad** | Installierbar auf dem Home-Bildschirm, vollständig offline (Suche, Anleitungen, Bilder). Tab-Leiste und Zurück-Pfeil, Touch-Ziele ab 44 px, Safe Areas (Notch, Home-Indikator). Export über das Teilen-Menü („In Dateien sichern“, AirDrop), Import aus „Dateien“, Bilder aus Fotos, Kamera oder Zwischenablage. Hinweise bei neuer App-Version oder neuen Inhalten – aktualisiert wird erst nach Bestätigung. |
 
 ## Daten: Speicherung und Verteilung
@@ -90,9 +91,13 @@ Datenschutz: Bitte keine personenbezogenen Gästedaten, Passwörter oder Kartend
 `node tools/pruefe-veroeffentlichung.js` (bzw. `--repo` für das ganze Repository) sperrt Build und Veröffentlichung, wenn
 - die mitgelieferte `data/wissensdatenbank.js` interne Artikel, interne oder nicht freigegebene Bilder, eigene protel-Screenshots, Bildplätze oder Personennamen enthält,
 - im App-Ordner Bilddateien liegen, die nicht in `tools/bildfreigabe.json` mit passender Prüfsumme stehen (neue eigene Grafik freigeben: `node tools/pruefe-veroeffentlichung.js --freigeben <Pfad> "<Herkunft>"`),
-- Dateien nach dem Screenshot-Schema (`S-ABC-01…`), mit „intern“ im Namen oder interne Exporte im Repository liegen.
+- Dateien nach dem Screenshot-Schema (`S-ABC-01…`), mit „intern“ im Namen oder interne Exporte im Repository liegen,
+- im App-Ordner eine Datei liegt, die nicht zur App gehört (**Positivliste**: HTML, Manifest, Service Worker, Lese- und Lizenzhinweise, CSS/JS-Module, freigegebene Symbole und Grafiken, die mitgelieferte Datendatei). Ein kopierter Entwurf, Notizen oder eine Sicherung gelangen so weder in den Build noch in den Offline-Speicher (PWA-Cache) noch auf die Website,
+- (mit `--repo`) eine Datei der Offline-Liste in `sw.js` nicht committet ist – die veröffentlichte App fände sie sonst nicht.
 
-Zusätzlich verhindern `.gitignore` und der Git-Hook `tools/git-hooks/pre-commit` (einrichten mit `git config core.hooksPath tools/git-hooks`) Commits interner Dateien.
+Zusätzlich verhindern `.gitignore` und der Git-Hook `tools/git-hooks/pre-commit` (einrichten mit `git config core.hooksPath tools/git-hooks`, **einmal je Klon**) Commits interner Dateien. Als Sicherheitsnetz führt GitHub bei jedem Push die **Veröffentlichungsprüfung** aus (`.github/workflows/veroeffentlichungspruefung.yml`); sie liest nur und veröffentlicht nichts.
+
+Interne Inhalte – Anleitungsentwürfe, Testprotokolle, Screenshot-Listen, die interne Importdatei der Pilotanleitungen – liegen in einem separaten **privaten** Repository, nie in diesem.
 
 ## Tests
 
@@ -120,7 +125,7 @@ protel-hilfe/
 ├── sw.js                      Service Worker für den Offline-Betrieb (nur über https://)
 ├── .nojekyll                  GitHub Pages: Dateien unverändert ausliefern
 ├── LIESMICH.txt               Kurzanleitung für den Betrieb
-├── LIZENZEN.txt               Lizenzhinweise (Symbole nach Feather Icons/MIT und Lucide/ISC)
+├── LIZENZEN.txt               Lizenzhinweise (Symbole nach Feather Icons/MIT und Lucide/ISC; in der App unter #/lizenzen)
 ├── data/
 │   └── wissensdatenbank.js    Wissensdatenbank (Beispieldaten, über die App exportierbar)
 └── assets/
@@ -128,7 +133,8 @@ protel-hilfe/
     ├── icons/                 App-Symbole (PNG für iOS/Android, SVG-Vorlage)
     └── js/
         ├── util.js            Hilfsfunktionen, Toasts, Dialoge
-        ├── icons.js           Inline-SVG-Symbole
+        ├── icons.js           Inline-SVG-Symbole (Herkunft und Lizenzen im Dateikopf)
+        ├── lizenzen.js        Lizenztexte für die App-Anzeige (von build-pwa.js aus LIZENZEN.txt erzeugt)
         ├── markdown.js        sicherer Markdown-Renderer (escaped jede Eingabe)
         ├── model.js           Datenmodell, Validierung, Import/Export, Zusammenführen
         ├── storage.js         IndexedDB / localStorage
@@ -140,11 +146,12 @@ protel-hilfe/
         ├── app.js             Start, Routing, Navigation, Speichern
         └── pwa.js             Offline-App: Service Worker, Updates, Installationshinweis
 tools/
-├── build-pwa.js               aktualisiert Dateiliste und Version in sw.js (Node, ohne Abhängigkeiten)
+├── build-pwa.js               aktualisiert Dateiliste und Version in sw.js sowie lizenzen.js (Node, ohne Abhängigkeiten)
 ├── pruefe-veroeffentlichung.js Veröffentlichungssperre (interne Inhalte, Bildfreigabe)
 ├── bildfreigabe.json          Freigabeliste der Bilddateien im App-Ordner (mit Prüfsummen)
 ├── git-hooks/pre-commit       verhindert Commits interner Dateien
 └── deploy-gh-pages.sh         veröffentlicht protel-hilfe/ im Branch gh-pages (nur mit Freigabe)
+.github/workflows/             Veröffentlichungsprüfung bei jedem Push (nur lesend, ohne Deployment)
 tests/                         automatische Tests (siehe tests/README.md)
 recherche/
 └── phase-1/                   Quellen- und Themenanalyse Protel Cloud PMS (nicht Teil der App)

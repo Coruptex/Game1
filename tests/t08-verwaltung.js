@@ -116,12 +116,73 @@ async function seedSlots(page) {
     const dl = await L.captureDownload(page, () => page.click('[data-adm="slots-csv"]'));
     L.ok(dl.text.charCodeAt(0) === 0xFEFF, 'CSV mit BOM (Excel erkennt Umlaute)');
     const lines = dl.text.replace(/^﻿/, '').trim().split(/\r\n/);
-    L.eq(lines[0], '"Bildschirmbereich";"Nr.";"Motiv";"Artikel";"Schritt";"Bedarf";"Testfall";"Status"', 'CSV-Kopfzeile');
+    L.eq(lines[0], '"Bildschirmbereich";"Nr.";"Motiv";"Artikel";"Schritt";"Bedarf";"Testfall";"Status";"Gleiche Aufnahme wie"', 'CSV-Kopfzeile');
     L.eq(lines.length, 4, 'CSV enthält alle 3 Bildplätze');
     L.ok(lines.some((l) => /"S-TST-02".*"fehlt"/.test(l)), 'CSV enthält den Status');
     // Pflegebedarf: Prüfstatus
     L.ok(/Bildplatztest/.test(await page.locator('#care').innerText()), 'Pflegebedarf listet Artikel im Status „Entwurf“');
     L.ok(!page._errors.length, 'keine Konsolenfehler' + (page._errors.length ? ': ' + page._errors.join(' | ') : ''));
+    await ctx.close();
+  });
+
+  await L.section('Gemeinsame Bildplätze: eine Aufnahme für zwei Anleitungen', async () => {
+    const ctx = await browser.newContext({ acceptDownloads: true });
+    const page = await L.openApp(ctx, L.fileUrl(L.APP));
+    await page.click('#btn-edit-mode');
+    await page.evaluate(async () => {
+      const a = PH.model.normalizeArticle({ id: 'same-a', type: 'guide', title: 'Gemeinsam A (erfunden)', steps: [
+        { title: 'Eins', slots: [{ id: 'S-TST-11', need: 'pflicht', title: 'Menü Abschluss', area: 'Testmenü' }] }] });
+      const b = PH.model.normalizeArticle({ id: 'same-b', type: 'guide', title: 'Gemeinsam B (erfunden)', steps: [
+        { title: 'Eins', slots: [{ id: 'S-TST-21', need: 'pflicht', title: 'Menü Abschluss (mitgenutzt)', area: 'Testmenü', same: 'S-TST-11' }] }] });
+      await PH.app.commit(Object.assign({}, PH.app.kb, { articles: PH.app.kb.articles.concat(a, b) }));
+    });
+    const f1 = await L.makePng(browser, path.join(base, 'S-TST-11_menue.png'), { title: 'Menü (erfunden)' });
+    await L.go(page, '#/verwaltung', '#slot-list');
+    L.ok(/= S-TST-11/.test(await page.locator('#slot-list').innerText()), 'Bildplatzliste zeigt „= S-TST-11“');
+    await page.setInputFiles('#bulk-files', [f1]);
+    await page.waitForSelector('#bulk-preview .import-preview');
+    const prev = await page.locator('#bulk-preview').innerText();
+    L.ok(/2 Bildplätze/.test(prev) && /S-TST-21, gleiche Aufnahme/.test(prev), 'Vorschau: eine Datei füllt beide Bildplätze');
+    L.ok(/2 Bild\(er\) übernehmen/.test(prev), 'Schaltfläche nennt 2 Bilder');
+    await page.click('[data-adm="bulk-apply"]');
+    await page.waitForFunction(() => PH.app.getArticle('same-b').steps[0].images.length === 1);
+    const r = await page.evaluate(() => [PH.app.getArticle('same-a'), PH.app.getArticle('same-b')].map((a) => {
+      const i = a.steps[0].images[0];
+      return [i.slot, i.id, i.rights, i.origin, PH.model.slotState(a.steps[0], a.steps[0].slots[0])];
+    }));
+    L.eq(r, [['S-TST-11', 'S-TST-11', 'intern', 'screenshot', 'vorhanden'], ['S-TST-21', 'S-TST-21', 'intern', 'screenshot', 'vorhanden']], 'beide Bildplätze gefüllt, jeweils mit eigener Nummer, intern');
+    // Datei mit der Nummer des mitnutzenden Bildplatzes füllt nur diesen
+    const f2 = await L.makePng(browser, path.join(base, 'S-TST-21_eigenes-bild.png'), { title: 'Eigenes Bild (erfunden)' });
+    await L.go(page, '#/verwaltung', '#bulk-files');
+    await page.setInputFiles('#bulk-files', [f2]);
+    await page.waitForSelector('#bulk-preview .import-preview');
+    L.ok(!/2 Bildplätze/.test(await page.locator('#bulk-preview').innerText()), 'eigene Nummer: nur ein Bildplatz');
+    await page.click('[data-adm="bulk-cancel"]');
+    const dl = await L.captureDownload(page, () => page.click('[data-adm="slots-csv"]'));
+    L.ok(dl.text.split(/\r\n/).some((l) => /"S-TST-21".*"S-TST-11"$/.test(l)), 'CSV: Spalte „Gleiche Aufnahme wie“');
+    L.ok(!page._errors.length, 'keine Konsolenfehler' + (page._errors.length ? ': ' + page._errors.join(' | ') : ''));
+    await ctx.close();
+  });
+
+  await L.section('Importvorschau nennt interne Bilder, Bildplätze und ungeprüfte Entwürfe', async () => {
+    const ctx = await browser.newContext();
+    const page = await L.openApp(ctx, L.fileUrl(L.APP));
+    const px = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+    const svg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
+    const f = path.join(base, 'vorschau.json');
+    fs.writeFileSync(f, JSON.stringify({ format: 'protel-hilfe-2', schemaVersion: 2, meta: { title: 'Test', package: 'intern' }, categories: [], synonyms: [], articles: [
+      { id: 'v-1', type: 'guide', title: 'Entwurf (erfunden)', visibility: 'intern', review: { status: 'entwurf' },
+        steps: [{ title: 'Eins', images: [{ src: px, rights: 'intern', origin: 'screenshot' }], slots: [{ id: 'S-TST-31' }, { id: 'S-TST-32' }] }] },
+      { id: 'v-2', type: 'guide', title: 'Geprüft (erfunden)', visibility: 'intern', review: { status: 'geprueft' }, steps: [{ title: 'Eins', slots: [{ id: 'S-TST-33' }] }] },
+      { id: 'v-3', type: 'info', title: 'Öffentlich (erfunden)', visibility: 'oeffentlich', images: [{ src: svg, rights: 'oeffentlich', origin: 'grafik' }] },
+    ] }));
+    await L.go(page, '#/verwaltung', '#imp-file');
+    await page.setInputFiles('#imp-file', f);
+    await page.waitForSelector('.import-preview');
+    const t = await page.locator('.import-preview').innerText();
+    L.ok(/2 Bilder in der Datei \(davon 1 intern, 1 öffentlich\)/.test(t), 'Vorschau: 2 Bilder, davon 1 intern');
+    L.ok(/2 interne Artikel · 3 geplante Bildplätze · 1 ungeprüfter Entwurf/.test(t), 'Vorschau: interne Artikel, Bildplätze, ungeprüfte Entwürfe');
+    await page.click('[data-adm="import-cancel"]');
     await ctx.close();
   });
 

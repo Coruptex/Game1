@@ -256,6 +256,7 @@
       need: (PH.model.SLOT_NEED[x.slot.need] || PH.model.SLOT_NEED.optional).label,
       title: x.slot.title,
       test: x.slot.test,
+      same: x.slot.same,
       state: x.state,
     })).sort((a, b) => a.area.localeCompare(b.area, 'de') || a.id.localeCompare(b.id, 'de'));
   }
@@ -281,7 +282,7 @@
     html += groups.map((g) => '<details class="slot-group" open><summary><strong>' + esc(g.area) + '</strong> <span class="muted">' + g.rows.length + ' Bildplätze · ' +
       g.rows.filter((r) => r.state === 'fehlt').length + ' fehlen</span></summary>' +
       '<div class="table-wrap"><table class="slot-table"><thead><tr><th>Nr.</th><th>Motiv</th><th>Artikel / Schritt</th><th>Bedarf</th><th>Testfall</th><th>Status</th></tr></thead><tbody>' +
-      g.rows.map((r) => '<tr data-state="' + r.state + '"><td><code>' + esc(r.id) + '</code></td><td>' + esc(r.title) + '</td>' +
+      g.rows.map((r) => '<tr data-state="' + r.state + '"><td><code>' + esc(r.id) + '</code>' + (r.same ? '<span class="muted small slot-same" title="gleiche Aufnahme wie ' + esc(r.same) + '"> = ' + esc(r.same) + '</span>' : '') + '</td><td>' + esc(r.title) + '</td>' +
         '<td><a href="#/bearbeiten/' + encodeURIComponent(r.article.id) + '?schritt=' + r.step + '">' + esc(truncate(r.article.title, 40)) + '</a> · ' + r.step + '</td>' +
         '<td>' + esc(r.need) + '</td><td>' + esc(r.test) + '</td>' +
         '<td><span class="slot-state state-' + r.state + '">' + esc(PH.model.SLOT_STATES[r.state].label) + '</span></td></tr>').join('') +
@@ -291,8 +292,8 @@
 
   function slotsCsv() {
     const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-    const lines = [['Bildschirmbereich', 'Nr.', 'Motiv', 'Artikel', 'Schritt', 'Bedarf', 'Testfall', 'Status'].map(q).join(';')];
-    slotRows().forEach((r) => lines.push([r.area, r.id, r.title, r.article.title, r.step, r.need, r.test, PH.model.SLOT_STATES[r.state].label].map(q).join(';')));
+    const lines = [['Bildschirmbereich', 'Nr.', 'Motiv', 'Artikel', 'Schritt', 'Bedarf', 'Testfall', 'Status', 'Gleiche Aufnahme wie'].map(q).join(';')];
+    slotRows().forEach((r) => lines.push([r.area, r.id, r.title, r.article.title, r.step, r.need, r.test, PH.model.SLOT_STATES[r.state].label, r.same].map(q).join(';')));
     return '\uFEFF' + lines.join('\r\n') + '\r\n';
   }
 
@@ -302,26 +303,39 @@
 
   /** Ordnet Dateien anhand der Bildplatz-Nummer am Anfang des Dateinamens zu */
   function planBulk(files) {
+    // Nummer → alle Bildplätze mit dieser Nummer, dazu Bildplätze, die diese Aufnahme mitbenutzen („gleiche Aufnahme wie“)
     const index = new Map();
-    PH.model.allSlots(PH.app.kb).forEach((x) => index.set(x.slot.id.toUpperCase(), x));
+    const add = (key, x) => {
+      if (!key) return;
+      const k = key.toUpperCase();
+      if (!index.has(k)) index.set(k, []);
+      if (!index.get(k).includes(x)) index.get(k).push(x);
+    };
+    PH.model.allSlots(PH.app.kb).forEach((x) => { add(x.slot.id, x); add(x.slot.same, x); });
     return files.map((f) => {
       const m = /^\s*([A-Za-z]-[A-Za-z]{3}-\d{2,3})/.exec(f.name);
       const id = m ? m[1].toUpperCase() : '';
-      const hit = id ? index.get(id) : null;
-      return { file: f, id, hit, action: !id ? 'keine Nummer im Dateinamen' : !hit ? 'kein passender Bildplatz' : hit.state === 'fehlt' ? 'neu' : 'ersetzt vorhandenes Bild' };
+      const hits = id ? index.get(id) || [] : [];
+      const replaced = hits.filter((h) => h.state !== 'fehlt').length;
+      const action = !id ? 'keine Nummer im Dateinamen' : !hits.length ? 'kein passender Bildplatz'
+        : (hits.length > 1 ? hits.length + ' Bildplätze – ' : '') +
+          (!replaced ? 'neu' : replaced === hits.length ? 'ersetzt vorhandenes Bild' : 'neu bzw. ersetzt vorhandenes Bild');
+      return { file: f, id, hits, hit: hits[0] || null, action };
     });
   }
 
   function bulkPreviewHtml(plan) {
-    const ok = plan.filter((x) => x.hit);
+    const ok = plan.filter((x) => x.hits.length);
+    const nImg = ok.reduce((n, x) => n + x.hits.length, 0);
     return '<div class="import-preview"><h3>' + icon('image') + plan.length + ' Datei(en) gewählt – ' + ok.length + ' zuordenbar</h3>' +
       '<div class="table-wrap"><table class="slot-table"><thead><tr><th>Datei</th><th>Bildplatz</th><th>Artikel / Schritt</th><th>Ergebnis</th></tr></thead><tbody>' +
       plan.map((x) => '<tr class="' + (x.hit ? '' : 'muted') + '"><td>' + esc(x.file.name) + ' <span class="muted small">' + formatBytes(x.file.size) + '</span></td>' +
         '<td>' + (x.id ? '<code>' + esc(x.id) + '</code>' : '–') + '</td>' +
-        '<td>' + (x.hit ? esc(truncate(x.hit.article.title, 40)) + ' · ' + (x.hit.stepIndex + 1) : '–') + '</td>' +
+        '<td>' + (x.hits.length ? x.hits.map((h) => esc(truncate(h.article.title, 40)) + ' · ' + (h.stepIndex + 1) +
+          (h.slot.id.toUpperCase() !== x.id ? ' <span class="muted small">(' + esc(h.slot.id) + ', gleiche Aufnahme)</span>' : '')).join('<br>') : '–') + '</td>' +
         '<td>' + esc(x.action) + '</td></tr>').join('') + '</tbody></table></div>' +
       '<p class="field-hint">Alle Bilder werden verkleinert und als <strong>intern</strong> (Herkunft: eigener Screenshot) gekennzeichnet. Vorher wird ein Wiederherstellungspunkt angelegt.</p>' +
-      '<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" data-adm="bulk-apply"' + (ok.length ? '' : ' disabled') + '>' + ok.length + ' Bild(er) übernehmen</button>' +
+      '<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" data-adm="bulk-apply"' + (ok.length ? '' : ' disabled') + '>' + nImg + ' Bild(er) übernehmen</button>' +
       '<button type="button" class="btn btn-ghost btn-sm" data-adm="bulk-cancel">Abbrechen</button></div></div>';
   }
 
@@ -331,22 +345,25 @@
     let n = 0;
     const errors = [];
     for (const x of plan) {
-      if (!x.hit) continue;
+      if (!x.hits || !x.hits.length) continue;
       try {
         const src = await PH.editor._processImage(x.file);
-        const a = byId.get(x.hit.article.id);
-        const step = a.steps[x.hit.stepIndex];
-        const slot = step.slots.find((sl) => sl.id === x.hit.slot.id);
         const date = x.file.lastModified ? new Date(x.file.lastModified).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
-        const k = step.images.findIndex((img) => img.slot === slot.id);
-        const base = k >= 0 ? step.images[k] : { caption: slot.title, alt: '', pmsVersion: a.review.pmsVersion };
-        const img = PH.model.normalizeImage(Object.assign({}, base, {
-          id: slot.id, slot: slot.id, src, markers: [], rights: 'intern', origin: 'screenshot', captured: date, status: '',
-        }));
-        if (k >= 0) step.images[k] = img;
-        else step.images.push(img);
-        a.updated = PH.model.now();
-        n++;
+        for (const h of x.hits) {
+          const a = byId.get(h.article.id);
+          const step = a && a.steps[h.stepIndex];
+          const slot = step && step.slots.find((sl) => sl.id === h.slot.id);
+          if (!slot) continue;
+          const k = step.images.findIndex((img) => img.slot === slot.id);
+          const base = k >= 0 ? step.images[k] : { caption: slot.title, alt: '', pmsVersion: a.review.pmsVersion };
+          const img = PH.model.normalizeImage(Object.assign({}, base, {
+            id: slot.id, slot: slot.id, src, markers: [], rights: 'intern', origin: 'screenshot', captured: date, status: '',
+          }));
+          if (k >= 0) step.images[k] = img;
+          else step.images.push(img);
+          a.updated = PH.model.now();
+          n++;
+        }
       } catch (e) {
         errors.push(x.file.name + ': ' + e.message);
       }
@@ -372,10 +389,19 @@
     pendingImport = { inc, plan, name: file.name };
     const ist = PH.model.imageStats(inc);
     const incInternal = PH.model.hasInternal(inc);
+    const nIntern = inc.articles.filter((a) => !PH.model.isPublicArticle(a)).length;
+    const nSlots = PH.model.allSlots(inc).length;
+    const nDraft = inc.articles.filter((a) => a.review.status === 'entwurf').length;
     return '<div class="import-preview">' +
       '<p><strong>' + esc(file.name) + '</strong> · ' + formatBytes(file.size) + ' · Stand ' + fmtDate(inc.meta.updated, true) + '</p>' +
       '<ul class="import-stats">' +
-      '<li><strong>' + inc.articles.length + '</strong> Artikel, <strong>' + inc.categories.length + '</strong> Kategorien, <strong>' + inc.synonyms.length + '</strong> Synonymgruppen, <strong>' + ist.total + '</strong> Bilder in der Datei</li>' +
+      '<li><strong>' + inc.articles.length + '</strong> Artikel, <strong>' + inc.categories.length + '</strong> Kategorien, <strong>' + inc.synonyms.length + '</strong> Synonymgruppen, <strong>' + ist.total + '</strong> Bilder in der Datei' +
+      (ist.total ? ' (davon <strong>' + ist.intern + '</strong> intern, ' + ist.oeffentlich + ' öffentlich)' : '') + '</li>' +
+      (nIntern || nSlots || nDraft ? '<li class="import-intern">' + [
+        nIntern ? '<strong>' + nIntern + '</strong> ' + (nIntern === 1 ? 'interner Artikel' : 'interne Artikel') : '',
+        nSlots ? '<strong>' + nSlots + '</strong> ' + (nSlots === 1 ? 'geplanter Bildplatz' : 'geplante Bildplätze') : '',
+        nDraft ? '<strong>' + nDraft + '</strong> ' + (nDraft === 1 ? 'ungeprüfter Entwurf' : 'ungeprüfte Entwürfe') : '',
+      ].filter(Boolean).join(' · ') + '</li>' : '') +
       '<li>Datenformat ' + info.schema + (info.schema < PH.model.SCHEMA ? ' (ältere App-Version) – wird beim Import automatisch umgewandelt; Bilder gelten danach als <strong>intern</strong>.' : '') + '</li>' +
       (info.newer ? '<li class="status warn">' + icon('alert') + 'Die Datei stammt aus einer neueren App-Version. Unbekannte Angaben bleiben erhalten, werden aber hier nicht angezeigt.</li>' : '') +
       (incInternal ? '<li>' + icon('shield') + ' Enthält <strong>interne Inhalte</strong> – nach dem Import gilt dieser Stand als intern.</li>' : '') +

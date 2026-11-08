@@ -56,6 +56,22 @@ const L = require('./lib');
     L.eq(await page.locator('#all-list .article-card').count(), 1, 'Filter „Veraltet“ zeigt genau den veralteten Artikel');
     await L.go(page, '#/artikel/fundsachen', '.review-callout');
     L.ok(/Veraltet/.test(await page.locator('.review-callout').innerText()), 'Hinweis „Veraltet“ im Artikel');
+    // Ungeprüfte Inhalte auch in den Suchergebnissen gekennzeichnet
+    await page.evaluate(async () => {
+      const kb = PH.app.kb;
+      const articles = kb.articles.map((a) => (a.id === 'beschwerde-gast' ? Object.assign({}, a, { review: Object.assign({}, a.review, { status: 'entwurf' }) }) : a));
+      await PH.app.commit(Object.assign({}, kb, { articles }));
+    });
+    await L.go(page, '#/suche?q=Beschwerde', '.search-head');
+    L.ok(await page.locator('.result-title .badge-review.review-entwurf').count() >= 1, 'Suchergebnis zeigt das Kennzeichen „Entwurf“');
+    // Lizenzhinweise in der App (auch auf iPhone/iPad erreichbar)
+    await L.go(page, '#/hilfe', '.prose');
+    await page.click('a[href="#/lizenzen"]');
+    await page.waitForSelector('.license-text');
+    const lic = await page.locator('.license-text').innerText();
+    const txt = fs.readFileSync(path.join(L.APP, 'LIZENZEN.txt'), 'utf8').replace(/\r\n/g, '\n');
+    L.ok(/Feather Icons/.test(lic) && /MIT License/.test(lic) && /Lucide/.test(lic) && /ISC License/.test(lic), 'Lizenzseite zeigt Feather (MIT) und Lucide (ISC)');
+    L.eq(lic.trim(), txt.trim(), 'Lizenzseite entspricht LIZENZEN.txt');
     // Hilfe
     await L.go(page, '#/hilfe', '.prose');
     const help = await page.locator('.prose').innerText();

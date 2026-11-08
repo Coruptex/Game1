@@ -11,3 +11,8 @@ S-[A-Z][A-Z][A-Z]-[0-9][0-9]*
 # Testläufe
 tests/.tmp/
 node_modules/
+
+# Systemdateien von Windows und macOS (werden nie gebaut oder veröffentlicht)
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -955,6 +955,7 @@
         case 'neu': v = PH.editor.view({ type: parts[1], categoryId: query.kat }); break;
         case 'verwaltung': v = PH.admin.view(query); break;
         case 'hilfe': v = PH.views.help(); break;
+        case 'lizenzen': v = PH.views.licenses(); break;
         default: v = PH.views.notFound();
       }
     } catch (err) {

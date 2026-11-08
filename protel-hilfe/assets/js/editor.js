@@ -291,6 +291,7 @@
           field('Motiv', input(p + '.title', sl.title, 'placeholder="z. B. Check-in-Wizard, Schritt „Übersicht“"'), '', { for: fid(p + '.title') }) +
           field('Bildschirmbereich', input(p + '.area', sl.area, 'placeholder="z. B. Check-in-Wizard"'), '', { for: fid(p + '.area') }) +
           field('Aufnahme bei Testfall', input(p + '.test', sl.test, 'placeholder="z. B. T-CIN-03"'), '', { for: fid(p + '.test') }) +
+          field('Gleiche Aufnahme wie', input(p + '.same', sl.same, 'placeholder="optional, z. B. S-TAB-01"'), 'Der Sammelimport füllt diesen Bildplatz dann mit derselben Datei.', { for: fid(p + '.same') }) +
           '</div>' +
           field('Aufnahmeanweisung', textarea(p + '.instruction', sl.instruction, 3, 'placeholder="Was muss sichtbar sein? Was ist abzudecken?"'), '', { for: fid(p + '.instruction') }) +
           (state === 'fehlt' ? dropzone('steps.' + i + '.images', 'Bild für ' + sl.id + ' einfügen', sl.id) : '') +

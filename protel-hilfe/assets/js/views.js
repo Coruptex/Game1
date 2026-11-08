@@ -73,7 +73,8 @@
       '<span class="slot-ph-icon">' + icon('slot') + '</span>' +
       '<div class="slot-ph-text"><div><strong>Bildplatz ' + esc(sl.id) + '</strong> <span class="slot-need need-' + esc(sl.need) + '">' + esc(need.label) + '</span></div>' +
       (sl.title ? '<div>' + esc(sl.title) + '</div>' : '') +
-      '<div class="muted small">' + (sl.area ? 'Bereich: ' + esc(sl.area) + ' · ' : '') + (sl.test ? 'Aufnahme bei ' + esc(sl.test) + ' · ' : '') + 'noch kein Bild</div>' +
+      '<div class="muted small">' + (sl.area ? 'Bereich: ' + esc(sl.area) + ' · ' : '') + (sl.test ? 'Aufnahme bei ' + esc(sl.test) + ' · ' : '') +
+        (sl.same ? 'gleiche Aufnahme wie ' + esc(sl.same) + ' · ' : '') + 'noch kein Bild</div>' +
       (sl.instruction ? '<details class="slot-instr"><summary>Aufnahmeanweisung</summary><div class="md">' + md(sl.instruction) + '</div></details>' : '') +
       '</div>' +
       (a.id ? '<a class="btn btn-sm btn-secondary" href="#/bearbeiten/' + encodeURIComponent(a.id) + '?schritt=' + (i + 1) + '">' + icon('image') + 'Bild einfügen</a>' : '') +
@@ -429,7 +430,7 @@
         return '<a class="result" href="' + articleHref(a, q) + '">' +
           '<span class="type-icon type-' + esc(a.type) + '">' + icon(t.icon) + '</span>' +
           '<span class="result-body">' +
-          '<span class="result-title">' + idx.highlight(a.title, r.matched) + exampleBadge(a) + '</span>' +
+          '<span class="result-title">' + idx.highlight(a.title, r.matched) + exampleBadge(a) + reviewBadge(a) + '</span>' +
           '<span class="result-meta">' + esc(t.label) + (cat ? ' · ' + esc(cat.name) : '') + ' · Stand ' + fmtDate(a.updated) +
           '<span class="relevance" title="Relevanz">' + [1, 2, 3, 4, 5].map((i) => '<i' + (i <= rel ? ' class="on"' : '') + '></i>').join('') + '</span></span>' +
           '<span class="result-snippet">' + idx.snippet(doc.plain, r.matched, 220) + '</span>' +
@@ -844,7 +845,10 @@
     '- Eigene Änderungen, Favoriten, Verlauf und Suchstatistik bleiben lokal auf dem jeweiligen Gerät.',
     '- Die veröffentlichte Website ist **öffentlich erreichbar**. Vertrauliche Inhalte nur lokal pflegen (Import auf dem Gerät), nicht veröffentlichen.',
     '- Bitte keine personenbezogenen Gästedaten, Passwörter oder Kartendaten in Artikeln oder Screenshots speichern.',
-    '- Einige Symbole der App beruhen auf Feather Icons (MIT-Lizenz) und Lucide (ISC-Lizenz); die Lizenztexte stehen in der Datei `LIZENZEN.txt` im App-Ordner.',
+    '',
+    '## Lizenzen',
+    '- Viele Bediensymbole stammen aus **Feather Icons** (MIT-Lizenz) und **Lucide** (ISC-Lizenz) oder sind daran angelehnt.',
+    '- [Lizenzhinweise anzeigen](#/lizenzen) – dieselben Texte stehen in der Datei `LIZENZEN.txt` im App-Ordner.',
   ].join('\n');
 
   function help() {
@@ -853,6 +857,18 @@
       '<div class="card prose md">' + md(HELP_MD) + '</div>' +
       '<p class="muted small">Protel Hilfe ist eine interne Wissensdatenbank und kein offizielles Produkt des Herstellers von protel.</p>';
     return { title: 'Hilfe zur App', html };
+  }
+
+  /** Lizenzhinweise für Bestandteile Dritter (Text aus LIZENZEN.txt, erzeugt von tools/build-pwa.js) */
+  function licenses() {
+    const text = PH.LIZENZEN || '';
+    const html = breadcrumb([{ href: '#/', label: 'Start' }, { href: '#/hilfe', label: 'Hilfe zur App' }, { label: 'Lizenzhinweise' }]) +
+      '<header class="page-head"><span class="page-icon">' + icon('shield') + '</span><div class="page-head-text"><h1>Lizenzhinweise</h1>' +
+      '<p>Bestandteile Dritter und ihre Lizenzen.</p></div></header>' +
+      (text
+        ? '<div class="card"><pre class="license-text">' + esc(text) + '</pre></div>'
+        : emptyState('alert', 'Lizenztexte nicht gefunden', 'Die Datei <code>assets/js/lizenzen.js</code> fehlt. Die Texte stehen auch in <code>LIZENZEN.txt</code> im App-Ordner.'));
+    return { title: 'Lizenzhinweise', html };
   }
 
   function notFound(title, text) {
@@ -871,7 +887,7 @@
   }
 
   PH.views = {
-    home, categories, category, typeList, all, favorites, search, article, help, notFound, error,
+    home, categories, category, typeList, all, favorites, search, article, help, licenses, notFound, error,
     renderArticle, articleCard, typeBadge, exampleBadge, reviewBadge, catBadge, breadcrumb, emptyState, shotHtml, figureHtml, searchUrl, articleHref,
   };
 })();

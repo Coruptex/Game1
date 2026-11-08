@@ -6,10 +6,10 @@ Protel Hilfe ist eine interne, inoffizielle Wissensdatenbank. Sie ist kein Produ
 
 Bediensymbole (assets/js/icons.js)
 ----------------------------------
-Einige der Bediensymbole stimmen mit Symbolen aus „Feather Icons“ bzw. „Lucide“ überein oder sind
-daran angelehnt (z. B. Buch, Datenbank, Auge, Ordner, Link, Mond, Schild, Ziel, Werkzeug). Die übrigen
-Symbole, das App-Symbol, die Platzhalterbilder und die schematischen Grafiken sind eigene Gestaltungen.
-Die Lizenztexte der beiden Bibliotheken lauten:
+Viele der Bediensymbole stammen aus „Feather Icons“ bzw. „Lucide“ oder sind daran angelehnt
+(z. B. Suche, Bearbeiten, Papierkorb, Herunterladen, Hochladen, Sonne, Mond, Warnung, Werkzeug, Stern,
+Buch, Datenbank, Auge, Ordner, Link, Schild, Ziel). Die übrigen Symbole, das App-Symbol und die
+Platzhalterbilder sind eigene Gestaltungen. Die Lizenztexte der beiden Bibliotheken lauten:
 
 
 Feather Icons – https://github.com/feathericons/feather

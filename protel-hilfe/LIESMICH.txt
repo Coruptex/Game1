@@ -49,4 +49,5 @@ DATENSCHUTZ
   Keine Gästedaten, Passwörter oder Kartendaten in Artikeln/Screenshots speichern.
 
 LIZENZEN
-  Hinweise zu verwendeten Symbolen: Datei "LIZENZEN.txt".
+  Hinweise zu verwendeten Symbolen (Feather Icons, MIT; Lucide, ISC): Datei "LIZENZEN.txt",
+  in der App unter "Hilfe zur App" -> "Lizenzhinweise anzeigen".

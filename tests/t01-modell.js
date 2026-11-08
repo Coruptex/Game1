@@ -151,6 +151,20 @@ const L = require('./lib');
     L.ok(/missing/.test(r.outside), 'ohne Artikelbezug kein falscher Verweis');
   });
 
+  await L.section('Gemeinsame Bildplätze („gleiche Aufnahme wie“) bleiben erhalten', async () => {
+    const r = await page.evaluate(() => {
+      const sl = PH.model.normalizeSlot({ id: 'S-TST-21', same: '  S-TST-11 ', zusatz: 1 });
+      const plain = PH.model.normalizeSlot({ id: 'S-TST-22' });
+      const kb = PH.model.normalizeKB({ format: 'protel-hilfe-2', schemaVersion: 2, meta: {}, categories: [], synonyms: [], articles: [
+        { id: 'a', type: 'guide', title: 'A', steps: [{ title: 'eins', slots: [sl] }] }] });
+      const back = PH.model.parseImport(PH.model.toJSON(kb)).kb;
+      return { same: sl.same, extra: sl.zusatz, plain: plain.same, back: back.articles[0].steps[0].slots[0].same, pub: PH.model.toPublic(kb).kb.articles.length };
+    });
+    L.eq([r.same, r.extra, r.plain], ['S-TST-11', 1, ''], 'Feld „same“ wird bereinigt, unbekannte Felder bleiben, Standard leer');
+    L.eq(r.back, 'S-TST-11', 'übersteht Export und Import');
+    L.eq(r.pub, 0, 'interner Artikel mit Bildplätzen fehlt im öffentlichen Stand');
+  });
+
   await L.section('Sicherheit: nur Bilddaten und sichere Links', async () => {
     const r = await page.evaluate(() => {
       const bad = PH.model.normalizeImage({ src: 'javascript:alert(1)' });

@@ -10,7 +10,12 @@
  *  2. Alle Dateien im App-Ordner: Bilddateien nur, wenn sie in tools/bildfreigabe.json mit passender
  *     Prüfsumme stehen; keine Dateien nach dem Screenshot-Schema (S-ABC-01 …) oder mit „intern“ im Namen;
  *     keine Dateien mit dem Kennzeichen interner Exporte; keine eingebetteten Rasterbilder im Code.
- *  3. Mit --repo zusätzlich alle Dateien des Repositorys (für Commits): dieselben Namens- und Inhaltsregeln.
+ *  3. Positivliste: Im App-Ordner sind nur Dateien erlaubt, die zur App gehören (HTML, Manifest, Service Worker,
+ *     Lizenz- und Lesehinweise, CSS/JS-Module, freigegebene Symbole, die mitgelieferte Datendatei). Alles andere –
+ *     etwa ein kopierter Entwurf, Notizen oder eine Sicherung – wird abgewiesen und kommt so weder in den Build
+ *     noch in den Offline-Speicher (PWA-Cache) noch auf die Website.
+ *  4. Mit --repo zusätzlich alle Dateien des Repositorys (für Commits): dieselben Namens- und Inhaltsregeln; außerdem
+ *     muss jede Datei der Offline-Liste in sw.js committet sein (sonst fehlte sie in der veröffentlichten App).
  *
  * Aufruf:
  *   node tools/pruefe-veroeffentlichung.js              App-Ordner prüfen (auch Teil von build-pwa.js)
@@ -42,6 +47,18 @@ const INTERN_NAME = /(^|[\\/])intern([\\/]|$)|protel-hilfe-intern|(^|[-_. ])inte
 const RASTER_DATA_URI = /data:image\/(png|jpe?g|gif|webp|bmp);base64,[A-Za-z0-9+/=]{200,}/;
 // Dateien, die das Kennzeichen bewusst enthalten (Code, der es schreibt, und diese Prüfung)
 const MARKER_OK = new Set(['protel-hilfe/assets/js/model.js', 'tools/pruefe-veroeffentlichung.js']);
+// Positivliste des App-Ordners (Pfade relativ zu protel-hilfe/). Neue Dateiarten bewusst hier ergänzen.
+const APP_FILES = [
+  /^index\.html$/, /^manifest\.webmanifest$/, /^sw\.js$/, /^\.nojekyll$/, /^LIESMICH\.txt$/, /^LIZENZEN\.txt$/,
+  /^assets\/css\/[a-z0-9-]+\.css$/, /^assets\/js\/[a-z0-9-]+\.js$/, /^assets\/icons\/[a-z0-9-]+\.(png|svg)$/,
+  // eigene, öffentlich freigegebene Grafiken (zusätzlich Pflicht: Eintrag mit Prüfsumme in tools/bildfreigabe.json)
+  /^assets\/grafiken\/[A-Za-z0-9_-]+\.(svg|png|webp|jpe?g)$/,
+  /^data\/wissensdatenbank\.js$/,
+];
+// Systemdateien von Windows und macOS – werden nie gebaut oder veröffentlicht und hier übergangen
+const SYSTEM_JUNK = new Set(['thumbs.db', 'desktop.ini', '.ds_store']);
+const isSystemJunk = (name) => SYSTEM_JUNK.has(String(name).split('/').pop().toLowerCase());
+const isAppFile = (appRel) => APP_FILES.some((re) => re.test(appRel));
 
 const rel = (p) => p.split(path.sep).join('/');
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
@@ -58,7 +75,7 @@ function loadAllowlist() {
 function walk(dir, base) {
   let out = [];
   for (const name of fs.readdirSync(dir).sort()) {
-    if (name === '.git' || name === 'node_modules') continue;
+    if (name === '.git' || name === 'node_modules' || isSystemJunk(name)) continue;
     const full = path.join(dir, name);
     const r = base ? base + '/' + name : name;
     const st = fs.statSync(full);
@@ -104,6 +121,9 @@ function checkData(raw, where) {
 function checkFile(relPath, buf, opts) {
   const p = [];
   const inApp = relPath.startsWith(APP_DIR + '/');
+  if (inApp && !isAppFile(relPath.slice(APP_DIR.length + 1))) {
+    p.push(relPath + ': gehört nicht zur App (nicht in der Positivliste des App-Ordners) – Entwürfe, Notizen, Sicherungen und interne Dateien gehören nicht in protel-hilfe/.');
+  }
   if (SCREENSHOT_NAME.test(relPath)) p.push(relPath + ': Dateiname nach dem Screenshot-Schema (S-ABC-01 …) – interne Screenshots gehören nicht ins Repository.');
   if (INTERN_NAME.test(relPath)) p.push(relPath + ': „intern“ im Datei- oder Ordnernamen – interne Dateien gehören nicht ins Repository.');
   if (IMAGE_EXT.test(relPath)) {
@@ -163,7 +183,9 @@ function check(opts) {
     if (!files.includes(APP_DIR + '/' + DATA_FILE)) files.push(APP_DIR + '/' + DATA_FILE);
   }
   const problems = [];
+  if (opts.repo) problems.push(...checkAssetsTracked(root));
   files.forEach((f) => {
+    if (isSystemJunk(f) && !f.startsWith(APP_DIR + '/')) return;
     const full = path.join(root, f);
     if (!fs.existsSync(full)) {
       if (f === APP_DIR + '/' + DATA_FILE) problems.push(f + ': fehlt.');
@@ -173,6 +195,21 @@ function check(opts) {
     problems.push(...checkFile(f, fs.readFileSync(full), { allow }));
   });
   return { problems, files: files.length };
+}
+
+/** Jede Datei der Offline-Liste (ASSETS in sw.js) muss committet sein – sonst fehlte sie in der veröffentlichten App */
+function checkAssetsTracked(root) {
+  if (root !== ROOT) return [];
+  const tracked = gitFiles(['ls-files', '--', APP_DIR]);
+  if (!tracked) return [];
+  const set = new Set(tracked);
+  let sw = '';
+  try { sw = fs.readFileSync(path.join(root, APP_DIR, 'sw.js'), 'utf8'); } catch (e) { return [APP_DIR + '/sw.js: fehlt.']; }
+  const m = sw.match(/const ASSETS = \[([\s\S]*?)\];/);
+  if (!m) return [APP_DIR + '/sw.js: Offline-Liste (ASSETS) nicht gefunden.'];
+  const assets = Array.from(m[1].matchAll(/'([^']+)'/g)).map((x) => x[1]);
+  return assets.filter((a) => !set.has(APP_DIR + '/' + a))
+    .map((a) => APP_DIR + '/' + a + ': steht in der Offline-Liste (sw.js), ist aber nicht committet – die veröffentlichte App fände die Datei nicht.');
 }
 
 function freigeben(appRelPath, herkunft) {
@@ -189,7 +226,7 @@ function freigeben(appRelPath, herkunft) {
   return entry;
 }
 
-module.exports = { check, checkData, checkFile, freigeben, MARKER };
+module.exports = { check, checkData, checkFile, freigeben, MARKER, isAppFile, isSystemJunk, APP_FILES };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);

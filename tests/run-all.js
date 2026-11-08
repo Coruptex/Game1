@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
  * Protel Hilfe – alle automatischen Tests ausführen
- * Aufruf: node tests/run-all.js            (alle Testdateien t01 … t10)
+ * Aufruf: node tests/run-all.js            (alle Testdateien t01 … t11)
  *         node tests/run-all.js t04 t06    (nur ausgewählte)
  * Ergebnis: Zusammenfassung in der Konsole und als Bericht in tests/.tmp/testbericht.md
  */

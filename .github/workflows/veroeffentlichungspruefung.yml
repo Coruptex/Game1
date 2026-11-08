@@ -1,0 +1,28 @@
+# Protel Hilfe – Veröffentlichungsprüfung bei jedem Push und Pull Request
+#
+# Meldet sofort, wenn interne Inhalte (interne Artikel oder Bilder, Bildplätze, Sicherungen, Screenshots,
+# unbekannte Dateien im App-Ordner) in dieses öffentliche Repository gelangt sind, und prüft, ob die
+# Offline-Dateiliste der App (sw.js) aktuell ist.
+# Dieser Ablauf veröffentlicht nichts und stellt nichts bereit; er liest das Repository nur.
+# Der Git-Hook (tools/git-hooks/pre-commit) verhindert solche Commits schon vorher auf dem eigenen Rechner.
+name: Veröffentlichungsprüfung
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Keine internen Inhalte im Repository
+        run: node tools/pruefe-veroeffentlichung.js --repo
+      - name: Offline-Dateiliste und Lizenztexte aktuell
+        run: node tools/build-pwa.js --check
