@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Protel Hilfe – interne Offline-Wissensdatenbank für die Hotelrezeption">
+  <title>Protel Hilfe</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bd3'/%3E%3Cpath d='M14 44h36M18 44a14 14 0 0 1 28 0M32 24v-4M28 20h8' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script>
+    /* Farbschema vor dem ersten Zeichnen setzen (verhindert Aufblitzen) */
+    (function () {
+      try {
+        var keys = Object.keys(localStorage).filter(function (k) { return /^protelHilfe:.*:prefs$/.test(k); });
+        var theme = '';
+        keys.forEach(function (k) { try { var p = JSON.parse(localStorage.getItem(k)); if (p && p.theme) theme = p.theme; } catch (e) {} });
+        if (!theme && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+        document.documentElement.setAttribute('data-theme', theme || 'light');
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="topbar">
+    <button type="button" class="icon-btn menu-btn" id="btn-menu" aria-label="Navigation öffnen" aria-controls="sidebar">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a class="brand" href="#/" aria-label="Protel Hilfe – Startseite">
+      <span class="brand-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M3 18h18"/><path d="M5 18a7 7 0 0 1 14 0"/><path d="M12 8V6M10 6h4"/></svg>
+      </span>
+      <span class="brand-text"><span class="brand-name">Protel Hilfe</span><span class="brand-sub">Wissensdatenbank Rezeption</span></span>
+    </a>
+    <div class="topbar-search" id="topbar-search"></div>
+    <div class="topbar-actions">
+      <a href="#/verwaltung" id="dirty-pill" class="pill pill-warn edit-only" hidden title="Lokale Änderungen sind noch nicht für den App-Ordner exportiert">Nicht exportiert</a>
+      <button type="button" class="btn btn-ghost btn-sm edit-toggle" id="btn-edit-mode" aria-pressed="false">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span>Bearbeiten</span>
+      </button>
+      <button type="button" class="icon-btn" id="btn-theme" aria-label="Farbschema wechseln"></button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Hauptnavigation"></nav>
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <div class="content">
+      <div id="example-banner" class="example-banner" hidden>
+        <span class="eb-icon" aria-hidden="true">!</span>
+        <span class="eb-text"><strong>Prototyp mit Beispieldaten:</strong> Die als „Beispiel“ markierten Inhalte sind fiktive Muster und keine offiziellen oder geprüften protel-Bedienungsanleitungen.</span>
+        <a href="#/hilfe">Mehr erfahren</a>
+        <a href="#/verwaltung" class="edit-only">Beispiele verwalten</a>
+      </div>
+      <main id="main" class="main" tabindex="-1">
+        <noscript>
+          <div class="empty"><h3>JavaScript ist deaktiviert</h3><p>Protel Hilfe benötigt JavaScript. Bitte im Browser aktivieren.</p></div>
+        </noscript>
+      </main>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <!-- Wissensdatenbank (wird über die Verwaltung exportiert und hier ersetzt) -->
+  <script src="data/wissensdatenbank.js"></script>
+  <!-- App (klassische Skripte – funktionieren auch unter file:// ohne Webserver) -->
+  <script src="assets/js/util.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/markdown.js"></script>
+  <script src="assets/js/model.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/tree.js"></script>
+  <script src="assets/js/views.js"></script>
+  <script src="assets/js/editor.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

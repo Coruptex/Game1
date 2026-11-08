@@ -1,0 +1,31 @@
+PROTEL HILFE – Offline-Wissensdatenbank für die Rezeption
+=========================================================
+
+STARTEN
+  Doppelklick auf "index.html" (Microsoft Edge oder Google Chrome).
+  Keine Installation, kein Internet, kein Server nötig.
+
+WICHTIG
+  Dies ist ein Prototyp mit BEISPIELDATEN. Als "Beispiel" markierte Artikel sind
+  fiktive Muster und keine offiziellen oder geprüften protel-Bedienungsanleitungen.
+  Gelb markierte Platzhalter müssen durch die tatsächlichen, intern geprüften
+  Abläufe ersetzt werden. Keine Verbindung zu protel-Systemen oder Cloud-Diensten.
+
+SUCHEN
+  Strg+K oder "/" drücken und tippen. Die Suche versteht Synonyme
+  (z. B. Abreise = Check-out) und verzeiht Tippfehler.
+
+BEARBEITEN
+  Oben rechts "Bearbeiten" einschalten. Screenshots: Win+Umschalt+S,
+  dann im Editor das Bildfeld eines Schritts anklicken und Strg+V drücken.
+
+ÄNDERUNGEN AUF ALLE PCs VERTEILEN
+  Änderungen werden zunächst nur im Browser des jeweiligen PCs gespeichert.
+  1. Verwaltung -> "Für App-Ordner exportieren"
+  2. Die heruntergeladene Datei "wissensdatenbank.js" in den Ordner "data"
+     kopieren und die vorhandene Datei ersetzen.
+  3. Auf allen PCs die App neu laden (F5).
+  Zusätzlich regelmäßig eine Sicherung (.json) exportieren.
+
+DATENSCHUTZ
+  Keine Gästedaten, Passwörter oder Kartendaten in Artikeln/Screenshots speichern.
