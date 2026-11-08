@@ -70,6 +70,11 @@
     grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
     pin: '<path d="M12 22s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/>',
     history: '<path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/>',
+    // eigene, einfache Formen (Bildansicht, Bildplätze)
+    minus: '<path d="M5 12h14"/>',
+    fit: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    actual: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9.5 11 8v8M14 9.5 16 8v8"/>',
+    slot: '<rect x="3" y="5" width="18" height="14" rx="2" stroke-dasharray="3 2.5"/><path d="M12 9v6M9 12h6"/>',
   };
 
   /** Liefert ein Inline-SVG-Symbol. */

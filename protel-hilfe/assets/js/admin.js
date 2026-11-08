@@ -23,6 +23,9 @@
     const examples = kb.articles.filter((a) => a.example).length;
     const isFile = PH.env.isFile;
     const lastBackup = PH.app.prefs.lastBackup;
+    const ist = PH.model.imageStats(kb);
+    const internal = PH.model.hasInternal(kb);
+    const smallStore = PH.store.backend !== 'indexeddb';
     const statusLine = !s.hasLocal
       ? '<span class="status ok">' + icon('checkCircle') + (isFile ? 'Entspricht der Datei <code>data/wissensdatenbank.js</code>' : 'Entspricht der veröffentlichten Version') + '</span>'
       : s.dirty
@@ -40,10 +43,19 @@
       stat('Artikel', kb.articles.length, examples ? examples + ' davon Beispiele' : '') +
       stat('Kategorien', kb.categories.length) +
       stat('Synonymgruppen', kb.synonyms.length) +
-      stat('Bilder', PH.model.countImages(kb), formatBytes(size) + ' gesamt') +
+      stat('Bilder', ist.total, ist.intern + ' intern · ' + ist.oeffentlich + ' öffentlich') +
+      stat('Datenmenge', formatBytes(size), formatBytes(ist.bytes) + ' davon Bilder') +
       '</div>' +
+      (smallStore && size > 3 * 1024 * 1024
+        ? '<div class="callout callout-warning"><div class="callout-title">' + icon('alert') + 'Wenig Speicherplatz</div><div class="callout-body"><p>Dieser Browser speichert nur im kleinen ' +
+          esc(PH.store.backendLabel()) + '. Bei vielen Bildern kann das Speichern fehlschlagen. Bitte regelmäßig eine Sicherung exportieren oder die App in einem anderen Browser bzw. als installierte App nutzen.</p></div></div>'
+        : '') +
       '<dl class="kv">' +
       '<dt>Status</dt><dd>' + statusLine + '</dd>' +
+      '<dt>Inhaltsstand</dt><dd>' + (internal
+        ? '<span class="status warn">' + icon('shield') + 'Interne Inhalte – nur intern verteilen, nicht veröffentlichen</span>'
+        : '<span class="status ok">' + icon('checkCircle') + esc(kb.meta.package ? PH.model.PACKAGES[kb.meta.package] : 'nur öffentliche Inhalte') + '</span>') + '</dd>' +
+      '<dt>Datenformat</dt><dd>Version ' + PH.model.SCHEMA + ' <span class="muted">(ältere Sicherungen werden beim Import automatisch umgewandelt)</span></dd>' +
       '<dt>Letzte Änderung</dt><dd>' + fmtDate(kb.meta.updated, true) + '</dd>' +
       '<dt>Revision</dt><dd><code>' + esc(kb.meta.revision) + '</code></dd>' +
       '<dt>' + (isFile ? 'Datei im App-Ordner' : 'Veröffentlichte Version') + '</dt><dd>' + (s.bundledAvailable ? 'Stand ' + fmtDate(s.bundledUpdated, true) + ' · <code>' + esc(s.bundledRevision) + '</code>' : '<span class="status warn">' + icon('alert') + 'nicht gefunden oder fehlerhaft</span>') + '</dd>' +
@@ -57,15 +69,17 @@
       '<section class="card admin-card">' +
       '<h2>' + icon('download') + 'Exportieren</h2>' +
       (isFile
-        ? '<div class="action-block"><button type="button" class="btn btn-primary" data-adm="export-js">' + icon('download') + 'Für App-Ordner exportieren</button>' +
-          '<p class="field-hint">Erzeugt <code>wissensdatenbank.js</code>. Ersetzen Sie damit die gleichnamige Datei im Unterordner <code>data</code> der App (z. B. auf dem Netzlaufwerk). Alle PCs sehen den neuen Stand nach dem Neuladen ({{F5}}).</p></div>' +
+        ? '<div class="action-block"><button type="button" class="btn btn-primary" data-adm="export-js">' + icon('download') + 'Für App-Ordner exportieren (intern)</button>' +
+          '<p class="field-hint">Erzeugt <code>wissensdatenbank.js</code> mit allen Inhalten. Ersetzen Sie damit die gleichnamige Datei im Unterordner <code>data</code> der App auf dem internen Laufwerk. Alle PCs sehen den neuen Stand nach dem Neuladen ({{F5}}).</p></div>' +
           '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-json">' + icon('save') + 'Sicherung exportieren (.json)</button>' +
-          '<p class="field-hint">Vollständige Sicherung inkl. Bilder – kann jederzeit wieder importiert werden.</p></div>'
+          '<p class="field-hint">Vollständige Sicherung inkl. Bilder – kann jederzeit wieder importiert werden. Dient auch als <strong>interne Importdatei</strong> für iPhone/iPad.</p></div>'
         : '<div class="action-block"><button type="button" class="btn btn-primary" data-adm="export-json">' + icon('save') + 'Sicherung exportieren (.json)</button>' +
           '<p class="field-hint">Vollständige Sicherung inkl. Bilder. ' + (PH.env.isAppleMobile ? 'Öffnet das Teilen-Menü: „In Dateien sichern“, AirDrop oder Mail. ' : '') +
           'Zum Übertragen auf ein anderes iPhone/iPad dort unter Verwaltung importieren.</p></div>' +
-          '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-js">' + icon('download') + 'Datendatei exportieren (wissensdatenbank.js)</button>' +
-          '<p class="field-hint">Für die PC-Version (Ordner <code>data</code>) oder zum Veröffentlichen. Die veröffentlichte Website ist öffentlich – nur unbedenkliche Inhalte veröffentlichen.</p></div>') +
+          '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-js">' + icon('download') + 'Datendatei für die interne PC-Version</button>' +
+          '<p class="field-hint">Erzeugt <code>wissensdatenbank.js</code> mit allen Inhalten für den Ordner <code>data</code> der internen PC-Version. Nicht veröffentlichen.</p></div>') +
+      '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-public">' + icon('shield') + 'Öffentliche Datendatei exportieren</button>' +
+      '<p class="field-hint">Nur ausdrücklich öffentliche Artikel und Bilder; ohne Bildplätze, ohne Namen. Eigene protel-Screenshots sind nie enthalten.</p></div>' +
       '</section>' +
 
       '<section class="card admin-card">' +
@@ -84,6 +98,22 @@
       '<div class="action-block"><button type="button" class="btn btn-danger-ghost" data-adm="remove-examples"' + (examples ? '' : ' disabled') + '>' + icon('trash') + 'Alle Beispielartikel löschen (' + examples + ')</button>' +
       '<p class="field-hint">Entfernt alle als „Beispiel“ markierten Artikel. Kategorien, Synonyme und eigene Artikel bleiben erhalten.</p></div>' +
       '</div></section>' +
+
+      '<section class="card admin-card" id="wiederherstellung">' +
+      '<h2>' + icon('history') + 'Wiederherstellungspunkte</h2>' +
+      '<p class="field-hint">Vor riskanten Aktionen (Import, Ersetzen, Laden einer neuen Version, Umstellung des Datenformats) sichert die App den bisherigen Stand automatisch auf diesem Gerät. ' +
+      'Es bleiben die letzten ' + PH.store.MAX_SNAPSHOTS + ' Punkte; angeheftete Punkte bleiben, bis Sie sie löschen. Ersetzt keine regelmäßige Sicherung.</p>' +
+      '<div id="snap-list"><p class="muted">Wird geladen …</p></div></section>' +
+
+      '<section class="card admin-card" id="bilder">' +
+      '<div class="admin-card-head"><h2>' + icon('image') + 'Bilder &amp; Bildplätze</h2><div class="btn-row">' +
+      '<label class="btn btn-secondary btn-sm" for="bulk-files">' + icon('upload') + 'Screenshots zuordnen …</label>' +
+      '<input type="file" id="bulk-files" multiple accept="image/*" class="sr-only">' +
+      '<button type="button" class="btn btn-secondary btn-sm" data-adm="slots-csv">' + icon('download') + 'Liste als CSV</button></div></div>' +
+      '<p class="field-hint"><strong>Screenshots zuordnen:</strong> mehrere Bilddateien auf einmal wählen. Beginnt der Dateiname mit der Nummer eines Bildplatzes (z. B. <code>S-CIN-06_wizard.png</code>), ' +
+      'wird das Bild automatisch dort eingefügt, verkleinert und als <strong>intern</strong> gekennzeichnet. Vorher sehen Sie eine Vorschau.</p>' +
+      '<div id="bulk-preview"></div>' +
+      '<div id="slot-list"></div></section>' +
 
       '<section class="card admin-card" id="kategorien">' +
       '<div class="admin-card-head"><h2>' + icon('grid') + 'Kategorien</h2><div class="btn-row"><button type="button" class="btn btn-secondary btn-sm" data-adm="cat-add">' + icon('plus') + 'Kategorie hinzufügen</button>' +
@@ -118,10 +148,18 @@
     const ph = kb.articles.map((a) => ({ a, n: PH.model.countPlaceholders(a) })).filter((x) => x.n).sort((a, b) => b.n - a.n);
     const trees = kb.articles.filter((a) => a.type === 'decision').map((a) => ({ a, w: PH.model.validateTree(a.tree) })).filter((x) => x.w.length);
     const old = kb.articles.filter((a) => a.updated && Date.now() - new Date(a.updated).getTime() > 365 * 86400000);
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const toCheck = kb.articles.filter((a) => ['entwurf', 'pruefung', 'veraltet'].includes(a.review.status) || (a.review.nextReview && a.review.nextReview <= todayIso))
+      .sort((a, b) => a.title.localeCompare(b.title, 'de'));
     const editLink = (a) => '<a href="#/bearbeiten/' + encodeURIComponent(a.id) + '" class="edit-only">bearbeiten</a>';
     const block = (title, ic, inner, extra) => '<div class="care-block"><h3>' + icon(ic) + esc(title) + '</h3>' + (extra || '') + inner + '</div>';
 
     return '<div class="care-grid">' +
+      block('Zu prüfen (Prüfstatus)', 'shield',
+        toCheck.length
+          ? '<ul class="care-list">' + toCheck.slice(0, 20).map((a) => '<li><a href="#/artikel/' + encodeURIComponent(a.id) + '">' + esc(truncate(a.title, 60)) + '</a><span class="muted">' +
+            esc(a.review.status ? PH.model.REVIEW_STATUS[a.review.status].short : 'Wiedervorlage') + (a.review.nextReview ? ' · bis ' + fmtDate(a.review.nextReview) : '') + '</span></li>').join('') + '</ul>'
+          : '<p class="muted small">Keine offenen Prüfungen.</p>') +
       block('Suchanfragen ohne Treffer', 'search',
         noHits.length
           ? '<ul class="care-list">' + noHits.map(([q, v]) => '<li><a href="' + PH.views.searchUrl(q) + '">' + esc(q) + '</a><span class="muted">' + v.count + '× · ' + fmtDate(v.last) + '</span></li>').join('') + '</ul>' +
@@ -188,19 +226,161 @@
         : '<p class="muted">Keine Treffer.</p>');
   }
 
+  /* ------------------------------------------------------------ Wiederherstellungspunkte */
+
+  async function snapListHtml() {
+    if (!PH.store.canSnapshot()) {
+      return '<p class="status warn">' + icon('alert') + 'In diesem Browser nicht verfügbar (' + esc(PH.store.backendLabel()) + '). Bitte regelmäßig eine Sicherung exportieren.</p>';
+    }
+    let list = [];
+    try { list = await PH.store.listSnapshots(); } catch (e) { return '<p class="status warn">' + icon('alert') + esc(e.message) + '</p>'; }
+    if (!list.length) return '<p class="muted small">Noch keine Wiederherstellungspunkte auf diesem Gerät.</p>';
+    return '<div class="table-wrap"><table class="snap-table"><thead><tr><th>Zeitpunkt</th><th>Anlass</th><th>Inhalt</th><th></th></tr></thead><tbody>' +
+      list.map((x) => '<tr data-snap="' + esc(x.id) + '"><td>' + fmtDate(x.createdAt, true) + (x.pinned ? ' <span class="badge badge-pin" title="Wird nicht automatisch gelöscht">angeheftet</span>' : '') + '</td>' +
+        '<td>' + esc(x.reason) + '</td>' +
+        '<td class="muted small">' + x.articles + ' Artikel · ' + x.images + ' Bilder · ' + formatBytes(x.bytes) + (x.schema && x.schema < PH.model.SCHEMA ? ' · Datenformat ' + x.schema : '') + '</td>' +
+        '<td class="snap-actions"><button type="button" class="btn btn-secondary btn-xs" data-snap-act="restore">' + icon('refresh') + 'Wiederherstellen</button>' +
+        '<button type="button" class="btn btn-ghost btn-xs" data-snap-act="download">' + icon('download') + 'Herunterladen</button>' +
+        '<button type="button" class="icon-btn btn-xs danger" data-snap-act="delete" title="Löschen" aria-label="Wiederherstellungspunkt löschen">' + icon('trash') + '</button></td></tr>'
+      ).join('') + '</tbody></table></div>';
+  }
+
+  /* ------------------------------------------------------------ Bildplätze (nach Bildschirmbereich) */
+
+  function slotRows() {
+    return PH.model.allSlots(PH.app.kb).map((x) => ({
+      area: x.slot.area || 'ohne Bereich',
+      id: x.slot.id,
+      article: x.article,
+      step: x.stepIndex + 1,
+      need: (PH.model.SLOT_NEED[x.slot.need] || PH.model.SLOT_NEED.optional).label,
+      title: x.slot.title,
+      test: x.slot.test,
+      state: x.state,
+    })).sort((a, b) => a.area.localeCompare(b.area, 'de') || a.id.localeCompare(b.id, 'de'));
+  }
+
+  function slotListHtml() {
+    const st = PH.model.imageStats(PH.app.kb);
+    const rows = slotRows();
+    const count = (k) => rows.filter((r) => r.state === k).length;
+    let html = '<div class="stats small-stats">' +
+      stat('Bilder', st.total, st.intern + ' intern · ' + st.oeffentlich + ' öffentlich') +
+      stat('Bildplätze', rows.length, count('fehlt') + ' fehlen') +
+      stat('Vorhanden', count('vorhanden') + count('geprueft'), count('geprueft') + ' geprüft') +
+      stat('Veraltet', count('veraltet')) + '</div>';
+    if (!rows.length) return html + '<p class="muted small">Noch keine Bildplätze geplant. Bildplätze legen Sie im Editor je Schritt an.</p>';
+    const groups = [];
+    rows.forEach((r) => {
+      const g = groups[groups.length - 1];
+      if (g && g.area === r.area) g.rows.push(r);
+      else groups.push({ area: r.area, rows: [r] });
+    });
+    html += '<div class="filterbar"><label class="field-inline"><span class="muted">Anzeigen:</span><select class="input input-sm" id="slot-filter">' +
+      '<option value="">alle</option><option value="fehlt">nur fehlende</option><option value="veraltet">nur veraltete</option></select></label></div>';
+    html += groups.map((g) => '<details class="slot-group" open><summary><strong>' + esc(g.area) + '</strong> <span class="muted">' + g.rows.length + ' Bildplätze · ' +
+      g.rows.filter((r) => r.state === 'fehlt').length + ' fehlen</span></summary>' +
+      '<div class="table-wrap"><table class="slot-table"><thead><tr><th>Nr.</th><th>Motiv</th><th>Artikel / Schritt</th><th>Bedarf</th><th>Testfall</th><th>Status</th></tr></thead><tbody>' +
+      g.rows.map((r) => '<tr data-state="' + r.state + '"><td><code>' + esc(r.id) + '</code></td><td>' + esc(r.title) + '</td>' +
+        '<td><a href="#/bearbeiten/' + encodeURIComponent(r.article.id) + '?schritt=' + r.step + '">' + esc(truncate(r.article.title, 40)) + '</a> · ' + r.step + '</td>' +
+        '<td>' + esc(r.need) + '</td><td>' + esc(r.test) + '</td>' +
+        '<td><span class="slot-state state-' + r.state + '">' + esc(PH.model.SLOT_STATES[r.state].label) + '</span></td></tr>').join('') +
+      '</tbody></table></div></details>').join('');
+    return html;
+  }
+
+  function slotsCsv() {
+    const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const lines = [['Bildschirmbereich', 'Nr.', 'Motiv', 'Artikel', 'Schritt', 'Bedarf', 'Testfall', 'Status'].map(q).join(';')];
+    slotRows().forEach((r) => lines.push([r.area, r.id, r.title, r.article.title, r.step, r.need, r.test, PH.model.SLOT_STATES[r.state].label].map(q).join(';')));
+    return '\uFEFF' + lines.join('\r\n') + '\r\n';
+  }
+
+  /* ------------------------------------------------------------ Sammelimport von Screenshots */
+
+  let pendingBulk = null;
+
+  /** Ordnet Dateien anhand der Bildplatz-Nummer am Anfang des Dateinamens zu */
+  function planBulk(files) {
+    const index = new Map();
+    PH.model.allSlots(PH.app.kb).forEach((x) => index.set(x.slot.id.toUpperCase(), x));
+    return files.map((f) => {
+      const m = /^\s*([A-Za-z]-[A-Za-z]{3}-\d{2,3})/.exec(f.name);
+      const id = m ? m[1].toUpperCase() : '';
+      const hit = id ? index.get(id) : null;
+      return { file: f, id, hit, action: !id ? 'keine Nummer im Dateinamen' : !hit ? 'kein passender Bildplatz' : hit.state === 'fehlt' ? 'neu' : 'ersetzt vorhandenes Bild' };
+    });
+  }
+
+  function bulkPreviewHtml(plan) {
+    const ok = plan.filter((x) => x.hit);
+    return '<div class="import-preview"><h3>' + icon('image') + plan.length + ' Datei(en) gewählt – ' + ok.length + ' zuordenbar</h3>' +
+      '<div class="table-wrap"><table class="slot-table"><thead><tr><th>Datei</th><th>Bildplatz</th><th>Artikel / Schritt</th><th>Ergebnis</th></tr></thead><tbody>' +
+      plan.map((x) => '<tr class="' + (x.hit ? '' : 'muted') + '"><td>' + esc(x.file.name) + ' <span class="muted small">' + formatBytes(x.file.size) + '</span></td>' +
+        '<td>' + (x.id ? '<code>' + esc(x.id) + '</code>' : '–') + '</td>' +
+        '<td>' + (x.hit ? esc(truncate(x.hit.article.title, 40)) + ' · ' + (x.hit.stepIndex + 1) : '–') + '</td>' +
+        '<td>' + esc(x.action) + '</td></tr>').join('') + '</tbody></table></div>' +
+      '<p class="field-hint">Alle Bilder werden verkleinert und als <strong>intern</strong> (Herkunft: eigener Screenshot) gekennzeichnet. Vorher wird ein Wiederherstellungspunkt angelegt.</p>' +
+      '<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" data-adm="bulk-apply"' + (ok.length ? '' : ' disabled') + '>' + ok.length + ' Bild(er) übernehmen</button>' +
+      '<button type="button" class="btn btn-ghost btn-sm" data-adm="bulk-cancel">Abbrechen</button></div></div>';
+  }
+
+  async function applyBulk(plan) {
+    const kb = PH.util.clone(PH.app.kb);
+    const byId = new Map(kb.articles.map((a) => [a.id, a]));
+    let n = 0;
+    const errors = [];
+    for (const x of plan) {
+      if (!x.hit) continue;
+      try {
+        const src = await PH.editor._processImage(x.file);
+        const a = byId.get(x.hit.article.id);
+        const step = a.steps[x.hit.stepIndex];
+        const slot = step.slots.find((sl) => sl.id === x.hit.slot.id);
+        const date = x.file.lastModified ? new Date(x.file.lastModified).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
+        const k = step.images.findIndex((img) => img.slot === slot.id);
+        const base = k >= 0 ? step.images[k] : { caption: slot.title, alt: '', pmsVersion: a.review.pmsVersion };
+        const img = PH.model.normalizeImage(Object.assign({}, base, {
+          id: slot.id, slot: slot.id, src, markers: [], rights: 'intern', origin: 'screenshot', captured: date, status: '',
+        }));
+        if (k >= 0) step.images[k] = img;
+        else step.images.push(img);
+        a.updated = PH.model.now();
+        n++;
+      } catch (e) {
+        errors.push(x.file.name + ': ' + e.message);
+      }
+    }
+    if (!n) {
+      PH.ui.toast('Keine Bilder übernommen. ' + errors.join(' '), 'error');
+      return;
+    }
+    await PH.app.safetySnapshot('Vor dem Sammelimport von ' + n + ' Screenshot(s)');
+    await PH.app.commit(kb);
+    PH.ui.toast(n + ' Bild(er) eingefügt und als intern gekennzeichnet.' + (errors.length ? ' Fehler: ' + errors.join('; ') : ''), errors.length ? 'warning' : 'success', { timeout: 6000 });
+    PH.app.refresh();
+  }
+
   /* ------------------------------------------------------------ Import */
 
   let pendingImport = null;
 
-  function importPreview(file, inc) {
+  function importPreview(file, info) {
+    const inc = info.kb;
     const kb = PH.app.kb;
     const plan = PH.model.planMerge(kb, inc);
-    pendingImport = { inc, plan };
+    pendingImport = { inc, plan, name: file.name };
+    const ist = PH.model.imageStats(inc);
+    const incInternal = PH.model.hasInternal(inc);
     return '<div class="import-preview">' +
       '<p><strong>' + esc(file.name) + '</strong> · ' + formatBytes(file.size) + ' · Stand ' + fmtDate(inc.meta.updated, true) + '</p>' +
       '<ul class="import-stats">' +
-      '<li><strong>' + inc.articles.length + '</strong> Artikel, <strong>' + inc.categories.length + '</strong> Kategorien, <strong>' + inc.synonyms.length + '</strong> Synonymgruppen in der Datei</li>' +
+      '<li><strong>' + inc.articles.length + '</strong> Artikel, <strong>' + inc.categories.length + '</strong> Kategorien, <strong>' + inc.synonyms.length + '</strong> Synonymgruppen, <strong>' + ist.total + '</strong> Bilder in der Datei</li>' +
+      '<li>Datenformat ' + info.schema + (info.schema < PH.model.SCHEMA ? ' (ältere App-Version) – wird beim Import automatisch umgewandelt; Bilder gelten danach als <strong>intern</strong>.' : '') + '</li>' +
+      (info.newer ? '<li class="status warn">' + icon('alert') + 'Die Datei stammt aus einer neueren App-Version. Unbekannte Angaben bleiben erhalten, werden aber hier nicht angezeigt.</li>' : '') +
+      (incInternal ? '<li>' + icon('shield') + ' Enthält <strong>interne Inhalte</strong> – nach dem Import gilt dieser Stand als intern.</li>' : '') +
       '</ul>' +
+      (PH.store.canSnapshot() ? '<p class="muted small">Vor dem Zusammenführen oder Ersetzen wird der aktuelle Stand automatisch als Wiederherstellungspunkt gesichert.</p>' : '') +
       '<div class="import-options">' +
       '<div class="import-option"><h4>Zusammenführen</h4><ul>' +
       '<li>' + plan.added.length + ' neue Artikel</li>' +
@@ -257,6 +437,41 @@
     const renderCats = () => { catHost.innerHTML = catEditor(catState); };
     renderCats();
     el.querySelector('#care').innerHTML = careHtml();
+    const snapHost = el.querySelector('#snap-list');
+    const renderSnaps = () => snapListHtml().then((h) => { if (snapHost.isConnected) snapHost.innerHTML = h; });
+    renderSnaps();
+    const slotHost = el.querySelector('#slot-list');
+    slotHost.innerHTML = slotListHtml();
+    slotHost.addEventListener('change', (e) => {
+      if (e.target.id !== 'slot-filter') return;
+      const f = e.target.value;
+      slotHost.querySelectorAll('tr[data-state]').forEach((tr) => { tr.hidden = !!f && tr.dataset.state !== f; });
+      slotHost.querySelectorAll('details.slot-group').forEach((d) => { d.hidden = !d.querySelector('tr[data-state]:not([hidden])'); });
+    });
+    snapHost.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-snap-act]');
+      if (!b) return;
+      const id = b.closest('[data-snap]').dataset.snap;
+      const a = b.dataset.snapAct;
+      if (a === 'restore') {
+        await PH.app.restoreSnapshot(id);
+      } else if (a === 'download') {
+        await PH.app.downloadSnapshot(id);
+      } else if (a === 'delete') {
+        const ok = await PH.ui.confirm({ title: 'Wiederherstellungspunkt löschen?', message: 'Der gesicherte Stand wird von diesem Gerät gelöscht.', okLabel: 'Löschen', danger: true });
+        if (!ok) return;
+        await PH.store.deleteSnapshot(id);
+        PH.ui.toast('Wiederherstellungspunkt gelöscht.', 'success');
+      }
+      renderSnaps();
+    });
+    el.querySelector('#bulk-files').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      e.target.value = '';
+      if (!files.length) return;
+      pendingBulk = planBulk(files);
+      el.querySelector('#bulk-preview').innerHTML = bulkPreviewHtml(pendingBulk);
+    });
 
     const pwaHost = el.querySelector('#pwa-status');
     if (pwaHost) {
@@ -331,8 +546,7 @@
       if (!f) return;
       try {
         const text = await PH.util.readFile(f, 'text');
-        const inc = PH.model.parseImportText(text);
-        out.innerHTML = importPreview(f, inc);
+        out.innerHTML = importPreview(f, PH.model.parseImport(text));
       } catch (err) {
         pendingImport = null;
         out.innerHTML = '<div class="callout callout-danger"><div class="callout-title">' + icon('xCircle') + 'Import nicht möglich</div><div class="callout-body"><p>' + esc(err.message) + '</p></div></div>';
@@ -348,6 +562,20 @@
         PH.app.exportForFolder();
       } else if (act === 'export-json') {
         PH.app.exportBackup();
+      } else if (act === 'export-public') {
+        PH.app.exportPublic();
+      } else if (act === 'slots-csv') {
+        const d = new Date().toISOString().slice(0, 10);
+        const r = await PH.util.saveFile('protel-hilfe-bildplaetze-' + d + '.csv', slotsCsv(), 'text/csv;charset=utf-8');
+        if (r !== 'cancelled') PH.ui.toast('Liste der Bildplätze gespeichert (intern).', 'success');
+      } else if (act === 'bulk-cancel') {
+        pendingBulk = null;
+        el.querySelector('#bulk-preview').innerHTML = '';
+      } else if (act === 'bulk-apply' && pendingBulk) {
+        b.disabled = true;
+        const plan = pendingBulk;
+        pendingBulk = null;
+        await applyBulk(plan);
       } else if (act === 'pwa-check') {
         b.disabled = true;
         const r = await PH.pwa.checkForUpdates(false);
@@ -368,6 +596,7 @@
           okLabel: 'Beispiele löschen', danger: true,
         });
         if (!ok) return;
+        await PH.app.safetySnapshot('Vor dem Löschen der Beispielartikel');
         const ids = new Set(ex.map((a) => a.id));
         const cur = PH.app.kb;
         const articles = cur.articles.filter((a) => !ids.has(a.id)).map((a) => PH.app.withoutRefs(a, ids));
@@ -419,6 +648,7 @@
         pendingImport = null;
         el.querySelector('#imp-preview').innerHTML = '';
       } else if (act === 'import-merge' && pendingImport) {
+        await PH.app.safetySnapshot('Vor dem Import (Zusammenführen): ' + pendingImport.name);
         const merged = PH.model.applyMerge(PH.app.kb, pendingImport.plan);
         const p = pendingImport.plan;
         await PH.app.commit(merged);
@@ -428,10 +658,12 @@
       } else if (act === 'import-replace' && pendingImport) {
         const ok = await PH.ui.confirm({
           title: 'Wissensdatenbank ersetzen?',
-          html: 'Alle aktuellen Artikel, Kategorien und Synonyme werden durch den Inhalt der Datei ersetzt. Dies kann nicht rückgängig gemacht werden – exportieren Sie vorher ggf. eine Sicherung.',
+          html: 'Alle aktuellen Artikel, Kategorien und Synonyme werden durch den Inhalt der Datei ersetzt. ' +
+            (PH.store.canSnapshot() ? 'Der bisherige Stand wird vorher als Wiederherstellungspunkt gesichert.' : 'Dies kann nicht rückgängig gemacht werden – exportieren Sie vorher eine Sicherung.'),
           okLabel: 'Ersetzen', danger: true,
         });
         if (!ok) return;
+        await PH.app.safetySnapshot('Vor dem Import (Ersetzen): ' + pendingImport.name);
         await PH.app.commit(pendingImport.inc);
         pendingImport = null;
         PH.ui.toast('Wissensdatenbank ersetzt.', 'success');

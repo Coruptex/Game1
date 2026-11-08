@@ -6,6 +6,8 @@
  * und eine Versionskennung (Hash über alle Dateiinhalte). Ändert sich eine Datei, ändert sich die Version,
  * und installierte Apps laden die neue Version im Hintergrund.
  *
+ * Vorher läuft immer die Veröffentlichungsprüfung (tools/pruefe-veroeffentlichung.js).
+ *
  * Aufruf:   node tools/build-pwa.js           (aktualisiert sw.js)
  *           node tools/build-pwa.js --check   (prüft nur; Exit-Code 1, wenn sw.js veraltet ist)
  *
@@ -17,6 +19,15 @@ const path = require('path');
 const crypto = require('crypto');
 
 const APP = path.join(__dirname, '..', 'protel-hilfe');
+
+// Veröffentlichungssperre: Ohne bestandene Prüfung gibt es weder Build noch Veröffentlichung
+// (keine internen Artikel, Bilder oder Bildplätze im App-Ordner, nur freigegebene Bilddateien).
+const guard = require('./pruefe-veroeffentlichung.js').check();
+if (guard.problems.length) {
+  console.error('Abgebrochen – Veröffentlichungsprüfung fehlgeschlagen (' + guard.problems.length + ' Problem(e)):');
+  guard.problems.forEach((x) => console.error('  - ' + x));
+  process.exit(1);
+}
 const SW = path.join(APP, 'sw.js');
 const EXCLUDE = new Set(['sw.js', 'LIESMICH.txt']);
 

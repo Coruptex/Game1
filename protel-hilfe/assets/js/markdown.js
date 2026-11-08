@@ -51,6 +51,8 @@
       return '\u0000' + (tokens.length - 1) + '\u0000';
     };
     s = s.replace(/`([^`]+)`/g, (_, c) => keep('<code>' + c + '</code>'));
+    // Verweis auf eine Abbildung des Artikels: {{Abb:ID}} (ID = Bildplatz, z. B. S-CIN-06, oder Bild-ID)
+    s = s.replace(/\{\{Abb:\s*([A-Za-z0-9_.-]+)\s*\}\}/g, (_, id) => keep(figRef(id)));
     s = s.replace(/\{\{([^{}]+)\}\}/g, (_, k) =>
       keep('<span class="keys">' + k.split('+').map((x) => '<kbd>' + x.trim() + '</kbd>').join('<span class="kbd-plus">+</span>') + '</span>')
     );
@@ -68,6 +70,24 @@
     });
     s = fmt(s);
     return s.replace(/\u0000(\d+)\u0000/g, (_, n) => tokens[+n]);
+  }
+
+  /* Abbildungsverweise: Beim Rendern eines Artikels setzt die Ansicht die Zuordnung ID → „Abb. 3.1“ */
+  let figCtx = null;
+  function figRef(id) {
+    const label = figCtx && figCtx.get(id);
+    if (label) return '<a href="#" class="fig-ref" data-fig="' + esc(id) + '">' + esc(label) + '</a>';
+    return '<span class="fig-ref missing" title="Abbildung „' + esc(id) + '“ ist (noch) nicht vorhanden">Abb. ' + esc(id) + '</span>';
+  }
+  /** Rendert mit einer Abbildungszuordnung (Map ID → Bezeichnung) */
+  function withFigures(map, fn) {
+    const prev = figCtx;
+    figCtx = map || null;
+    try {
+      return fn();
+    } finally {
+      figCtx = prev;
+    }
   }
 
   function isBlockStart(line, next) {
@@ -212,6 +232,7 @@
       .replace(/\|/g, ' ')
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
       .replace(/\[\[([^[\]]+)\]\]/g, '$1')
+      .replace(/\{\{Abb:\s*[^{}]+\}\}/g, 'Abb.')
       .replace(/\{\{([^{}]+)\}\}/g, '$1')
       .replace(/(\*\*|==|`)/g, '')
       .replace(/(^|\s)[*_]([^*_]+)[*_](?=\s|[.,;:!?]|$)/g, '$1$2')
@@ -220,5 +241,5 @@
       .trim();
   }
 
-  PH.md = { render, inline, toPlain, safeUrl };
+  PH.md = { render, inline, toPlain, safeUrl, withFigures };
 })();

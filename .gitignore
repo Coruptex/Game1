@@ -1,0 +1,13 @@
+# Interne Inhalte gehören in das private Repository, nie in dieses öffentliche Repository.
+# (Zusätzlicher Schutz: tools/pruefe-veroeffentlichung.js --repo und der Git-Hook in tools/git-hooks/)
+intern/
+**/intern/
+protel-hilfe-intern-*
+protel-hilfe-sicherung-*.json
+protel-hilfe-wiederherstellungspunkt-*.json
+protel-hilfe-bildplaetze-*.csv
+S-[A-Z][A-Z][A-Z]-[0-9][0-9]*
+
+# Testläufe
+tests/.tmp/
+node_modules/

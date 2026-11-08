@@ -14,7 +14,15 @@ if [ -n "$(git status --porcelain -- protel-hilfe tools)" ]; then
   echo "Bitte zuerst alle Änderungen in protel-hilfe/ committen." >&2
   exit 1
 fi
+# Veröffentlichungssperre: ganzes Repository prüfen (keine internen Inhalte, nur freigegebene Bilder)
+node tools/pruefe-veroeffentlichung.js --repo
 node tools/build-pwa.js --check
+printf 'Wirklich veröffentlichen? Die Website ist öffentlich. Nur mit Freigabe! [ja/nein] '
+read -r antwort
+if [ "$antwort" != "ja" ]; then
+  echo "Abgebrochen – nichts veröffentlicht." >&2
+  exit 1
+fi
 
 git branch -D gh-pages-deploy 2>/dev/null || true
 git subtree split --prefix protel-hilfe -b gh-pages-deploy

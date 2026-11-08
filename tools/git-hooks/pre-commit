@@ -1,0 +1,4 @@
+#!/bin/sh
+# Protel Hilfe – verhindert Commits mit internen Inhalten (Screenshots, interne Exporte, interne Artikel).
+# Einrichten (einmalig je Arbeitskopie):  git config core.hooksPath tools/git-hooks
+exec node "$(git rev-parse --show-toplevel)/tools/pruefe-veroeffentlichung.js" --staged

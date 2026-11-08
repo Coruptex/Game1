@@ -110,6 +110,69 @@
     if (backend === 'indexeddb') await idb('readwrite', (s) => s.delete(KB_KEY));
   }
 
+  /* ------------------------------------------------------- Wiederherstellungspunkte
+   * Vor riskanten Aktionen (Import, Ersetzen, Umstellung des Datenformats …) wird der bisherige
+   * Stand automatisch in der Browser-Datenbank abgelegt. Nur mit IndexedDB möglich (Platzbedarf).
+   * Gespeichert werden höchstens MAX_SNAPSHOTS nicht angeheftete Punkte; angeheftete (z. B. vor der
+   * Umstellung auf Datenformat 2) bleiben, bis sie von Hand gelöscht werden.
+   */
+  const SNAP_INDEX = NS + ':snapshots';
+  const SNAP_PREFIX = NS + ':snapshot:';
+  const MAX_SNAPSHOTS = 5;
+
+  const canSnapshot = () => backend === 'indexeddb';
+
+  async function listSnapshots() {
+    if (!canSnapshot()) return [];
+    const list = await idb('readonly', (s) => s.get(SNAP_INDEX));
+    return Array.isArray(list) ? list : [];
+  }
+
+  /**
+   * Legt einen Wiederherstellungspunkt an. info: { reason, pinned, schema, revision, articles, images, bytes }
+   * Liefert die Metadaten oder null, wenn das hier nicht möglich ist.
+   */
+  async function saveSnapshot(kb, info) {
+    if (!canSnapshot() || !kb) return null;
+    info = info || {};
+    const meta = {
+      id: 'snap-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      createdAt: new Date().toISOString(),
+      reason: String(info.reason || 'Automatische Sicherung'),
+      pinned: !!info.pinned,
+      schema: info.schema || 0,
+      revision: info.revision || '',
+      articles: info.articles || 0,
+      images: info.images || 0,
+      bytes: info.bytes || 0,
+      tag: info.tag || '',
+    };
+    let list = await listSnapshots();
+    await idb('readwrite', (s) => s.put(kb, SNAP_PREFIX + meta.id));
+    list = [meta].concat(list);
+    // älteste, nicht angeheftete Punkte entfernen
+    const loose = list.filter((x) => !x.pinned);
+    const drop = loose.slice(MAX_SNAPSHOTS);
+    if (drop.length) {
+      const ids = new Set(drop.map((x) => x.id));
+      list = list.filter((x) => !ids.has(x.id));
+      await idb('readwrite', (s) => { drop.forEach((x) => s.delete(SNAP_PREFIX + x.id)); return null; });
+    }
+    await idb('readwrite', (s) => s.put(list, SNAP_INDEX));
+    return meta;
+  }
+
+  async function getSnapshot(id) {
+    if (!canSnapshot()) return null;
+    return (await idb('readonly', (s) => s.get(SNAP_PREFIX + id))) || null;
+  }
+
+  async function deleteSnapshot(id) {
+    if (!canSnapshot()) return;
+    const list = (await listSnapshots()).filter((x) => x.id !== id);
+    await idb('readwrite', (s) => { s.delete(SNAP_PREFIX + id); return s.put(list, SNAP_INDEX); });
+  }
+
   /* ------------------------------------------------------- Einstellungen */
   const DEFAULT_PREFS = {
     theme: '',
@@ -134,6 +197,7 @@
 
   PH.store = {
     loadLocal, saveLocal, clearLocal, loadPrefs, savePrefs,
+    canSnapshot, listSnapshots, saveSnapshot, getSnapshot, deleteSnapshot, MAX_SNAPSHOTS,
     get backend() { return backend; },
     backendLabel() {
       return { indexeddb: 'Browser-Datenbank (IndexedDB)', localstorage: 'Browser-Speicher (localStorage)', memory: 'Nur Arbeitsspeicher (nicht dauerhaft!)' }[backend];

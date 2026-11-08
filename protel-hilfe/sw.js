@@ -15,8 +15,9 @@
 'use strict';
 
 // <<PWA-BUILD>> – automatisch gepflegt von tools/build-pwa.js (nicht von Hand ändern)
-const VERSION = 'db136ad42f46';
+const VERSION = 'cc707a235e8e';
 const ASSETS = [
+  'LIZENZEN.txt',
   'assets/css/app.css',
   'assets/icons/apple-touch-icon.png',
   'assets/icons/icon-192.png',

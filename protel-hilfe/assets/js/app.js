@@ -56,8 +56,45 @@
     return ok;
   }
 
+  /**
+   * Legt einen Wiederherstellungspunkt an (nur mit IndexedDB möglich).
+   * kbRaw darf auch eine ältere, nicht umgewandelte Wissensdatenbank sein.
+   * Liefert die Metadaten, false bei Fehler oder null, wenn nicht unterstützt.
+   */
+  async function snapshot(kbRaw, reason, opts) {
+    opts = opts || {};
+    if (!kbRaw || !PH.store.canSnapshot()) return null;
+    try {
+      let norm = kbRaw;
+      try { norm = PH.model.normalizeKB(PH.util.clone(kbRaw)); } catch (e) { /* Rohdaten trotzdem sichern */ }
+      const stats = norm.articles ? PH.model.imageStats(norm) : { total: 0 };
+      const meta = await PH.store.saveSnapshot(kbRaw, {
+        reason,
+        pinned: !!opts.pinned,
+        tag: opts.tag || '',
+        schema: Number(kbRaw.schemaVersion) || 1,
+        revision: (kbRaw.meta && kbRaw.meta.revision) || '',
+        articles: Array.isArray(kbRaw.articles) ? kbRaw.articles.length : 0,
+        images: stats.total || 0,
+        bytes: JSON.stringify(kbRaw).length,
+      });
+      return meta;
+    } catch (e) {
+      console.warn('[Protel Hilfe] Wiederherstellungspunkt nicht möglich:', e);
+      return false;
+    }
+  }
+
+  /** Sicherung vor einer riskanten Aktion; meldet, falls das nicht möglich war */
+  async function safetySnapshot(reason) {
+    const r = await snapshot(state.kb, reason);
+    if (r === false) PH.ui.toast('Hinweis: Der automatische Wiederherstellungspunkt konnte nicht angelegt werden (Speicher voll?). Bitte vorher eine Sicherung exportieren.', 'warning', { timeout: 9000 });
+    return r;
+  }
+
   async function adoptBundled(silent) {
     if (!state.bundled) return;
+    if (state.hasLocal) await safetySnapshot(txt('Vor dem Laden der Datei aus dem App-Ordner', 'Vor dem Laden der veröffentlichten Version'));
     setKB(state.bundled);
     state.hasLocal = false;
     state.dirty = false;
@@ -97,9 +134,15 @@
 
   /* ------------------------------------------------------------ Aktionen */
 
+  /** Kennzeichnet einen Stand mit internen Inhalten als „interner Inhaltsstand“ */
+  function withPackage(kb) {
+    if (PH.model.hasInternal(kb) && kb.meta.package !== 'intern') return Object.assign({}, kb, { meta: Object.assign({}, kb.meta, { package: 'intern' }) });
+    return kb;
+  }
+
   async function exportForFolder() {
     const rev = PH.model.newRevision();
-    const kb = Object.assign({}, state.kb, { meta: Object.assign({}, state.kb.meta, { revision: rev, updated: PH.model.now() }) });
+    const kb = withPackage(Object.assign({}, state.kb, { meta: Object.assign({}, state.kb.meta, { revision: rev, updated: PH.model.now() }) }));
     const result = await PH.util.saveFile('wissensdatenbank.js', PH.model.toJS(kb), 'text/javascript;charset=utf-8');
     if (result === 'cancelled') {
       PH.ui.toast('Export abgebrochen – es wurde nichts verändert.', 'info');
@@ -130,10 +173,14 @@
     } else {
       body = '<p>Die Datei <code>wissensdatenbank.js</code> wurde ' + how + '. Verwendung:</p>' +
         '<ul class="steps-plain">' +
-        '<li><strong>PC-Version:</strong> Datei in den Ordner <code>data</code> der App kopieren und die vorhandene Datei ersetzen.</li>' +
-        '<li><strong>Veröffentlichte Version:</strong> Datei im Hosting (z. B. GitHub-Repository) unter <code>data/wissensdatenbank.js</code> ersetzen. ' +
-        '<strong>Achtung:</strong> Die Website ist öffentlich erreichbar – nur Inhalte veröffentlichen, die öffentlich sein dürfen.</li>' +
+        '<li><strong>Interne PC-Version:</strong> Datei in den Ordner <code>data</code> der App kopieren und die vorhandene Datei ersetzen.</li>' +
+        '<li><strong>Nicht veröffentlichen:</strong> Diese Datei enthält den vollständigen, internen Stand. Für die öffentliche Website gibt es unter <em>Verwaltung</em> den eigenen Export „Öffentliche Datendatei“.</li>' +
         '<li><strong>Anderes iPhone/iPad:</strong> Dafür besser die Sicherung (.json) verwenden und auf dem anderen Gerät importieren.</li></ul>';
+    }
+    if (PH.model.hasInternal(kb)) {
+      body += '<div class="callout callout-warning"><div class="callout-title">' + icon('shield') + 'Interne Inhalte</div><div class="callout-body"><p>' +
+        'Die Datei ist als <strong>interner Inhaltsstand</strong> gekennzeichnet. Nur intern verteilen (App-Ordner auf dem internen Laufwerk, privates Repository) – ' +
+        'nicht ins öffentliche Repository und nicht auf GitHub Pages.</p></div></div>';
     }
     await PH.ui.dialog({
       title: 'Datei wurde erstellt',
@@ -146,19 +193,116 @@
     if (location.hash.startsWith('#/verwaltung')) refresh();
   }
 
-  async function exportBackup() {
+  function dateStamp() {
     const d = new Date();
-    const stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    const result = await PH.util.saveFile('protel-hilfe-sicherung-' + stamp + '.json', PH.model.toJSON(state.kb), 'application/json;charset=utf-8');
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  async function exportBackup() {
+    const kb = withPackage(state.kb);
+    const internal = kb.meta.package === 'intern';
+    const name = (internal ? 'protel-hilfe-intern-sicherung-' : 'protel-hilfe-sicherung-') + dateStamp() + '.json';
+    const result = await PH.util.saveFile(name, PH.model.toJSON(kb), 'application/json;charset=utf-8');
     if (result === 'cancelled') {
       PH.ui.toast('Sicherung abgebrochen.', 'info');
       return false;
     }
     state.prefs.lastBackup = PH.model.now();
     savePrefs();
-    PH.ui.toast(result === 'shared' ? 'Sicherung wurde weitergegeben.' : 'Sicherung wurde heruntergeladen.', 'success');
+    PH.ui.toast((result === 'shared' ? 'Sicherung wurde weitergegeben.' : 'Sicherung wurde heruntergeladen.') +
+      (internal ? ' Sie enthält interne Inhalte – nur intern ablegen.' : ''), 'success', { timeout: internal ? 6000 : 3800 });
     if (location.hash.startsWith('#/verwaltung')) refresh();
     return true;
+  }
+
+  /**
+   * Öffentliche Datendatei: nur ausdrücklich öffentliche Artikel und Bilder (Rechte geklärt),
+   * ohne Bildplätze und ohne Personennamen. Vorher wird angezeigt, was entfällt.
+   */
+  async function exportPublic() {
+    const { kb, removed } = PH.model.toPublic(state.kb);
+    const issues = PH.model.publicIssues(kb);
+    const li = (n, t) => (n ? '<li><strong>' + n + '</strong> ' + t + '</li>' : '');
+    const body =
+      '<p>Erzeugt eine <code>wissensdatenbank.js</code> nur mit Inhalten, die ausdrücklich als <strong>öffentlich</strong> gekennzeichnet sind.</p>' +
+      '<dl class="kv"><dt>Enthalten</dt><dd>' + kb.articles.length + ' Artikel · ' + PH.model.countImages(kb) + ' Bilder</dd>' +
+      '<dt>Nicht enthalten</dt><dd>' + ((removed.articles + removed.images + removed.slots + removed.names)
+        ? '<ul class="plain-list">' + li(removed.articles, 'interne Artikel') + li(removed.images, 'interne oder nicht freigegebene Bilder') +
+          li(removed.slots, 'geplante Bildplätze') + li(removed.names, 'Personennamen (Prüfung/Aufnahme)') + '</ul>'
+        : 'nichts – alle Inhalte sind öffentlich') + '</dd></dl>' +
+      (issues.length ? '<div class="callout callout-danger"><div class="callout-title">' + icon('xCircle') + 'Prüfung fehlgeschlagen</div><div class="callout-body"><ul>' +
+        issues.slice(0, 8).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div></div>' : '') +
+      '<p class="muted small">Eigene protel-Screenshots sind nie enthalten. Die Website ist öffentlich – vor dem Veröffentlichen bitte den Inhalt prüfen.</p>';
+    const ok = await PH.ui.dialog({
+      title: 'Öffentliche Datendatei exportieren',
+      body,
+      buttons: [{ label: 'Abbrechen', value: false }, { label: 'Exportieren', value: true, kind: 'primary', autofocus: true }].filter((b) => !issues.length || !b.value),
+    });
+    if (!ok) return false;
+    const result = await PH.util.saveFile('wissensdatenbank.js', PH.model.toJS(kb), 'text/javascript;charset=utf-8');
+    if (result === 'cancelled') {
+      PH.ui.toast('Export abgebrochen.', 'info');
+      return false;
+    }
+    PH.ui.toast('Öffentliche Datendatei erstellt (' + kb.articles.length + ' Artikel).', 'success');
+    return true;
+  }
+
+  /* ------------------------------------------------------------ Wiederherstellungspunkte */
+
+  async function restoreSnapshot(id) {
+    const list = await PH.store.listSnapshots();
+    const meta = list.find((x) => x.id === id);
+    const raw = meta && (await PH.store.getSnapshot(id));
+    if (!raw) {
+      PH.ui.toast('Der Wiederherstellungspunkt ist nicht mehr vorhanden.', 'error');
+      return false;
+    }
+    let kb;
+    try {
+      kb = PH.model.normalizeKB(PH.util.clone(raw));
+    } catch (e) {
+      PH.ui.toast('Der Wiederherstellungspunkt ist nicht lesbar: ' + e.message, 'error');
+      return false;
+    }
+    const ok = await PH.ui.confirm({
+      title: 'Wiederherstellen?',
+      html: 'Der Stand vom <strong>' + fmtDate(meta.createdAt, true) + '</strong> („' + esc(meta.reason) + '“, ' + kb.articles.length + ' Artikel) ersetzt die aktuelle Wissensdatenbank. ' +
+        'Der aktuelle Stand wird vorher selbst als Wiederherstellungspunkt gesichert.',
+      okLabel: 'Wiederherstellen',
+    });
+    if (!ok) return false;
+    await safetySnapshot('Vor dem Wiederherstellen eines älteren Stands');
+    await commit(kb);
+    PH.ui.toast('Stand vom ' + fmtDate(meta.createdAt, true) + ' wiederhergestellt.', 'success');
+    refresh();
+    return true;
+  }
+
+  async function downloadSnapshot(id) {
+    const list = await PH.store.listSnapshots();
+    const meta = list.find((x) => x.id === id);
+    const raw = meta && (await PH.store.getSnapshot(id));
+    if (!raw) {
+      PH.ui.toast('Der Wiederherstellungspunkt ist nicht mehr vorhanden.', 'error');
+      return;
+    }
+    // Rohdaten unverändert (auch Datenformat 1) – lassen sich wieder importieren
+    const name = 'protel-hilfe-wiederherstellungspunkt-' + meta.createdAt.slice(0, 10) + '.json';
+    const result = await PH.util.saveFile(name, JSON.stringify(raw, null, 1), 'application/json;charset=utf-8');
+    if (result !== 'cancelled') PH.ui.toast('Wiederherstellungspunkt gespeichert.', 'success');
+  }
+
+  /** Neue Inhalte der mitgelieferten/veröffentlichten Version übernehmen, ohne eigene zu verlieren */
+  async function mergeBundled() {
+    if (!state.bundled) return;
+    await safetySnapshot(txt('Vor dem Zusammenführen mit der Datei aus dem App-Ordner', 'Vor dem Zusammenführen mit der veröffentlichten Version'));
+    const plan = PH.model.planMerge(state.kb, state.bundled);
+    const merged = PH.model.applyMerge(state.kb, plan);
+    state.baseRevision = state.bundled.meta.revision;
+    await commit(merged);
+    PH.ui.toast('Zusammengeführt: ' + plan.added.length + ' neue, ' + plan.updated.length + ' aktualisierte Artikel. Ihre eigenen Inhalte sind erhalten.', 'success', { timeout: 6000 });
+    refresh();
   }
 
   async function resetToBundled() {
@@ -166,10 +310,13 @@
       PH.ui.toast(txt('Die Datei data/wissensdatenbank.js ist nicht verfügbar.', 'Die veröffentlichte Wissensdatenbank ist nicht verfügbar.'), 'error');
       return;
     }
+    const internal = PH.model.hasInternal(state.kb) && !PH.model.hasInternal(state.bundled);
     const ok = await PH.ui.confirm({
       title: 'Lokale Änderungen verwerfen?',
       html: 'Alle ' + txt('in diesem Browser', 'auf diesem Gerät') + ' gespeicherten Änderungen werden verworfen und der Stand ' +
-        txt('aus <code>data/wissensdatenbank.js</code>', 'der veröffentlichten Version') + ' (' + fmtDate(state.bundled.meta.updated, true) + ') geladen.',
+        txt('aus <code>data/wissensdatenbank.js</code>', 'der veröffentlichten Version') + ' (' + fmtDate(state.bundled.meta.updated, true) + ') geladen.' +
+        (internal ? '<br><strong>Achtung:</strong> Ihr Stand enthält interne Inhalte, die dort nicht enthalten sind.' : '') +
+        (PH.store.canSnapshot() ? '<br>Der bisherige Stand wird vorher als Wiederherstellungspunkt gesichert (Verwaltung → Wiederherstellungspunkte).' : ''),
       okLabel: 'Verwerfen und laden',
       danger: true,
     });
@@ -555,34 +702,223 @@
 
   /* ------------------------------------------------------------ Bildansicht */
 
+  /**
+   * Bildansicht mit Zoom und Verschieben (Maus, Tastatur, Touch/Pinch) und Blättern
+   * durch alle Bilder der aktuellen Seite. Markierungen bleiben lesbar (Gegenskalierung).
+   */
   function openLightbox(frame) {
+    const scope = frame.closest('.view') || document;
+    const frames = Array.from(scope.querySelectorAll('.shot-frame[data-zoom]')).filter((f) => !f.classList.contains('broken'));
+    let index = Math.max(0, frames.indexOf(frame));
+    const tb = (act, ic, label) => '<button type="button" class="lb-btn" data-lb="' + act + '" title="' + label + '" aria-label="' + label + '">' + icon(ic) + '</button>';
     const ov = document.createElement('div');
     ov.className = 'lightbox';
     ov.setAttribute('role', 'dialog');
     ov.setAttribute('aria-modal', 'true');
     ov.setAttribute('aria-label', 'Bildansicht');
-    ov.innerHTML = '<button type="button" class="lightbox-close icon-btn" aria-label="Schließen (Esc)">' + icon('x') + '</button><div class="lightbox-stage"></div>';
-    const stage = ov.querySelector('.lightbox-stage');
-    const copy = frame.cloneNode(true);
-    ['data-zoom', 'tabindex', 'role', 'aria-label'].forEach((a) => copy.removeAttribute(a));
-    stage.appendChild(copy);
-    const fig = frame.closest('figure');
-    const legend = fig && fig.querySelector('.marker-legend');
-    if (legend) stage.appendChild(legend.cloneNode(true));
-    document.body.appendChild(ov);
-    document.body.classList.add('no-scroll');
-    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    ov.innerHTML =
+      '<div class="lb-bar">' +
+      '<div class="lb-title"><span class="lb-num"></span><span class="lb-cap"></span></div>' +
+      '<div class="lb-tools">' +
+      '<span class="lb-count" aria-live="polite"></span>' +
+      tb('out', 'minus', 'Verkleinern (−)') + '<span class="lb-zoom" aria-live="polite">100 %</span>' + tb('in', 'plus', 'Vergrößern (+)') +
+      tb('fit', 'fit', 'Einpassen (0)') + tb('one', 'actual', 'Originalgröße (1)') + tb('close', 'x', 'Schließen (Esc)') +
+      '</div></div>' +
+      '<div class="lb-stage"><div class="lb-canvas"></div></div>' +
+      '<button type="button" class="lb-nav lb-prev" data-lb="prev" aria-label="Vorheriges Bild (←)">' + icon('chevronLeft') + '</button>' +
+      '<button type="button" class="lb-nav lb-next" data-lb="next" aria-label="Nächstes Bild (→)">' + icon('chevronRight') + '</button>' +
+      '<div class="lb-legend"></div>' +
+      '<p class="lb-help no-print">' + (PH.env.isTouch ? 'Zwei Finger zum Zoomen · doppelt tippen · wischen zum Blättern' : 'Mausrad zum Zoomen · ziehen zum Verschieben · Doppelklick · ← → blättern') + '</p>';
+    const stage = ov.querySelector('.lb-stage');
+    const canvas = ov.querySelector('.lb-canvas');
+    const zoomLabel = ov.querySelector('.lb-zoom');
+    const v = { s: 1, tx: 0, ty: 0, fit: 1, w: 1, h: 1, ready: false };
+
+    const maxS = () => Math.max(v.fit * 6, 3);
+    const apply = () => {
+      const r2 = (n) => Math.round(n * 100) / 100;
+      canvas.style.transform = 'translate(' + r2(v.tx) + 'px,' + r2(v.ty) + 'px) scale(' + Math.round(v.s * 10000) / 10000 + ')';
+      canvas.style.setProperty('--inv', String(1 / v.s));
+      zoomLabel.textContent = Math.round(v.s * 100) + ' %';
+      ov.classList.toggle('is-zoomed', v.s > v.fit * 1.02);
+    };
+    const clamp = () => {
+      const sw = stage.clientWidth;
+      const sh = stage.clientHeight;
+      const cw = v.w * v.s;
+      const ch = v.h * v.s;
+      v.tx = cw <= sw ? (sw - cw) / 2 : Math.min(0, Math.max(sw - cw, v.tx));
+      v.ty = ch <= sh ? (sh - ch) / 2 : Math.min(0, Math.max(sh - ch, v.ty));
+    };
+    const zoomTo = (s, cx, cy) => {
+      s = Math.min(maxS(), Math.max(v.fit, s));
+      if (cx == null) { cx = stage.clientWidth / 2; cy = stage.clientHeight / 2; }
+      v.tx = cx - (cx - v.tx) * (s / v.s);
+      v.ty = cy - (cy - v.ty) * (s / v.s);
+      v.s = s;
+      clamp();
+      apply();
+    };
+    const fitView = () => {
+      const sw = stage.clientWidth || 1;
+      const sh = stage.clientHeight || 1;
+      const isSvg = /\.svg(\?|$)|^data:image\/svg/i.test(canvas.dataset.src || '');
+      v.fit = Math.min(sw / v.w, sh / v.h, isSvg ? 2 : 1);
+      v.s = v.fit;
+      clamp();
+      apply();
+    };
+
+    const show = (i) => {
+      index = (i + frames.length) % frames.length;
+      const f = frames[index];
+      const img = f.querySelector('img');
+      const fig = f.closest('figure');
+      canvas.innerHTML = '';
+      const copy = document.createElement('img');
+      copy.src = img.currentSrc || img.src;
+      copy.alt = img.alt;
+      copy.draggable = false;
+      canvas.dataset.src = img.getAttribute('src') || '';
+      canvas.appendChild(copy);
+      f.querySelectorAll('.marker').forEach((m) => canvas.appendChild(m.cloneNode(true)));
+      ov.querySelector('.lb-num').textContent = fig && fig.querySelector('.fig-num') ? fig.querySelector('.fig-num').textContent : '';
+      ov.querySelector('.lb-cap').textContent = fig && fig.querySelector('.fig-text') ? fig.querySelector('.fig-text').textContent : img.alt;
+      ov.querySelector('.lb-count').textContent = frames.length > 1 ? (index + 1) + ' / ' + frames.length : '';
+      ov.querySelectorAll('.lb-nav').forEach((b) => { b.hidden = frames.length < 2; });
+      const legend = fig && fig.querySelector('.marker-legend');
+      const lh = ov.querySelector('.lb-legend');
+      lh.innerHTML = legend ? legend.outerHTML : '';
+      lh.hidden = !legend;
+      const init = () => {
+        v.w = copy.naturalWidth || img.naturalWidth || img.clientWidth || 800;
+        v.h = copy.naturalHeight || img.naturalHeight || img.clientHeight || 600;
+        canvas.style.width = v.w + 'px';
+        canvas.style.height = v.h + 'px';
+        v.ready = true;
+        fitView();
+      };
+      if (copy.complete && copy.naturalWidth) init();
+      else { copy.onload = init; copy.onerror = init; }
+    };
+
+    // Zeiger: Verschieben, Zwei-Finger-Zoom, Wischen, Doppeltippen
+    const pts = new Map();
+    let gesture = null;
+    let lastTap = { t: 0, x: 0, y: 0 };
+    const rel = (e) => {
+      const r = stage.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+    const toggleZoom = (p) => {
+      if (v.s > v.fit * 1.05) fitView();
+      else zoomTo(Math.min(maxS(), Math.max(v.fit * 2.5, 1)), p.x, p.y);
+    };
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.button !== undefined && e.button > 0) return;
+      try { stage.setPointerCapture(e.pointerId); } catch (err) { /* z. B. bereits beendeter Zeiger */ }
+      pts.set(e.pointerId, rel(e));
+      if (pts.size === 2) {
+        const [a, b] = Array.from(pts.values());
+        gesture = { kind: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, s0: v.s };
+      } else if (pts.size === 1) {
+        const p = rel(e);
+        gesture = { kind: 'pan', x0: p.x, y0: p.y, tx0: v.tx, ty0: v.ty, t0: Date.now(), moved: false };
+      }
+    });
+    stage.addEventListener('pointermove', (e) => {
+      if (!pts.has(e.pointerId) || !gesture) return;
+      pts.set(e.pointerId, rel(e));
+      if (gesture.kind === 'pinch' && pts.size >= 2) {
+        const [a, b] = Array.from(pts.values());
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        zoomTo(gesture.s0 * (d / gesture.d0), (a.x + b.x) / 2, (a.y + b.y) / 2);
+      } else if (gesture.kind === 'pan') {
+        const p = rel(e);
+        const dx = p.x - gesture.x0;
+        const dy = p.y - gesture.y0;
+        if (Math.abs(dx) + Math.abs(dy) > 4) gesture.moved = true;
+        if (v.s > v.fit * 1.02) {
+          v.tx = gesture.tx0 + dx;
+          v.ty = gesture.ty0 + dy;
+          clamp();
+          apply();
+        }
+      }
+    });
+    const endPointer = (e) => {
+      if (!pts.has(e.pointerId)) return;
+      const p = rel(e);
+      pts.delete(e.pointerId);
+      if (gesture && gesture.kind === 'pan' && !pts.size) {
+        const dx = p.x - gesture.x0;
+        const dy = p.y - gesture.y0;
+        if (v.s <= v.fit * 1.02 && frames.length > 1 && Math.abs(dx) > 60 && Math.abs(dy) < 60 && Date.now() - gesture.t0 < 700) {
+          show(index + (dx < 0 ? 1 : -1));
+        } else if (!gesture.moved && e.pointerType === 'touch') {
+          if (Date.now() - lastTap.t < 320 && Math.hypot(p.x - lastTap.x, p.y - lastTap.y) < 30) {
+            toggleZoom(p);
+            lastTap = { t: 0, x: 0, y: 0 };
+          } else lastTap = { t: Date.now(), x: p.x, y: p.y };
+        }
+      }
+      gesture = pts.size === 1 ? { kind: 'pan', x0: Array.from(pts.values())[0].x, y0: Array.from(pts.values())[0].y, tx0: v.tx, ty0: v.ty, t0: Date.now(), moved: true } : pts.size ? gesture : null;
+    };
+    stage.addEventListener('pointerup', endPointer);
+    stage.addEventListener('pointercancel', endPointer);
+    stage.addEventListener('dblclick', (e) => toggleZoom(rel(e)));
+    stage.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const p = rel(e);
+      zoomTo(v.s * Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0018)), p.x, p.y);
+    }, { passive: false });
+
     const close = () => {
       ov.remove();
       document.body.classList.remove('no-scroll');
       document.removeEventListener('keydown', onKey, true);
-      if (frame.isConnected) frame.focus({ preventScroll: true });
+      window.removeEventListener('resize', onResize);
+      const f = frames[index] && frames[index].isConnected ? frames[index] : frame;
+      if (f.isConnected) f.focus({ preventScroll: true });
+    };
+    const act = (a) => {
+      if (a === 'close') close();
+      else if (a === 'in') zoomTo(v.s * 1.4);
+      else if (a === 'out') zoomTo(v.s / 1.4);
+      else if (a === 'fit') fitView();
+      else if (a === 'one') zoomTo(1);
+      else if (a === 'prev') show(index - 1);
+      else if (a === 'next') show(index + 1);
     };
     ov.addEventListener('click', (e) => {
-      if (e.target.closest('.lightbox-close') || !e.target.closest('.shot-frame, .marker-legend')) close();
+      const b = e.target.closest('[data-lb]');
+      if (b) { act(b.dataset.lb); return; }
+      if (e.target === ov || e.target.classList.contains('lb-legend') || e.target.classList.contains('lb-help')) close();
     });
+    const onKey = (e) => {
+      const k = e.key;
+      if (k === 'Escape') { e.preventDefault(); close(); }
+      else if (k === '+' || k === '=') { e.preventDefault(); act('in'); }
+      else if (k === '-' || k === '_') { e.preventDefault(); act('out'); }
+      else if (k === '0') { e.preventDefault(); act('fit'); }
+      else if (k === '1') { e.preventDefault(); act('one'); }
+      else if (k === 'ArrowLeft' && frames.length > 1) { e.preventDefault(); act('prev'); }
+      else if (k === 'ArrowRight' && frames.length > 1) { e.preventDefault(); act('next'); }
+      else if (k === 'Tab') {
+        const items = Array.from(ov.querySelectorAll('button:not([hidden])'));
+        const i = items.indexOf(document.activeElement);
+        e.preventDefault();
+        items[(i + (e.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+      }
+    };
+    const onResize = PH.util.debounce(() => { if (v.ready) { const atFit = v.s <= v.fit * 1.02; if (atFit) fitView(); else { clamp(); apply(); } } }, 80);
+
+    document.body.appendChild(ov);
+    document.body.classList.add('no-scroll');
     document.addEventListener('keydown', onKey, true);
-    ov.querySelector('.lightbox-close').focus();
+    window.addEventListener('resize', onResize);
+    show(index);
+    ov.querySelector('[data-lb="close"]').focus();
   }
 
   /* ------------------------------------------------------------ Routing */
@@ -615,7 +951,7 @@
         case 'alle': v = PH.views.all(query); break;
         case 'favoriten': v = PH.views.favorites(); break;
         case 'suche': v = PH.views.search(query); break;
-        case 'bearbeiten': v = PH.editor.view({ id: parts[1] }); break;
+        case 'bearbeiten': v = PH.editor.view({ id: parts[1], step: query.schritt }); break;
         case 'neu': v = PH.editor.view({ type: parts[1], categoryId: query.kat }); break;
         case 'verwaltung': v = PH.admin.view(query); break;
         case 'hilfe': v = PH.views.help(); break;
@@ -686,27 +1022,51 @@
 
   async function showConflict(localKB) {
     const b = state.bundled;
+    // Interner Inhaltsstand auf dem Gerät, mitgeliefert/veröffentlicht nur Beispiel- bzw. öffentliche Daten:
+    // dann nie das Ersetzen vorschlagen, sondern Behalten bzw. Zusammenführen.
+    const protect = PH.model.hasInternal(localKB) && !PH.model.hasInternal(b);
     const choice = await PH.ui.dialog({
       title: txt('Andere Version im App-Ordner gefunden', 'Neue veröffentlichte Version gefunden'),
       body:
         txt('<p>Die Datei <code>data/wissensdatenbank.js</code> im App-Ordner unterscheidet sich von der Version, die in diesem Browser gespeichert ist.</p>',
           '<p>Die veröffentlichte Wissensdatenbank unterscheidet sich von der Version mit Ihren Änderungen, die auf diesem Gerät gespeichert ist.</p>') +
         '<dl class="kv">' +
-        '<dt>' + txt('App-Ordner', 'Veröffentlicht') + '</dt><dd>Stand ' + fmtDate(b.meta.updated, true) + ' · ' + b.articles.length + ' Artikel</dd>' +
+        '<dt>' + txt('App-Ordner', 'Veröffentlicht') + '</dt><dd>Stand ' + fmtDate(b.meta.updated, true) + ' · ' + b.articles.length + ' Artikel' +
+        (b.meta.package ? ' · ' + esc(PH.model.PACKAGES[b.meta.package]) : '') + '</dd>' +
         '<dt>' + txt('Dieser PC', 'Dieses Gerät') + '</dt><dd>Stand ' + fmtDate(localKB.meta.updated, true) + ' · ' + localKB.articles.length + ' Artikel' +
+        (PH.model.hasInternal(localKB) ? ' · <strong>interner Inhaltsstand</strong>' : '') +
         (state.dirty ? ' · <strong>mit eigenen Änderungen</strong>' : ' · bereits exportiert, aber im Ordner noch nicht ersetzt') + '</dd>' +
-        '</dl><p>Welche Version möchten Sie verwenden? Tipp: Vorher eine Sicherung erstellen – dann geht nichts verloren.</p>',
+        '</dl>' +
+        (protect
+          ? '<div class="callout callout-warning"><div class="callout-title">' + icon('shield') + 'Interne Inhalte schützen</div><div class="callout-body"><p>' +
+            'Auf diesem ' + txt('PC', 'Gerät') + ' liegen interne Inhalte, die in der ' + txt('Datei im App-Ordner', 'veröffentlichten Version') + ' nicht enthalten sind. ' +
+            'Empfohlen: <strong>Zusammenführen</strong> – neue ' + txt('Inhalte', 'öffentliche Inhalte') + ' kommen hinzu, Ihre internen bleiben erhalten.</p></div></div>'
+          : '<p>Welche Version möchten Sie verwenden? Tipp: Vorher eine Sicherung erstellen – dann geht nichts verloren.</p>') +
+        (PH.store.canSnapshot() ? '<p class="muted small">Vor dem Zusammenführen oder Ersetzen wird der bisherige Stand automatisch als Wiederherstellungspunkt gesichert.</p>' : ''),
       buttons: [
         { label: 'Sicherung erstellen', value: 'backup', kind: 'ghost', icon: 'download' },
-        { label: txt('Lokale Version behalten', 'Meine Version behalten'), value: 'local' },
-        { label: txt('Version aus App-Ordner laden', 'Veröffentlichte Version laden'), value: 'bundled', kind: 'primary' },
+        { label: txt('Lokale Version behalten', 'Meine Version behalten'), value: 'local', kind: protect ? 'secondary' : 'secondary' },
+        { label: 'Zusammenführen', value: 'merge', kind: protect ? 'primary' : 'secondary' },
+        { label: txt('Version aus App-Ordner laden', 'Veröffentlichte Version laden'), value: 'bundled', kind: protect ? 'danger' : 'primary' },
       ],
     });
     if (choice === 'backup') {
       await exportBackup();
       return showConflict(localKB);
     }
-    if (choice === 'bundled') return adoptBundled();
+    if (choice === 'merge') return mergeBundled();
+    if (choice === 'bundled') {
+      if (protect) {
+        const sure = await PH.ui.confirm({
+          title: 'Interne Inhalte ersetzen?',
+          html: 'Ihre internen Inhalte werden durch ' + txt('die Datei aus dem App-Ordner', 'die veröffentlichte Version') + ' ersetzt.' +
+            (PH.store.canSnapshot() ? ' Sie bleiben als Wiederherstellungspunkt erhalten.' : ' <strong>Bitte vorher eine Sicherung exportieren.</strong>'),
+          okLabel: 'Trotzdem ersetzen', danger: true,
+        });
+        if (!sure) return showConflict(localKB);
+      }
+      return adoptBundled();
+    }
     if (choice === 'local') {
       state.baseRevision = b.meta.revision;
       state.dirty = true;
@@ -844,25 +1204,38 @@
       console.warn(e);
     }
     let conflictKB = null;
+    let migration = null;
     if (local && local.kb) {
       let localKB = null;
       try {
-        localKB = PH.model.normalizeKB(local.kb);
+        localKB = PH.model.normalizeKB(PH.util.clone(local.kb));
       } catch (e) {
         console.warn('Lokale Kopie unlesbar', e);
+        // Unlesbare Kopie nicht stillschweigend überschreiben: als Wiederherstellungspunkt aufheben
+        await snapshot(local.kb, 'Unlesbare lokale Kopie beim Start', { pinned: true });
       }
       if (localKB) {
         state.hasLocal = true;
         state.dirty = !!local.dirty;
         state.baseRevision = local.baseRevision || '';
         setKB(localKB);
+        // Umstellung von Datenformat 1 auf 2: alten Stand unverändert sichern, dann im neuen Format speichern
+        const oldSchema = Number(local.kb.schemaVersion) || 1;
+        if (oldSchema < PH.model.SCHEMA) {
+          migration = await snapshot(local.kb, 'Vor der Umstellung auf Datenformat ' + PH.model.SCHEMA + ' (automatisch)', { pinned: true, tag: 'migration' });
+          if (migration || !PH.store.canSnapshot()) await persist();
+        }
         if (state.bundled && state.bundled.meta.revision !== state.baseRevision) {
           if (state.bundled.meta.revision === localKB.meta.revision) {
             // Die mitgelieferte Datei ist ein Export genau dieses Stands → kein Konflikt
             state.baseRevision = state.bundled.meta.revision;
             if (localKB.meta.updated <= state.bundled.meta.updated) state.dirty = false;
             await persist();
+          } else if (PH.model.hasInternal(localKB) && !PH.model.hasInternal(state.bundled)) {
+            // Interne Inhalte nie stillschweigend durch Beispiel-/öffentliche Daten ersetzen
+            conflictKB = localKB;
           } else if (!state.dirty && state.bundled.meta.updated >= localKB.meta.updated) {
+            await snapshot(localKB, txt('Vor dem automatischen Laden der neuen Datei aus dem App-Ordner', 'Vor dem automatischen Laden der neuen veröffentlichten Version'));
             setKB(state.bundled);
             state.hasLocal = false;
             state.baseRevision = state.bundled.meta.revision;
@@ -893,6 +1266,13 @@
 
     if (state.bundledError && !state.hasLocal) PH.ui.toast(state.bundledError, 'error', { timeout: 12000 });
     if (PH.store.backend === 'memory') PH.ui.toast('Hinweis: Dieser Browser erlaubt keine dauerhafte Speicherung. Änderungen bitte exportieren.', 'warning', { timeout: 12000 });
+    if (migration) {
+      setTimeout(() => PH.ui.toast('Die App wurde aktualisiert. Ihr bisheriger Stand ist zusätzlich als Wiederherstellungspunkt gesichert (Verwaltung).', 'info', { timeout: 8000 }), 600);
+    } else if (migration === false) {
+      setTimeout(() => PH.ui.toast('Die App wurde aktualisiert, die automatische Sicherung des alten Stands war aber nicht möglich. Bitte jetzt eine Sicherung exportieren.', 'warning', {
+        timeout: 15000, action: { label: 'Jetzt sichern', onClick: exportBackup },
+      }), 600);
+    }
     if (conflictKB) showConflict(conflictKB);
     else remindBackup();
   }
@@ -929,11 +1309,11 @@
       bundledUpdated: state.bundled ? state.bundled.meta.updated : '',
     }),
     isFavorite, toggleFavorite, trackView, logSearch,
-    commit, refresh, withoutRefs,
+    commit, refresh, withoutRefs, snapshot, safetySnapshot, restoreSnapshot, downloadSnapshot, mergeBundled,
     setLeaveGuard: (fn) => { state.leaveGuard = fn || null; },
     hasUnsavedChanges: () => !!(state.leaveGuard && state.leaveGuard()),
-    openSearch,
-    deleteArticle, duplicateArticle, exportForFolder, exportBackup, resetToBundled, openNewArticleDialog,
+    openSearch, openLightbox,
+    deleteArticle, duplicateArticle, exportForFolder, exportBackup, exportPublic, resetToBundled, openNewArticleDialog,
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

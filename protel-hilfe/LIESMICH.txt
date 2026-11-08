@@ -35,5 +35,18 @@ IPHONE / IPAD (OFFLINE-APP)
   Sicherung: Verwaltung -> "Sicherung exportieren" (Teilen-Menü, z. B. "In Dateien sichern").
   Die Website ist öffentlich: keine vertraulichen Inhalte veröffentlichen.
 
+SICHERN UND WIEDERHERSTELLEN
+  Vor Import, Ersetzen, Laden einer neuen Version und beim ersten Start nach einem
+  Update legt die App automatisch einen Wiederherstellungspunkt an
+  (Verwaltung -> Wiederherstellungspunkte). Ältere Sicherungen bleiben importierbar.
+
+INTERN UND ÖFFENTLICH
+  Neue Bilder und Artikel sind "intern". Eigene protel-Screenshots bleiben immer intern.
+  "Für App-Ordner exportieren" enthält alle (internen) Inhalte: nur intern verteilen.
+  Für die öffentliche Website gibt es den eigenen Export "Öffentliche Datendatei".
+
 DATENSCHUTZ
   Keine Gästedaten, Passwörter oder Kartendaten in Artikeln/Screenshots speichern.
+
+LIZENZEN
+  Hinweise zu verwendeten Symbolen: Datei "LIZENZEN.txt".

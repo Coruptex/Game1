@@ -19,6 +19,67 @@
     return a && a.example ? '<span class="badge badge-example" title="Beispielinhalt – kein geprüfter Ablauf">Beispiel</span>' : '';
   }
 
+  /** Prüfstatus als Kennzeichen (Entwurf, In Prüfung, Geprüft, Veraltet) */
+  function reviewBadge(a) {
+    const st = a && a.review && a.review.status;
+    if (!st) return '';
+    const r = PH.model.REVIEW_STATUS[st];
+    return '<span class="badge badge-review review-' + esc(st) + '" title="' + esc(r.label) + '">' + esc(r.short) + '</span>';
+  }
+
+  function figMeta(img) {
+    const parts = [];
+    if (img.slot) parts.push(img.slot);
+    parts.push('Herkunft: ' + PH.model.ORIGINS[img.origin].label);
+    if (img.captured) parts.push('aufgenommen ' + fmtDate(img.captured));
+    if (img.pmsVersion) parts.push('Version ' + img.pmsVersion);
+    if (img.status) parts.push(PH.model.IMAGE_STATUS[img.status].label);
+    return parts.join(' · ');
+  }
+
+  /** Abbildung mit Nummer, Bildunterschrift, Markierungen und (im Bearbeitungsmodus) Rechtekennzeichnung */
+  function figureHtml(img, opts) {
+    opts = opts || {};
+    const zoom = opts.zoom !== false;
+    const markers = (img.markers || []).map((m, j) =>
+      '<span class="marker" style="left:' + m.x + '%;top:' + m.y + '%"' + (m.label ? ' title="' + esc(m.label) + '"' : '') + '>' + (j + 1) + '</span>'
+    ).join('');
+    const legend = (img.markers || []).some((m) => m.label)
+      ? '<ol class="marker-legend">' + img.markers.map((m, j) => '<li><span class="marker-dot">' + (j + 1) + '</span><span>' + esc(m.label || '–') + '</span></li>').join('') + '</ol>'
+      : '';
+    const caption = img.caption || img.alt || '';
+    const rights = img.rights === 'oeffentlich' ? 'oeffentlich' : 'intern';
+    return '<figure class="shot" data-fig-id="' + esc(img.id || '') + '"' + (img.slot ? ' data-slot="' + esc(img.slot) + '"' : '') + '>' +
+      '<div class="shot-frame"' + (zoom ? ' data-zoom tabindex="0" role="button" aria-label="' + esc((opts.label ? opts.label + ' ' : '') + 'vergrößern') + '"' : '') +
+      ' data-src-label="' + esc(truncate(img.src.startsWith('data:') ? 'eingebettetes Bild' : img.src, 80)) + '">' +
+      '<img src="' + esc(img.src) + '" alt="' + esc(img.alt || caption || 'Screenshot') + '" loading="lazy" decoding="async">' + markers + '</div>' +
+      '<figcaption>' + (opts.label ? '<span class="fig-num">' + esc(opts.label) + '</span>' : '') +
+      '<span class="fig-text">' + esc(caption) + '</span>' +
+      (zoom ? '<span class="muted no-print fig-hint">Klicken zum Vergrößern</span>' : '') +
+      '<span class="fig-admin edit-only"><span class="rights-badge rights-' + rights + '" title="' + esc(PH.model.RIGHTS[rights].desc) + '">' + (rights === 'oeffentlich' ? 'öffentlich' : 'intern') + '</span>' +
+      '<span class="fig-meta">' + esc(figMeta(img)) + '</span></span>' +
+      '</figcaption>' + legend + '</figure>';
+  }
+
+  /** Bisherige Schnittstelle (ein Bild ohne Nummer) */
+  function shotHtml(img, opts) {
+    return figureHtml(PH.model.normalizeImage(img) || img, opts);
+  }
+
+  /** Noch fehlender, geplanter Screenshot – nur im Bearbeitungsmodus sichtbar */
+  function slotPlaceholder(a, i, sl) {
+    const need = PH.model.SLOT_NEED[sl.need] || PH.model.SLOT_NEED.optional;
+    return '<div class="slot-ph edit-only no-print" data-slot="' + esc(sl.id) + '">' +
+      '<span class="slot-ph-icon">' + icon('slot') + '</span>' +
+      '<div class="slot-ph-text"><div><strong>Bildplatz ' + esc(sl.id) + '</strong> <span class="slot-need need-' + esc(sl.need) + '">' + esc(need.label) + '</span></div>' +
+      (sl.title ? '<div>' + esc(sl.title) + '</div>' : '') +
+      '<div class="muted small">' + (sl.area ? 'Bereich: ' + esc(sl.area) + ' · ' : '') + (sl.test ? 'Aufnahme bei ' + esc(sl.test) + ' · ' : '') + 'noch kein Bild</div>' +
+      (sl.instruction ? '<details class="slot-instr"><summary>Aufnahmeanweisung</summary><div class="md">' + md(sl.instruction) + '</div></details>' : '') +
+      '</div>' +
+      (a.id ? '<a class="btn btn-sm btn-secondary" href="#/bearbeiten/' + encodeURIComponent(a.id) + '?schritt=' + (i + 1) + '">' + icon('image') + 'Bild einfügen</a>' : '') +
+      '</div>';
+  }
+
   function catBadge(cat) {
     if (!cat) return '';
     return '<a class="badge badge-cat color-' + esc(cat.color) + '" href="#/kategorie/' + encodeURIComponent(cat.id) + '">' +
@@ -36,7 +97,7 @@
     return '<a class="card article-card" href="' + articleHref(a) + '">' +
       '<span class="type-icon type-' + esc(a.type) + '">' + icon(t.icon) + '</span>' +
       '<span class="article-card-body">' +
-      '<span class="article-card-title">' + esc(a.title) + exampleBadge(a) + '</span>' +
+      '<span class="article-card-title">' + esc(a.title) + exampleBadge(a) + reviewBadge(a) + '</span>' +
       (a.summary && !opts.compact ? '<span class="article-card-summary">' + esc(truncate(a.summary, 140)) + '</span>' : '') +
       '<span class="article-card-meta">' + esc(t.label) + (cat && !opts.hideCat ? ' · ' + esc(cat.name) : '') +
       (opts.meta ? ' · ' + opts.meta : '') + '</span>' +
@@ -59,22 +120,6 @@
   function newArticleButton(categoryId, label) {
     return '<button type="button" class="btn btn-primary btn-sm edit-only" data-global="new-article"' +
       (categoryId ? ' data-cat="' + esc(categoryId) + '"' : '') + '>' + icon('plus') + esc(label || 'Neuer Artikel') + '</button>';
-  }
-
-  function shotHtml(img, opts) {
-    opts = opts || {};
-    const zoom = opts.zoom !== false;
-    const markers = (img.markers || []).map((m, j) =>
-      '<span class="marker" style="left:' + m.x + '%;top:' + m.y + '%"' + (m.label ? ' title="' + esc(m.label) + '"' : '') + '>' + (j + 1) + '</span>'
-    ).join('');
-    const legend = (img.markers || []).some((m) => m.label)
-      ? '<ol class="marker-legend">' + img.markers.map((m, j) => '<li><span class="marker-dot">' + (j + 1) + '</span><span>' + esc(m.label || '–') + '</span></li>').join('') + '</ol>'
-      : '';
-    return '<figure class="shot">' +
-      '<div class="shot-frame"' + (zoom ? ' data-zoom tabindex="0" role="button" aria-label="Bild vergrößern"' : '') + ' data-src-label="' + esc(truncate(img.src.startsWith('data:') ? 'eingebettetes Bild' : img.src, 80)) + '">' +
-      '<img src="' + esc(img.src) + '" alt="' + esc(img.alt || 'Screenshot') + '" loading="lazy" decoding="async">' + markers + '</div>' +
-      (img.alt || zoom ? '<figcaption>' + esc(img.alt) + (zoom ? '<span class="muted no-print">' + (img.alt ? ' · ' : '') + 'Klicken zum Vergrößern</span>' : '') + '</figcaption>' : '') +
-      legend + '</figure>';
   }
 
   function sortByTitle(list) {
@@ -265,6 +310,9 @@
       PH.model.TYPE_ORDER.map((t) => '<option value="' + t + '"' + (query.typ === t ? ' selected' : '') + '>' + esc(T()[t].plural) + '</option>').join('') + '</select></label>' +
       '<label class="field-inline"><span class="sr-only">Kategorie</span><select class="input" id="f-cat"><option value="">Alle Kategorien</option>' +
       kb.categories.map((c) => '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>').join('') + '<option value="_ohne">Ohne Kategorie</option></select></label>' +
+      '<label class="field-inline"><span class="sr-only">Prüfstatus</span><select class="input" id="f-review"><option value="">Alle Prüfstände</option>' +
+      Object.keys(PH.model.REVIEW_STATUS).filter(Boolean).map((k) => '<option value="' + k + '"' + (query.status === k ? ' selected' : '') + '>' + esc(PH.model.REVIEW_STATUS[k].short) + '</option>').join('') +
+      '<option value="_ohne"' + (query.status === '_ohne' ? ' selected' : '') + '>ohne Prüfstatus</option></select></label>' +
       '<label class="field-inline"><span class="sr-only">Sortierung</span><select class="input" id="f-sort"><option value="title">Titel A–Z</option><option value="updated">Zuletzt aktualisiert</option><option value="type">Nach Typ</option></select></label>' +
       '<label class="field-inline check-inline edit-only"><input type="checkbox" id="f-example"> nur Beispiele</label>' +
       '</div><div id="all-list"></div>';
@@ -279,7 +327,9 @@
           const ca = el.querySelector('#f-cat').value;
           const so = el.querySelector('#f-sort').value;
           const ex = el.querySelector('#f-example').checked;
+          const rv = el.querySelector('#f-review').value;
           let list = kb.articles.filter((a) =>
+            (!rv || (rv === '_ohne' ? !a.review.status : a.review.status === rv)) &&
             (!ty || a.type === ty) &&
             (!ca || (ca === '_ohne' ? !app().getCategory(a.categoryId) : a.categoryId === ca)) &&
             (!ex || a.example) &&
@@ -401,23 +451,32 @@
 
   function stepsHtml(a) {
     const steps = a.steps || [];
+    let lastGroup = '';
     if (!steps.length) return '<p class="muted">Für diese Anleitung sind noch keine Schritte hinterlegt.</p>';
     return '<section class="steps-section">' +
       '<div class="section-row"><h2>Schritt für Schritt</h2>' +
       '<div class="steps-progress no-print" aria-live="polite"><span class="sp-text">0 von ' + steps.length + ' erledigt</span>' +
       '<span class="sp-bar"><span></span></span>' +
       '<button type="button" class="btn btn-ghost btn-xs" data-action="steps-reset">' + icon('refresh') + 'Zurücksetzen</button></div></div>' +
-      '<ol class="steps">' + steps.map((s, i) =>
-        '<li class="step" data-step="' + i + '">' +
-        '<div class="step-rail"><span class="step-num">' + (i + 1) + '</span></div>' +
-        '<div class="step-main">' +
-        '<div class="step-head"><h3>' + esc(s.title || 'Schritt ' + (i + 1)) + '</h3>' +
-        '<label class="step-check no-print no-hl"><input type="checkbox" data-action="step-done"><span>Erledigt</span></label></div>' +
-        (s.text ? '<div class="md">' + md(s.text) + '</div>' : '') +
-        (s.image ? shotHtml(s.image) : '') +
-        (s.hint ? '<div class="callout callout-tip step-hint"><div class="callout-title">' + icon('sparkle') + 'Tipp</div><div class="callout-body">' + md(s.hint) + '</div></div>' : '') +
-        '</div></li>'
-      ).join('') + '</ol>' +
+      '<ol class="steps">' + steps.map((s, i) => {
+        let pre = '';
+        if (s.group && s.group !== lastGroup) {
+          pre = '<li class="step-group"><h3>' + esc(s.group) + '</h3></li>';
+          lastGroup = s.group;
+        }
+        const ht = PH.model.HINT_TYPES[s.hintType] || PH.model.HINT_TYPES.tipp;
+        const missing = (s.slots || []).filter((sl) => PH.model.slotState(s, sl) === 'fehlt');
+        return pre + '<li class="step" data-step="' + i + '" id="schritt-' + (i + 1) + '">' +
+          '<div class="step-rail"><span class="step-num">' + (i + 1) + '</span></div>' +
+          '<div class="step-main">' +
+          '<div class="step-head"><h3>' + esc(s.title || 'Schritt ' + (i + 1)) + '</h3>' +
+          '<label class="step-check no-print no-hl"><input type="checkbox" data-action="step-done"><span>Erledigt</span></label></div>' +
+          (s.text ? '<div class="md">' + md(s.text) + '</div>' : '') +
+          (s.images || []).map((img, k) => figureHtml(img, { label: 'Abb. ' + (i + 1) + '.' + (k + 1) })).join('') +
+          missing.map((sl) => slotPlaceholder(a, i, sl)).join('') +
+          (s.hint ? '<div class="callout callout-' + ht.cls + ' step-hint"><div class="callout-title">' + icon(ht.icon) + esc(ht.label) + '</div><div class="callout-body">' + md(s.hint) + '</div></div>' : '') +
+          '</div></li>';
+      }).join('') + '</ol>' +
       '<div class="steps-done-msg" hidden>' + icon('checkCircle') + '<span>Alle Schritte erledigt.</span></div>' +
       '</section>';
   }
@@ -461,7 +520,54 @@
    * Wird auch von der Editor-Vorschau genutzt.
    */
   function renderArticle(a, opts) {
-    opts = opts || {};
+    // Verweise {{Abb:…}} im Text auf die Abbildungsnummern dieses Artikels auflösen
+    return PH.md.withFigures(PH.model.figureLabels(a), () => renderArticleInner(a, opts || {}));
+  }
+
+  function reviewMeta(a) {
+    const r = a.review || {};
+    const parts = [];
+    if (r.checkedAt) parts.push('Geprüft am ' + fmtDate(r.checkedAt) + (r.checkedBy ? ' durch ' + esc(r.checkedBy) : ''));
+    if (r.pmsVersion) parts.push('protel-Version ' + esc(r.pmsVersion));
+    if (r.nextReview) parts.push('Wiedervorlage ' + fmtDate(r.nextReview));
+    return parts.length ? '<span>' + icon('shield') + parts.join(' · ') + '</span>' : '';
+  }
+
+  function reviewCallout(a) {
+    const r = a.review || {};
+    const note = r.note ? '<p>' + esc(r.note) + '</p>' : '';
+    if (r.status === 'entwurf') {
+      return '<div class="callout callout-warning review-callout"><div class="callout-title">' + icon('alert') + 'Entwurf – noch nicht im System geprüft</div>' +
+        '<div class="callout-body"><p>Diese Anleitung ist aus Herstellerquellen abgeleitet und noch nicht im System geprüft. Bitte nur zusammen mit der verantwortlichen Person verwenden.</p>' + note + '</div></div>';
+    }
+    if (r.status === 'pruefung') {
+      return '<div class="callout callout-info review-callout"><div class="callout-title">' + icon('infoCircle') + 'In Prüfung</div><div class="callout-body"><p>Der Ablauf wird gerade geprüft. Abweichungen bitte der verantwortlichen Person melden.</p>' + note + '</div></div>';
+    }
+    if (r.status === 'veraltet') {
+      return '<div class="callout callout-danger review-callout"><div class="callout-title">' + icon('alert') + 'Veraltet – bitte erneut prüfen</div><div class="callout-body"><p>Der Ablauf hat sich möglicherweise geändert (z. B. durch ein Update).</p>' + note + '</div></div>';
+    }
+    if (r.status === 'geprueft' && r.nextReview && r.nextReview < new Date().toISOString().slice(0, 10)) {
+      return '<div class="callout callout-info review-callout"><div class="callout-title">' + icon('clock') + 'Wiedervorlage fällig</div><div class="callout-body"><p>Die geplante erneute Prüfung (' + fmtDate(r.nextReview) + ') steht aus.</p>' + note + '</div></div>';
+    }
+    return '';
+  }
+
+  function sourcesHtml(a) {
+    const list = a.sources || [];
+    if (!list.length) return '';
+    return '<section class="section sources" id="quellen"><h2>' + icon('book') + 'Quellen</h2>' +
+      '<p class="muted small no-print">Links öffnen die Originalquelle und funktionieren nur mit Internetverbindung.</p>' +
+      '<ol class="source-list">' + list.map((q, i) => {
+        const url = PH.md.safeUrl(q.url);
+        const title = esc(q.title || q.url);
+        return '<li id="quelle-' + (i + 1) + '"><span class="src-tag">Q' + (i + 1) + '</span><span class="src-text">' +
+          (url && !url.startsWith('#') ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + title + '</a>' : title) +
+          (q.date ? ' <span class="muted">· Stand ' + esc(q.date) + '</span>' : '') +
+          (q.note ? ' <span class="muted">· ' + esc(q.note) + '</span>' : '') + '</span></li>';
+      }).join('') + '</ol></section>';
+  }
+
+  function renderArticleInner(a, opts) {
     const cat = app().getCategory(a.categoryId);
     const t = T()[a.type] || T().info;
     const fav = !opts.preview && app().isFavorite(a.id);
@@ -471,12 +577,14 @@
     }
     html += '<article class="article type-' + esc(a.type) + '">' +
       '<header class="article-head">' +
-      '<div class="article-kicker">' + typeBadge(a.type) + exampleBadge(a) + catBadge(cat) + '</div>' +
+      '<div class="article-kicker">' + typeBadge(a.type) + exampleBadge(a) + reviewBadge(a) + catBadge(cat) +
+      (a.visibility === 'oeffentlich' ? '<span class="badge badge-public edit-only" title="Darf in der öffentlichen Version erscheinen">öffentlich</span>' : '') + '</div>' +
       '<h1>' + esc(a.title || 'Ohne Titel') + '</h1>' +
       (a.summary ? '<p class="lead">' + esc(a.summary) + '</p>' : '') +
       '<div class="article-meta">' +
       '<span>' + icon('clock') + 'Stand ' + fmtDate(a.updated || new Date().toISOString()) + '</span>' +
       (a.author ? '<span>' + icon('users') + esc(a.author) + '</span>' : '') +
+      reviewMeta(a) +
       (a.tags.length ? '<span class="tags">' + icon('tag') + a.tags.map((x) => '<a class="tag" href="' + searchUrl(x) + '">' + esc(x) + '</a>').join('') + '</span>' : '') +
       '</div>' +
       (!opts.preview
@@ -496,6 +604,7 @@
         '<div class="callout-body"><p>Dieser Artikel ist ein <strong>fiktives Muster</strong> und keine offizielle oder geprüfte protel-Bedienungsanleitung. ' +
         'Markierte <span class="placeholder">' + icon('edit') + 'Platzhalter</span> müssen durch Ihre tatsächlichen, intern geprüften Abläufe ersetzt werden.</p></div></div>';
     }
+    html += reviewCallout(a);
     if (opts.query) {
       html += '<div class="hl-notice no-print no-hl" hidden>' + icon('search') + '<span>Suchbegriffe aus „' + esc(opts.query) + '“ sind markiert.</span>' +
         '<button type="button" class="btn btn-ghost btn-xs" data-action="next-hit">Nächster Treffer</button>' +
@@ -504,11 +613,15 @@
 
     html += '<div class="article-content">';
     if (a.body) html += '<div class="md article-body">' + md(a.body) + '</div>';
+    const ov = a.images || [];
+    if (ov.length) html += '<div class="article-figures">' + ov.map((img, k) => figureHtml(img, { label: ov.length > 1 ? 'Übersicht ' + (k + 1) : 'Übersicht' })).join('') + '</div>';
     if (a.type === 'guide') html += stepsHtml(a);
     else if (a.type === 'troubleshooting') html += troubleshootingHtml(a);
     else if (a.type === 'decision') html += '<section class="dt-section"><h2>' + icon('tree') + 'Assistent</h2><div class="dt-host"></div></section>';
-    else if (!a.body) html += '<p class="muted">Noch kein Inhalt vorhanden.</p>';
+    else if (!a.body && !ov.length) html += '<p class="muted">Noch kein Inhalt vorhanden.</p>';
+    if (a.after) html += '<div class="md article-after">' + md(a.after) + '</div>';
     html += '</div>';
+    html += sourcesHtml(a);
 
     const related = (a.related || []).map((id) => app().getArticle(id)).filter((x) => x && x.id !== a.id);
     if (related.length) {
@@ -566,6 +679,18 @@
     });
 
     el.addEventListener('click', async (e) => {
+      const ref = e.target.closest('a.fig-ref[data-fig]');
+      if (ref && el.contains(ref)) {
+        e.preventDefault();
+        const id = ref.dataset.fig;
+        const fig = Array.from(el.querySelectorAll('figure[data-fig-id], figure[data-slot]')).find((f) => f.dataset.figId === id || f.dataset.slot === id);
+        const frame = fig && fig.querySelector('.shot-frame[data-zoom]');
+        if (frame) {
+          fig.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          PH.app.openLightbox(frame);
+        }
+        return;
+      }
       const btn = e.target.closest('[data-action]');
       if (!btn || !el.contains(btn)) return;
       const act = btn.dataset.action;
@@ -664,8 +789,18 @@
     '## Bearbeiten',
     '1. Oben rechts **Bearbeiten** einschalten.',
     '2. Im Artikel auf **Bearbeiten** klicken oder über **Neuer Artikel** einen Artikel anlegen.',
-    '3. Screenshots: mit {{Win+Umschalt+S}} einen Bildschirmausschnitt kopieren, das Bildfeld des Schritts anklicken und {{Strg+V}} drücken – oder eine Bilddatei hineinziehen.',
+    '3. Screenshots: mit {{Win+Umschalt+S}} einen Bildschirmausschnitt kopieren, das Bildfeld des Schritts anklicken und {{Strg+V}} drücken – oder eine Bilddatei hineinziehen. Ein Schritt kann **mehrere Bilder** haben.',
     '4. **Speichern** – die Änderung ist sofort in diesem Browser auf diesem PC gespeichert.',
+    '',
+    '## Bilder, Bildplätze und Rechte',
+    '- Jedes Bild bekommt automatisch eine **Abbildungsnummer** („Abb. 3.1“ = Schritt 3, Bild 1). Im Text verweisen Sie mit `{{Abb:S-CIN-06}}` (Bildplatz oder Bild-ID) darauf.',
+    '- **Bildplätze** sind geplante Screenshots mit Aufnahmeanweisung. Fehlende Bilder sehen Sie nur im Bearbeitungsmodus. Unter *Verwaltung → Bilder & Bildplätze* steht die Liste nach Bildschirmbereichen, dort können Sie auch mehrere Dateien auf einmal zuordnen (Dateiname beginnt mit der Nummer, z. B. `S-CIN-06_….png`).',
+    '- **Rechte:** Neue Bilder sind **intern**. Öffentlich dürfen nur eigene Grafiken, Platzhalter und Screenshots dieser App sein. Eigene protel-Screenshots bleiben immer intern.',
+    '- **Vergrößern:** Bild anklicken. Zoomen mit Mausrad, {{+}} / {{-}}, Doppelklick oder zwei Fingern; verschieben durch Ziehen; mit {{←}} / {{→}} oder Wischen zum nächsten Bild.',
+    '',
+    '## Prüfstatus und Quellen',
+    '- Jede Anleitung kann einen **Prüfstatus** haben (Entwurf, In Prüfung, Geprüft, Veraltet) mit Datum, protel-Version und Wiedervorlage. *Alle Artikel* lässt sich danach filtern.',
+    '- **Quellen** stehen am Ende des Artikels; im Text verweisen Kürzel wie [Q1] darauf.',
     '',
     '> [!WICHTIG]',
     '> Änderungen werden zunächst nur **lokal im Browser** dieses PCs gespeichert. Damit alle Rezeptions-PCs den neuen Stand erhalten, unter *Verwaltung → Für App-Ordner exportieren* die Datei `wissensdatenbank.js` erzeugen und im App-Ordner unter `data` ersetzen.',
@@ -698,12 +833,18 @@
     '> [!WICHTIG]',
     '> Safari und die App auf dem Home-Bildschirm haben **getrennte Speicher**. Bearbeiten Sie Inhalte daher immer in der installierten App und erstellen Sie regelmäßig eine Sicherung.',
     '',
+    '## Sichern und Wiederherstellen',
+    '- Vor riskanten Aktionen (Import, Ersetzen, Laden einer neuen Version, Umstellung des Datenformats) legt die App automatisch einen **Wiederherstellungspunkt** an. Sie finden die Punkte unter *Verwaltung*.',
+    '- Ältere Sicherungen (auch aus früheren App-Versionen) lassen sich weiterhin importieren.',
+    '- **Intern und öffentlich:** Die vollständige Sicherung und die Datendatei für die interne PC-Version enthalten alle Inhalte. Für die öffentliche Website gibt es einen eigenen Export, der nur ausdrücklich öffentliche Inhalte enthält.',
+    '',
     '## Daten & Datenschutz',
     '- Die App läuft **vollständig offline**: kein Server-Programm, keine Cloud-Dienste, keine Verbindung zu protel-Systemen, keine KI.',
     '- Inhalte stammen aus `data/wissensdatenbank.js` (PC: im App-Ordner, Smartphone/Tablet: von der Website, danach offline gespeichert).',
     '- Eigene Änderungen, Favoriten, Verlauf und Suchstatistik bleiben lokal auf dem jeweiligen Gerät.',
     '- Die veröffentlichte Website ist **öffentlich erreichbar**. Vertrauliche Inhalte nur lokal pflegen (Import auf dem Gerät), nicht veröffentlichen.',
     '- Bitte keine personenbezogenen Gästedaten, Passwörter oder Kartendaten in Artikeln oder Screenshots speichern.',
+    '- Einige Symbole der App beruhen auf Feather Icons (MIT-Lizenz) und Lucide (ISC-Lizenz); die Lizenztexte stehen in der Datei `LIZENZEN.txt` im App-Ordner.',
   ].join('\n');
 
   function help() {
@@ -731,6 +872,6 @@
 
   PH.views = {
     home, categories, category, typeList, all, favorites, search, article, help, notFound, error,
-    renderArticle, articleCard, typeBadge, exampleBadge, catBadge, breadcrumb, emptyState, shotHtml, searchUrl, articleHref,
+    renderArticle, articleCard, typeBadge, exampleBadge, reviewBadge, catBadge, breadcrumb, emptyState, shotHtml, figureHtml, searchUrl, articleHref,
   };
 })();

@@ -1,0 +1,40 @@
+{
+  "hinweis": "Freigabeliste der Bilddateien im App-Ordner (protel-hilfe/). Nur eigene, öffentlich zulässige Bilder – keine protel-Screenshots, keine Bilder aus Herstellerhandbüchern. Jede Bilddatei im App-Ordner muss hier mit passender Prüfsumme stehen, sonst sperrt tools/pruefe-veroeffentlichung.js Build und Veröffentlichung. Neue Datei aufnehmen: node tools/pruefe-veroeffentlichung.js --freigeben <Pfad> \"<Herkunft>\"",
+  "dateien": [
+    {
+      "pfad": "assets/icons/apple-touch-icon.png",
+      "sha256": "197f1c47ea3d71dde99e5584f4f18768722798168696c53d81a011333f43c46c",
+      "herkunft": "Eigene Grafik (App-Symbol)",
+      "rechte": "oeffentlich",
+      "freigegeben": "2026-11-08"
+    },
+    {
+      "pfad": "assets/icons/icon-192.png",
+      "sha256": "2327eaa8596f4c71f13d88502c01f31028d268f344a7a2d613047ab8c644f736",
+      "herkunft": "Eigene Grafik (App-Symbol)",
+      "rechte": "oeffentlich",
+      "freigegeben": "2026-11-08"
+    },
+    {
+      "pfad": "assets/icons/icon-512.png",
+      "sha256": "94478a7286f4ae1a59bac239f0115e4aa66f66207af2dcfb5f197a09c5b3b655",
+      "herkunft": "Eigene Grafik (App-Symbol)",
+      "rechte": "oeffentlich",
+      "freigegeben": "2026-11-08"
+    },
+    {
+      "pfad": "assets/icons/icon-maskable-512.png",
+      "sha256": "84539b4141358100dca9f1ecb8f9931ed2f456f46716ecd1ac8081a5575445fb",
+      "herkunft": "Eigene Grafik (App-Symbol)",
+      "rechte": "oeffentlich",
+      "freigegeben": "2026-11-08"
+    },
+    {
+      "pfad": "assets/icons/icon.svg",
+      "sha256": "9b795f6a8ce405e26d38c334bca475ba326e560b46186141b451218971d160ef",
+      "herkunft": "Eigene Grafik (App-Symbol)",
+      "rechte": "oeffentlich",
+      "freigegeben": "2026-11-08"
+    }
+  ]
+}
