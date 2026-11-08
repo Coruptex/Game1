@@ -148,9 +148,58 @@
     o[keys[keys.length - 1]] = value;
   }
 
+  /* ------------------------------------------------------------ Umgebung */
+  const ua = navigator.userAgent || '';
+  const isLocalHost = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  const env = {
+    /** PC-Version per Doppelklick (file://) */
+    isFile: location.protocol === 'file:',
+    /** Über eine Website (https:// bzw. localhost) geöffnet */
+    isWeb: /^https?:$/.test(location.protocol),
+    /** Service Worker möglich (sicherer Kontext) */
+    canOffline: 'serviceWorker' in navigator && (location.protocol === 'https:' || (location.protocol === 'http:' && isLocalHost)),
+    /** iPhone, iPod oder iPad (iPadOS meldet sich als „Macintosh“ mit Touch) */
+    isAppleMobile: /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1),
+    isTouch: (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || navigator.maxTouchPoints > 0,
+    isStandalone() {
+      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    },
+    /** Bezeichnung der mitgelieferten Datenquelle für Hinweistexte */
+    sourceLabel() {
+      return this.isFile ? 'App-Ordner' : 'veröffentlichten Version';
+    },
+  };
+  PH.env = env;
+
+  /**
+   * Datei speichern. Auf iPhone/iPad über das Teilen-Menü („In Dateien sichern“, AirDrop, Mail …),
+   * sonst als Download. Ergebnis (Promise): 'shared' | 'downloaded' | 'cancelled'.
+   * Muss direkt aus einer Tipp-/Klick-Aktion aufgerufen werden.
+   */
+  function saveFile(filename, content, mime) {
+    const blob = content instanceof Blob ? content : new Blob([content], { type: mime || 'application/octet-stream' });
+    if (env.isAppleMobile && typeof navigator.share === 'function' && typeof navigator.canShare === 'function') {
+      try {
+        const file = new File([blob], filename, { type: (mime || blob.type || 'application/octet-stream').split(';')[0] });
+        if (navigator.canShare({ files: [file] })) {
+          return navigator.share({ files: [file] }).then(
+            () => 'shared',
+            (err) => {
+              if (err && err.name === 'AbortError') return 'cancelled';
+              download(filename, blob);
+              return 'downloaded';
+            }
+          );
+        }
+      } catch (e) { /* weiter mit Download */ }
+    }
+    download(filename, blob);
+    return Promise.resolve('downloaded');
+  }
+
   PH.util = {
     esc, $, $$, uid, debounce, clone, fmtDate, relTime, slugify, formatBytes, truncate,
-    download, readFile, copyText, hashStr, getPath, setPath,
+    download, saveFile, readFile, copyText, hashStr, getPath, setPath,
   };
 
   /* ---------------------------------------------------------------- UI */

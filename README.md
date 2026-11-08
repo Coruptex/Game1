@@ -9,13 +9,18 @@ Entscheidungsbäume und Nachschlagewissen, durchsuchbar mit einer fehlertolerant
 > protel sind als gelbe Platzhalter `[[…]]` markiert und müssen intern ergänzt werden.
 > Protel Hilfe ist kein Produkt des protel-Herstellers und hat keine Verbindung zu protel-Systemen.
 
-## Starten
+## Zwei Betriebsarten – derselbe Ordner
 
-1. Den Ordner `protel-hilfe` auf den PC oder ein Netzlaufwerk kopieren.
-2. `protel-hilfe/index.html` doppelklicken. Die Datei öffnet sich in Microsoft Edge, Google Chrome oder einem anderen aktuellen Browser.
+| | PC-Version | iPhone/iPad-App (PWA) |
+|---|---|---|
+| **Start** | `protel-hilfe/index.html` doppelklicken (Edge, Chrome) | Website-Adresse in Safari öffnen → Teilen → „Zum Home-Bildschirm“ |
+| **Adresse** | `file://…/protel-hilfe/index.html` | **https://coruptex.github.io/Game1/** (GitHub Pages) |
+| **Offline** | immer (lokale Dateien) | nach dem ersten Laden vollständig (Service Worker) |
+| **Datenquelle** | `data/wissensdatenbank.js` im Ordner | `data/wissensdatenbank.js` der Website, danach offline gespeichert |
+| **Eigene Änderungen** | im Browser des PCs | auf dem Gerät (in der installierten App) |
 
-Es ist keine Installation nötig. Die App braucht keinen Server, kein Internet und keine Cloud-Dienste und verwendet zur Laufzeit keine KI.
-Alle Ressourcen (Skripte, Design, Symbole, Beispielbilder) liegen lokal im Ordner.
+Keine Installation, keine Server-Software, keine Cloud-Dienste, keine KI und keine Verbindung zu protel – weder auf dem PC noch auf dem iPhone/iPad.
+Alle Ressourcen (Skripte, Design, Symbole, Beispielbilder) liegen im Ordner; zur Laufzeit werden keine fremden Server angesprochen.
 
 ## Funktionen
 
@@ -30,6 +35,7 @@ Alle Ressourcen (Skripte, Design, Symbole, Beispielbilder) liegen lokal im Ordne
 | **Import/Export** | Export der `wissensdatenbank.js` für den App-Ordner, JSON-Sicherung, Import mit Vorschau zum Zusammenführen oder Ersetzen. |
 | **Pflege** | Die Verwaltung zeigt Suchanfragen ohne Treffer, Artikel mit offenen Platzhaltern, unvollständige Entscheidungsbäume und veraltete Artikel. Dazu kommen ein Suchtest und ein Synonym-Editor. |
 | **Komfort** | Favoriten, zuletzt angesehene Artikel, Druckansicht, Hell- und Dunkelmodus, responsives Layout (Desktop, Tablet, Smartphone) und Tastaturbedienung. |
+| **iPhone/iPad** | Installierbar auf dem Home-Bildschirm, vollständig offline (Suche, Anleitungen, Bilder). Tab-Leiste und Zurück-Pfeil, Touch-Ziele ab 44 px, Safe Areas (Notch, Home-Indikator). Export über das Teilen-Menü („In Dateien sichern“, AirDrop), Import aus „Dateien“, Bilder aus Fotos, Kamera oder Zwischenablage. Hinweise bei neuer App-Version oder neuen Inhalten – aktualisiert wird erst nach Bestätigung. |
 
 ## Daten: Speicherung und Verteilung
 
@@ -44,16 +50,49 @@ Alle Ressourcen (Skripte, Design, Symbole, Beispielbilder) liegen lokal im Ordne
 
 Datenschutz: Bitte keine personenbezogenen Gästedaten, Passwörter oder Kartendaten in Artikel oder Screenshots aufnehmen.
 
+### Auf iPhone und iPad
+
+- **Einmal online öffnen, dann installieren:** Safari → Teilen (ggf. über „•••“) → „Zum Home-Bildschirm“. Danach funktioniert die App ohne Netz.
+- **Getrennte Speicher:** Safari und die installierte App speichern getrennt. Bitte nur in der installierten App bearbeiten.
+  Die App fordert dauerhaften Speicher an. Trotzdem regelmäßig sichern: Beim Löschen der App oder der Website-Daten gehen lokale Änderungen verloren.
+- **Sicherung und Übertragung:** *Verwaltung → Sicherung exportieren* öffnet das Teilen-Menü. Auf dem anderen Gerät *Verwaltung → Importieren*. Die App erinnert an eine Sicherung, wenn eigene Änderungen nur auf dem Gerät liegen.
+- **Updates:** Eine neue App-Version wird im Hintergrund geladen und erst nach Tippen auf „Aktualisieren“ aktiv. Neue Inhalte der veröffentlichten Wissensdatenbank werden gemeldet; eigene Änderungen werden nie stillschweigend überschrieben (Rückfrage mit Sicherungsangebot).
+- **PC → iPhone:** Auf dem PC eine Sicherung (.json) exportieren, z. B. per Mail/Cloud-Ordner aufs iPhone bringen und in der App importieren (Zusammenführen).
+
+## Veröffentlichung (GitHub Pages, kostenlos)
+
+- Die Website ist der Inhalt von `protel-hilfe/` im Branch **`gh-pages`** (nur fertige Dateien, inkl. `.nojekyll`).
+- Einmalige Einstellung im Repository: **Settings → Pages → Build and deployment → Source: „Deploy from a branch“ → Branch `gh-pages`, Ordner `/ (root)` → Save.**
+- Neue Version veröffentlichen: Änderungen committen, dann `tools/deploy-gh-pages.sh` (prüft die PWA-Dateiliste und überträgt `protel-hilfe/` nach `gh-pages`).
+- Nach Änderungen an App-Dateien vorher `node tools/build-pwa.js` ausführen (aktualisiert Dateiliste und Versionskennung im Service Worker).
+
+**Geprüfte Bedingungen (GitHub-Doku, Stand 08.11.2026):** GitHub Pages ist für öffentliche Repositories mit GitHub Free kostenlos, ohne Zahlungsdaten.
+Limits: Website max. 1 GB, weiches Bandbreitenlimit 100 GB/Monat, Deployments max. 10 Minuten. HTTPS ist für `github.io` automatisch aktiv.
+Nicht erlaubt ist der Betrieb als kostenloses Hosting für ein Online-Geschäft, E-Commerce oder SaaS; eine interne Nachschlage-App ohne Bezahlfunktionen fällt nicht darunter.
+**Pages-Sites sind auf Free-Plänen immer öffentlich im Internet erreichbar** – deshalb werden nur die Beispieldaten veröffentlicht.
+Vertrauliche interne Inhalte gehören nicht auf die öffentliche Website, sondern werden auf den Geräten per Import gepflegt (sie bleiben dann lokal).
+
+### Portabilität / Anbieterwechsel
+
+Die Website besteht ausschließlich aus statischen Dateien mit relativen Pfaden und funktioniert in jedem Unterordner und bei jedem Anbieter für statische Websites
+mit HTTPS (z. B. Cloudflare Pages, Netlify, Codeberg Pages, eigener Webspace). Für einen Wechsel genügt es, den Inhalt von `protel-hilfe/`
+(bzw. den Branch `gh-pages` als ZIP) hochzuladen. Es gibt keinen Build-Zwang, keine Datenbank und keine Server-Abhängigkeiten.
+Da Browser-Speicher an die Adresse gebunden ist, eigene Änderungen vor einem Umzug als Sicherung exportieren und unter der neuen Adresse importieren.
+
 ## Projektstruktur
 
 ```
 protel-hilfe/
-├── index.html                 Einstiegspunkt (Doppelklick)
+├── index.html                 Einstiegspunkt (Doppelklick bzw. Website)
+├── manifest.webmanifest       Web-App-Manifest (Name, Symbole, Startverhalten)
+├── sw.js                      Service Worker für den Offline-Betrieb (nur über https://)
+├── .nojekyll                  GitHub Pages: Dateien unverändert ausliefern
 ├── LIESMICH.txt               Kurzanleitung für den Betrieb
 ├── data/
 │   └── wissensdatenbank.js    Wissensdatenbank (Beispieldaten, über die App exportierbar)
 └── assets/
-    ├── css/app.css            Gestaltung (Hell/Dunkel, responsiv, Druck)
+    ├── css/app.css            Gestaltung (Hell/Dunkel, responsiv, Touch, Druck)
+    ├── icons/                 App-Symbole (PNG für iOS/Android, SVG-Vorlage)
     └── js/
         ├── util.js            Hilfsfunktionen, Toasts, Dialoge
         ├── icons.js           Inline-SVG-Symbole
@@ -65,12 +104,18 @@ protel-hilfe/
         ├── views.js           Ansichten (Start, Listen, Suche, Artikel, Hilfe)
         ├── editor.js          Artikel-Editor
         ├── admin.js           Verwaltung
-        └── app.js             Start, Routing, Navigation, Speichern
+        ├── app.js             Start, Routing, Navigation, Speichern
+        └── pwa.js             Offline-App: Service Worker, Updates, Installationshinweis
+tools/
+├── build-pwa.js               aktualisiert Dateiliste und Version in sw.js (Node, ohne Abhängigkeiten)
+└── deploy-gh-pages.sh         veröffentlicht protel-hilfe/ im Branch gh-pages
 ```
 
-Technik: Die App verwendet reines HTML, CSS und JavaScript ohne Build-Schritt und ohne externe Bibliotheken.
-Es gibt keine ES-Module, keine Service Worker, keine Web Worker und kein `fetch`, damit alles unter `file://` funktioniert.
-Die Navigation läuft über Hash-Routen (`#/artikel/…`).
+Technik: Die App verwendet reines HTML, CSS und JavaScript ohne externe Bibliotheken.
+Es gibt keine ES-Module, keine Web Worker und kein `fetch` für die Daten, damit alles unter `file://` funktioniert.
+Service Worker und Manifest werden nur bei Aufruf über `https://` (bzw. `localhost`) aktiv; unter `file://` bleiben sie aus.
+Der Service Worker liefert App-Dateien aus einem versionierten Cache, die Wissensdatenbank sofort aus dem Cache mit Abgleich im Hintergrund,
+und verändert nie die lokal gespeicherten Bearbeitungen (IndexedDB). Die Navigation läuft über Hash-Routen (`#/artikel/…`).
 
 ## Datenformat (Kurzüberblick)
 
@@ -96,7 +141,7 @@ Alle Texte werden beim Anzeigen HTML-escaped, deshalb können importierte Inhalt
 
 ## Getestet
 
-Automatisiert in Chromium (Playwright) unter `file://`:
+Automatisiert in Chromium (Playwright) unter `file://` (PC-Version):
 
 - Suche: Synonyme, Tippfehler, Wortformen, Fehlermeldungstext
 - Navigation und Tastaturbedienung
@@ -109,4 +154,15 @@ Automatisiert in Chromium (Playwright) unter `file://`:
 - Dunkelmodus, Druckansicht, Smartphone-Layout ohne horizontales Scrollen
 - Start ohne Datendatei
 
-Firefox und Safari wurden nicht getestet. Microsoft Edge nutzt dieselbe Engine wie Chrome.
+Automatisiert als PWA über einen lokalen HTTPS-gleichwertigen Ursprung (`localhost`) mit iPhone- und iPad-Emulation in Chromium:
+
+- Service Worker, Vorab-Cache aller 21 App-Dateien, Manifest und iOS-Meta-Tags
+- Mobile Navigation: Tab-Leiste, Zurück-Pfeil, „Mehr“-Menü, Suche mit sofort geöffneter Tastatur, Eingabeschrift ≥ 16 px
+- **Komplett offline:** Start, Suche, Anleitung mit Bildern, Entscheidungsbaum, Bearbeiten, Export, Import – ohne eine einzige Server-Anfrage
+- Teilen-Menü beim Export (iOS-Verhalten simuliert), Abbruch wird erkannt
+- Neue Inhalte auf dem Server → Hinweis, eigene Änderungen bleiben erhalten (Rückfrage)
+- Neue App-Version → Hinweis, Aktualisierung nach Bestätigung, alter Cache entfernt, eigene Änderungen erhalten
+- Kein seitliches Scrollen auf iPhone SE, iPad hoch und quer (auch nach Interaktion)
+
+**Nicht direkt testbar:** echtes iOS/iPadOS-Safari (WebKit) und die Installation auf dem Home-Bildschirm. Die Emulation bildet Bildschirmgröße,
+Touch und Benutzeragent nach, nicht aber die Safari-Engine. Firefox wurde nicht getestet. Microsoft Edge nutzt dieselbe Engine wie Chrome.

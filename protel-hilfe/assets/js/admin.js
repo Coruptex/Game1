@@ -21,10 +21,12 @@
     const s = PH.app.status();
     const size = new Blob([PH.model.toJSON(kb)]).size;
     const examples = kb.articles.filter((a) => a.example).length;
+    const isFile = PH.env.isFile;
+    const lastBackup = PH.app.prefs.lastBackup;
     const statusLine = !s.hasLocal
-      ? '<span class="status ok">' + icon('checkCircle') + 'Entspricht der Datei <code>data/wissensdatenbank.js</code></span>'
+      ? '<span class="status ok">' + icon('checkCircle') + (isFile ? 'Entspricht der Datei <code>data/wissensdatenbank.js</code>' : 'Entspricht der veröffentlichten Version') + '</span>'
       : s.dirty
-        ? '<span class="status warn">' + icon('alert') + 'Lokale Änderungen – noch nicht für den App-Ordner exportiert</span>'
+        ? '<span class="status warn">' + icon('alert') + (isFile ? 'Lokale Änderungen – noch nicht für den App-Ordner exportiert' : 'Eigene Änderungen – nur auf diesem Gerät gespeichert') + '</span>'
         : '<span class="status ok">' + icon('checkCircle') + 'Lokale Kopie, zuletzt exportiert</span>';
 
     const html =
@@ -44,23 +46,32 @@
       '<dt>Status</dt><dd>' + statusLine + '</dd>' +
       '<dt>Letzte Änderung</dt><dd>' + fmtDate(kb.meta.updated, true) + '</dd>' +
       '<dt>Revision</dt><dd><code>' + esc(kb.meta.revision) + '</code></dd>' +
-      '<dt>Datei im App-Ordner</dt><dd>' + (s.bundledAvailable ? 'Stand ' + fmtDate(s.bundledUpdated, true) + ' · <code>' + esc(s.bundledRevision) + '</code>' : '<span class="status warn">' + icon('alert') + 'nicht gefunden oder fehlerhaft</span>') + '</dd>' +
+      '<dt>' + (isFile ? 'Datei im App-Ordner' : 'Veröffentlichte Version') + '</dt><dd>' + (s.bundledAvailable ? 'Stand ' + fmtDate(s.bundledUpdated, true) + ' · <code>' + esc(s.bundledRevision) + '</code>' : '<span class="status warn">' + icon('alert') + 'nicht gefunden oder fehlerhaft</span>') + '</dd>' +
       '<dt>Speicherort lokal</dt><dd>' + esc(PH.store.backendLabel()) + '</dd>' +
+      '<dt>Letzte Sicherung</dt><dd>' + (lastBackup ? fmtDate(lastBackup, true) : '<span class="status warn">' + icon('alert') + 'noch keine auf diesem Gerät</span>') + '</dd>' +
       '</dl></section>' +
+
+      (PH.env.isWeb ? '<section class="card admin-card" id="app-offline"><h2>' + icon('wifi') + 'App &amp; Offline</h2><div id="pwa-status"><p class="muted">Wird geprüft …</p></div></section>' : '') +
 
       '<div class="admin-grid">' +
       '<section class="card admin-card">' +
       '<h2>' + icon('download') + 'Exportieren</h2>' +
-      '<div class="action-block"><button type="button" class="btn btn-primary" data-adm="export-js">' + icon('download') + 'Für App-Ordner exportieren</button>' +
-      '<p class="field-hint">Erzeugt <code>wissensdatenbank.js</code>. Ersetzen Sie damit die gleichnamige Datei im Unterordner <code>data</code> der App (z. B. auf dem Netzlaufwerk). Alle PCs sehen den neuen Stand nach dem Neuladen ({{F5}}).</p></div>' +
-      '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-json">' + icon('save') + 'Sicherung exportieren (.json)</button>' +
-      '<p class="field-hint">Vollständige Sicherung inkl. Bilder – kann jederzeit wieder importiert werden.</p></div>' +
+      (isFile
+        ? '<div class="action-block"><button type="button" class="btn btn-primary" data-adm="export-js">' + icon('download') + 'Für App-Ordner exportieren</button>' +
+          '<p class="field-hint">Erzeugt <code>wissensdatenbank.js</code>. Ersetzen Sie damit die gleichnamige Datei im Unterordner <code>data</code> der App (z. B. auf dem Netzlaufwerk). Alle PCs sehen den neuen Stand nach dem Neuladen ({{F5}}).</p></div>' +
+          '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-json">' + icon('save') + 'Sicherung exportieren (.json)</button>' +
+          '<p class="field-hint">Vollständige Sicherung inkl. Bilder – kann jederzeit wieder importiert werden.</p></div>'
+        : '<div class="action-block"><button type="button" class="btn btn-primary" data-adm="export-json">' + icon('save') + 'Sicherung exportieren (.json)</button>' +
+          '<p class="field-hint">Vollständige Sicherung inkl. Bilder. ' + (PH.env.isAppleMobile ? 'Öffnet das Teilen-Menü: „In Dateien sichern“, AirDrop oder Mail. ' : '') +
+          'Zum Übertragen auf ein anderes iPhone/iPad dort unter Verwaltung importieren.</p></div>' +
+          '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="export-js">' + icon('download') + 'Datendatei exportieren (wissensdatenbank.js)</button>' +
+          '<p class="field-hint">Für die PC-Version (Ordner <code>data</code>) oder zum Veröffentlichen. Die veröffentlichte Website ist öffentlich – nur unbedenkliche Inhalte veröffentlichen.</p></div>') +
       '</section>' +
 
       '<section class="card admin-card">' +
       '<h2>' + icon('upload') + 'Importieren</h2>' +
       '<label class="file-drop" for="imp-file">' + icon('upload') + '<span><strong>Datei auswählen</strong><br><span class="muted">.json-Sicherung oder wissensdatenbank.js</span></span>' +
-      '<input type="file" id="imp-file" accept=".json,.js,application/json,text/javascript" class="sr-only"></label>' +
+      '<input type="file" id="imp-file"' + (PH.env.isAppleMobile ? '' : ' accept=".json,.js,application/json,text/javascript"') + ' class="sr-only"></label>' +
       '<div id="imp-preview"></div>' +
       '</section>' +
       '</div>' +
@@ -69,7 +80,7 @@
       '<h2>' + icon('refresh') + 'Zurücksetzen &amp; Beispiele</h2>' +
       '<div class="admin-grid inner">' +
       '<div class="action-block"><button type="button" class="btn btn-secondary" data-adm="reset"' + (s.hasLocal && s.bundledAvailable ? '' : ' disabled') + '>' + icon('refresh') + 'Lokale Änderungen verwerfen</button>' +
-      '<p class="field-hint">Lädt wieder den Stand aus <code>data/wissensdatenbank.js</code>. ' + (s.hasLocal ? 'Vorher ggf. eine Sicherung exportieren.' : 'Aktuell gibt es keine lokalen Änderungen.') + '</p></div>' +
+      '<p class="field-hint">Lädt wieder den Stand ' + (isFile ? 'aus <code>data/wissensdatenbank.js</code>' : 'der veröffentlichten Version') + '. ' + (s.hasLocal ? 'Vorher ggf. eine Sicherung exportieren.' : 'Aktuell gibt es keine lokalen Änderungen.') + '</p></div>' +
       '<div class="action-block"><button type="button" class="btn btn-danger-ghost" data-adm="remove-examples"' + (examples ? '' : ' disabled') + '>' + icon('trash') + 'Alle Beispielartikel löschen (' + examples + ')</button>' +
       '<p class="field-hint">Entfernt alle als „Beispiel“ markierten Artikel. Kategorien, Synonyme und eigene Artikel bleiben erhalten.</p></div>' +
       '</div></section>' +
@@ -204,6 +215,39 @@
       '</div>';
   }
 
+  /* ------------------------------------------------------------ App & Offline (nur Web/PWA) */
+
+  async function pwaStatusHtml() {
+    const p = PH.pwa ? PH.pwa.status() : { supported: false };
+    const store = PH.pwa ? await PH.pwa.storageInfo() : {};
+    const yes = (t) => '<span class="status ok">' + icon('checkCircle') + t + '</span>';
+    const warn = (t) => '<span class="status warn">' + icon('alert') + t + '</span>';
+    let offline;
+    if (!p.supported) offline = warn('Nicht verfügbar (Aufruf über https:// nötig)');
+    else if (p.error) offline = warn('Fehler: ' + esc(p.error));
+    else if (p.info && p.info.missing && p.info.missing.length) offline = warn(p.info.missing.length + ' Datei(en) fehlen noch – bitte einmal online öffnen');
+    else if (p.offlineReady) offline = yes('Bereit' + (p.info ? ' – alle ' + p.info.files + ' App-Dateien gespeichert' : ''));
+    else offline = warn('Wird eingerichtet …');
+    const persisted = store.persisted === true
+      ? yes('Ja – der Browser löscht die Daten nicht automatisch')
+      : store.persisted === false ? warn('Nicht bestätigt' + (PH.env.isAppleMobile ? ' – App über „Zum Home-Bildschirm“ installieren' : '')) : '<span class="muted">unbekannt</span>';
+    return '<dl class="kv">' +
+      '<dt>Als App installiert</dt><dd>' + (p.standalone ? yes('Ja (Home-Bildschirm)') : PH.env.isAppleMobile ? warn('Nein – Teilen → „Zum Home-Bildschirm“') : '<span class="muted">Nein (im Browser geöffnet)</span>') + '</dd>' +
+      '<dt>Offline-Betrieb</dt><dd>' + offline + '</dd>' +
+      '<dt>App-Version</dt><dd><code>' + esc((p.info && p.info.version) || '–') + '</code>' + (p.updateWaiting ? ' · ' + warn('neue Version bereit') : '') + '</dd>' +
+      '<dt>Dauerhafter Speicher</dt><dd>' + persisted + '</dd>' +
+      (store.usage != null ? '<dt>Belegter Speicher</dt><dd>' + formatBytes(store.usage) + (store.quota ? ' von ca. ' + formatBytes(store.quota) : '') + '</dd>' : '') +
+      '<dt>Verbindung</dt><dd>' + (p.online ? 'online' : 'offline – alle gespeicherten Inhalte nutzbar') + '</dd>' +
+      '</dl>' +
+      '<div class="btn-row pwa-actions">' +
+      '<button type="button" class="btn btn-secondary btn-sm" data-adm="pwa-check"' + (p.supported ? '' : ' disabled') + '>' + icon('refresh') + 'Nach Updates suchen</button>' +
+      (p.updateWaiting ? '<button type="button" class="btn btn-primary btn-sm" data-adm="pwa-apply">' + icon('download') + 'Update installieren</button>' : '') +
+      '<button type="button" class="btn btn-ghost btn-sm" data-adm="pwa-recache"' + (p.controlled ? '' : ' disabled') + '>' + icon('database') + 'Offline-Dateien neu laden</button>' +
+      '</div>' +
+      '<p class="field-hint">Ihre Änderungen liegen getrennt von den App-Dateien und bleiben bei Updates erhalten. ' +
+      (PH.env.isAppleMobile ? 'Hinweis: Safari und die App auf dem Home-Bildschirm haben getrennte Speicher.' : '') + '</p>';
+  }
+
   /* ------------------------------------------------------------ Bindung */
 
   function bind(el) {
@@ -213,6 +257,18 @@
     const renderCats = () => { catHost.innerHTML = catEditor(catState); };
     renderCats();
     el.querySelector('#care').innerHTML = careHtml();
+
+    const pwaHost = el.querySelector('#pwa-status');
+    if (pwaHost) {
+      const upd = () => { if (pwaHost.isConnected) pwaStatusHtml().then((h) => { pwaHost.innerHTML = h; }); };
+      upd();
+      if (PH.pwa) {
+        const off = PH.pwa.onChange(upd);
+        PH.pwa.requestInfo();
+        const stop = () => { if (!pwaHost.isConnected) { off(); window.removeEventListener('hashchange', stop); } };
+        window.addEventListener('hashchange', stop);
+      }
+    }
 
     // Formatierte Hinweise ({{F5}} etc.)
     el.querySelectorAll('.field-hint').forEach((p) => {
@@ -292,6 +348,16 @@
         PH.app.exportForFolder();
       } else if (act === 'export-json') {
         PH.app.exportBackup();
+      } else if (act === 'pwa-check') {
+        b.disabled = true;
+        const r = await PH.pwa.checkForUpdates(false);
+        b.disabled = false;
+        PH.ui.toast({ update: 'Neue Version gefunden – sie wird geladen. Danach erscheint oben „Aktualisieren“.', none: 'Sie verwenden die aktuelle Version.', offline: 'Keine Verbindung – Prüfung nicht möglich.', unsupported: 'Updates sind hier nicht verfügbar.' }[r], r === 'none' ? 'success' : 'info');
+      } else if (act === 'pwa-apply') {
+        PH.pwa.applyUpdate();
+      } else if (act === 'pwa-recache') {
+        if (!navigator.onLine) { PH.ui.toast('Dafür ist eine Internetverbindung nötig.', 'warning'); return; }
+        if (PH.pwa.recache()) PH.ui.toast('Offline-Dateien werden neu geladen …', 'info');
       } else if (act === 'reset') {
         PH.app.resetToBundled();
       } else if (act === 'remove-examples') {

@@ -118,14 +118,7 @@
     if (kb.categories.length) {
       html += '<section class="section"><div class="section-head"><h2>Kategorien</h2>' +
         '<a class="link-more" href="#/alle">Alle Artikel ' + icon('chevronRight') + '</a></div>' +
-        '<div class="grid cat-grid">' +
-        kb.categories.map((c) =>
-          '<a class="card cat-card color-' + esc(c.color) + '" href="#/kategorie/' + encodeURIComponent(c.id) + '">' +
-          '<span class="cat-icon">' + icon(c.icon) + '</span>' +
-          '<span class="cat-text"><span class="cat-name">' + esc(c.name) + '</span>' +
-          (c.description ? '<span class="cat-desc">' + esc(truncate(c.description, 90)) + '</span>' : '') +
-          '<span class="cat-count">' + (counts[c.id] || 0) + ' ' + ((counts[c.id] || 0) === 1 ? 'Artikel' : 'Artikel') + '</span></span></a>'
-        ).join('') + '</div></section>';
+        catGrid(counts) + '</section>';
     }
 
     const cols = [];
@@ -149,6 +142,38 @@
     if (cols2.length) html += '<div class="two-col">' + cols2.slice(0, 2).join('') + '</div>' + (cols2[2] ? '<div class="two-col">' + cols2[2] + '</div>' : '');
 
     return { title: '', html, after: bindTry };
+  }
+
+  function catGrid(counts) {
+    return '<div class="grid cat-grid">' +
+      app().kb.categories.map((c) =>
+        '<a class="card cat-card color-' + esc(c.color) + '" href="#/kategorie/' + encodeURIComponent(c.id) + '">' +
+        '<span class="cat-icon">' + icon(c.icon) + '</span>' +
+        '<span class="cat-text"><span class="cat-name">' + esc(c.name) + '</span>' +
+        (c.description ? '<span class="cat-desc">' + esc(truncate(c.description, 90)) + '</span>' : '') +
+        '<span class="cat-count">' + (counts[c.id] || 0) + ' Artikel</span></span></a>'
+      ).join('') + '</div>';
+  }
+
+  /** Übersicht aller Kategorien und Artikeltypen (Tab „Kategorien“ auf Smartphone/Tablet) */
+  function categories() {
+    const kb = app().kb;
+    const counts = app().categoryCounts();
+    const tc = {};
+    kb.articles.forEach((a) => (tc[a.type] = (tc[a.type] || 0) + 1));
+    const none = kb.articles.filter((a) => !app().getCategory(a.categoryId)).length;
+    const html = breadcrumb([{ href: '#/', label: 'Start' }, { label: 'Kategorien' }]) +
+      '<header class="page-head"><span class="page-icon">' + icon('grid') + '</span><div class="page-head-text"><h1>Kategorien</h1>' +
+      '<p>' + kb.articles.length + ' Artikel in ' + kb.categories.length + ' Kategorien</p></div>' +
+      '<div class="page-head-actions">' + newArticleButton('', 'Neuer Artikel') + '</div></header>' +
+      (kb.categories.length ? catGrid(counts) : emptyState('folder', 'Noch keine Kategorien', 'Kategorien legen Sie unter <a href="#/verwaltung">Verwaltung</a> an.')) +
+      (none ? '<p><a class="link-more" href="#/kategorie/_ohne">' + icon('folder') + 'Ohne Kategorie (' + none + ') ' + icon('chevronRight') + '</a></p>' : '') +
+      '<section class="section"><div class="section-head"><h2>Nach Artikeltyp</h2><a class="link-more" href="#/alle">Alle Artikel ' + icon('chevronRight') + '</a></div>' +
+      '<div class="grid type-grid">' + PH.model.TYPE_ORDER.map((t) =>
+        '<a class="card type-card type-' + t + '" href="#/typ/' + t + '"><span class="type-icon">' + icon(T()[t].icon) + '</span>' +
+        '<span class="cat-text"><span class="cat-name">' + esc(T()[t].plural) + '</span><span class="cat-count">' + (tc[t] || 0) + ' Artikel</span></span></a>'
+      ).join('') + '</div></section>';
+    return { title: 'Kategorien', html };
   }
 
   function bindTry(el) {
@@ -660,10 +685,24 @@
     '| `[Linktext](#/artikel/ID)` | Link auf einen anderen Artikel |',
     '| `> [!HINWEIS]` / `[!TIPP]` / `[!WARNUNG]` / `[!WICHTIG]` | farbige Hinweisbox (Text in den Folgezeilen mit `>` beginnen) |',
     '',
+    '## iPhone und iPad',
+    '1. Die Adresse der App einmal in **Safari** mit Internetverbindung öffnen.',
+    '2. Auf **Teilen** tippen (je nach Ansicht zuerst auf „•••“) und **„Zum Home-Bildschirm“** wählen.',
+    '3. Protel Hilfe ab jetzt über das Symbol auf dem Home-Bildschirm starten – die App funktioniert dann vollständig **offline**, einschließlich Suche, Anleitungen und Bildern.',
+    '',
+    '- **Navigation:** Tab-Leiste unten (Start, Suchen, Kategorien, Favoriten, Mehr) und Zurück-Pfeil oben links.',
+    '- **Screenshots** im Editor: „Datei wählen …“ öffnet Fotos, Kamera oder Dateien; „Aus Zwischenablage“ fügt ein kopiertes Bild ein.',
+    '- **Sichern und Übertragen:** *Verwaltung → Sicherung exportieren* öffnet das Teilen-Menü („In Dateien sichern“, AirDrop, Mail). Auf dem anderen Gerät unter *Verwaltung → Importieren* die Datei auswählen.',
+    '- **Updates:** Gibt es eine neue Version oder neue Inhalte, erscheint oben ein Hinweis. Ihre Änderungen bleiben beim Aktualisieren erhalten.',
+    '',
+    '> [!WICHTIG]',
+    '> Safari und die App auf dem Home-Bildschirm haben **getrennte Speicher**. Bearbeiten Sie Inhalte daher immer in der installierten App und erstellen Sie regelmäßig eine Sicherung.',
+    '',
     '## Daten & Datenschutz',
-    '- Die App läuft **vollständig offline** im Browser: kein Server, keine Cloud, keine Verbindung zu protel-Systemen, keine KI.',
-    '- Inhalte stammen aus `data/wissensdatenbank.js` im App-Ordner; lokale Änderungen liegen in der Browser-Datenbank dieses PCs.',
-    '- Favoriten, Verlauf und Suchstatistik bleiben ebenfalls lokal auf diesem PC.',
+    '- Die App läuft **vollständig offline**: kein Server-Programm, keine Cloud-Dienste, keine Verbindung zu protel-Systemen, keine KI.',
+    '- Inhalte stammen aus `data/wissensdatenbank.js` (PC: im App-Ordner, Smartphone/Tablet: von der Website, danach offline gespeichert).',
+    '- Eigene Änderungen, Favoriten, Verlauf und Suchstatistik bleiben lokal auf dem jeweiligen Gerät.',
+    '- Die veröffentlichte Website ist **öffentlich erreichbar**. Vertrauliche Inhalte nur lokal pflegen (Import auf dem Gerät), nicht veröffentlichen.',
     '- Bitte keine personenbezogenen Gästedaten, Passwörter oder Kartendaten in Artikeln oder Screenshots speichern.',
   ].join('\n');
 
@@ -691,7 +730,7 @@
   }
 
   PH.views = {
-    home, category, typeList, all, favorites, search, article, help, notFound, error,
+    home, categories, category, typeList, all, favorites, search, article, help, notFound, error,
     renderArticle, articleCard, typeBadge, exampleBadge, catBadge, breadcrumb, emptyState, shotHtml, searchUrl, articleHref,
   };
 })();
