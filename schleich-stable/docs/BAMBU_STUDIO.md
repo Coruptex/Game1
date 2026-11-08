@@ -5,12 +5,17 @@ Einstellungen; Bambu Studio zeigt nach dem Slicen seine eigenen Werte.
 
 ## Einmal einrichten
 
-1. **Presets importieren:** Bambu Studio > Datei > Importieren > *Konfigurationen importieren*,
-   dann alle vier Dateien aus `slicer/bambu_studio/` wählen. Sie erscheinen beim Prozess unter
-   den Benutzer-Presets. Sie bauen auf den Bambu-Profilen „0.20mm Standard @BBL A1“ und
-   „0.24mm Draft @BBL A1“ auf und ändern nur das, was dieser Stall braucht.
+1. **Drucker wählen:** *Bambu Lab A1 0.4 nozzle*, Platte *Textured PEI Plate*, Filament z. B.
+   *Bambu PLA Basic*. Die Presets passen nur zu diesem Drucker und erscheinen nur, wenn er
+   ausgewählt ist.
 2. **AMS lite belegen:** Slot 1 Weiß, Slot 2 Schwarz, Slot 3 Hellgrau, Slot 4 Dunkelgrau.
-3. Drucker *Bambu Lab A1 0.4 nozzle*, Platte *Textured PEI Plate*, Filament z. B. *Bambu PLA Basic*.
+3. **Die vier Prozess-Presets anlegen**, auf einem der beiden Wege:
+   * **Importieren:** im Menü **Datei > Importieren > Konfigurationen importieren …** (nicht das
+     Import-Symbol in der Werkzeugleiste und nicht per Ziehen auf die Platte; die importieren nur
+     Modelle) die vier `.json`-Dateien aus `slicer/bambu_studio/` wählen. Danach meldet Bambu
+     Studio „… Konfigurationen importiert“, und die Presets stehen in der Prozess-Auswahl unter
+     *Benutzerdefinierte Profile*. Meldet es 0, den nächsten Weg nehmen.
+   * **Von Hand anlegen** (etwa 10 Minuten, klappt immer): siehe unten.
 
 ## Jede Platte
 
@@ -61,14 +66,36 @@ Einstellungen; Bambu Studio zeigt nach dem Slicen seine eigenen Werte.
 * Ohne Stützen geht es auch: `knuckle_chamfer = true` in `cad/config.scad` setzen und neu
   exportieren, dann haben die Augen unten eine 45-Grad-Schräge.
 
-## Falls der Import der Presets nicht klappt
+## Die Presets von Hand anlegen (ohne Import)
 
-Die Einstellungen von Hand, jeweils auf Basis des genannten Bambu-Profils:
+Die Bezeichnungen sind die der deutschen Bambu Studio-Oberfläche. Vorher im Prozess-Bereich
+oben rechts den Schalter **Erweitert** einschalten, sonst sind einige Einstellungen versteckt.
+Jedes Preset: Basisprofil wählen, Werte ändern, dann auf das **Speichern-Symbol** neben dem
+Profilnamen klicken und den fett gedruckten Namen eingeben (so heißen die Presets auch in der
+Plattentabelle oben). Alles Ungenannte bleibt wie im Basisprofil.
 
-| Preset | Basis | Änderungen |
-|---|---|---|
-| Stall 0.20mm Standard | 0.20mm Standard @BBL A1 | Wandlinien 3, untere Schichten 4, Stützen aus, Prime-Tower aus |
-| Stall 0.20mm Pfosten Stuetzen | 0.20mm Standard @BBL A1 | Wandlinien 4, Füllung 25 %; Stützen an: Typ Baum (auto), Stil *Tree Slim*, Schwellwinkel 30°, *nur auf der Druckplatte* aus, *Brücken nicht stützen* an; Brim außen 8 mm |
-| Stall 0.20mm Mitteldach | 0.20mm Standard @BBL A1 | Wandlinien 3, Stützen aus, Brim außen 5 mm |
-| Stall 0.24mm Boden | 0.24mm Draft @BBL A1 | Wandlinien 3, untere Schichten 4, Stützen aus, kein Brim |
+**1. Stall 0.20mm Standard** (Wände, Türen, Fenster, Seitendächer, Testplatte T2)
+* Basis: *0.20mm Standard @BBL A1*
+* Reiter *Stärke*: Wandlinien **3**, Untere Schalenschichten **4**
+* Reiter *Stützen*: Stützstrukturen aktivieren **aus**
+* Reiter *Sonstige*: Reinigungsturm, Aktivieren **aus**
+
+**2. Stall 0.20mm Pfosten Stuetzen** (beide Pfostenplatten, Testplatte T1)
+* Basis: *0.20mm Standard @BBL A1*
+* Reiter *Stärke*: Wandlinien **4**, Fülldichte **25 %**
+* Reiter *Stützen*: Stützstrukturen aktivieren **an**, Typ **Baum (auto)**, Stil **Baum schlank**,
+  Schwellenwinkel **30**, Nur auf Druckplatte **aus**, Brücken nicht unterstützen **an**
+* Reiter *Sonstige*: Randtyp **Nur äußerer Rand**, Randbreite **8 mm**; Reinigungsturm **aus**
+
+**3. Stall 0.20mm Mitteldach** (das Mitteldach)
+* Basis: *0.20mm Standard @BBL A1*
+* Reiter *Stärke*: Wandlinien **3**
+* Reiter *Stützen*: Stützstrukturen aktivieren **aus**
+* Reiter *Sonstige*: Randtyp **Nur äußerer Rand**, Randbreite **5 mm**; Reinigungsturm **aus**
+
+**4. Stall 0.24mm Boden** (die sechs Bodenplatten)
+* Basis: *0.24mm Draft @BBL A1*
+* Reiter *Stärke*: Wandlinien **3**, Untere Schalenschichten **4**
+* Reiter *Stützen*: Stützstrukturen aktivieren **aus**
+* Reiter *Sonstige*: Randtyp **Keine Umrandung**; Reinigungsturm **aus**
 
