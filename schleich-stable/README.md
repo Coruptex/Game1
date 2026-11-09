@@ -19,7 +19,7 @@ mymodelhorse.com, but it is an original design and is not affiliated with Schlei
 | Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: click latch, a drop latch (test plate T4) is proposed to replace it; left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
 | Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows (hinge outside the window frame, which runs all the way round), 3 lift-off roof units (the central roof locks the side roofs) |
 | Parts | 51 printed pieces from 26 STL files; 12 hinge pins cut from 1.75 mm filament |
-| Print | 24 plates, about **88 h** and **2.5 kg PLA** (PrusaSlicer estimate with the same settings); every plate is a ready **Bambu Studio project** in `bambu/` |
+| Print | 24 plates, about **68 h** and **2.2 kg PLA** (PrusaSlicer estimate with the same settings); every plate is a ready **Bambu Studio project** in `bambu/` |
 
 This is the compact version (v2). The first, full-size version was 565 x 357 x 329 mm with
 3.4 kg / 116 h of printing. Section 4 of the dimension plan explains where the space was

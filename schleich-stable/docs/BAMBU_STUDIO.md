@@ -6,10 +6,10 @@ Gespeichert sind:
 * Drucker **Bambu Lab A1 0.4 nozzle**, Druckplatte *Textured PEI Plate*;
 * vier Filamente für das AMS lite: **1 Weiß, 2 Schwarz, 3 Hellgrau, 4 Dunkelgrau** (Bambu PLA
   Basic), und welches Teil mit welchem Filament gedruckt wird;
-* das Prozess-Preset mit allen geänderten Werten (Wände, Füllung, Stützen, Brim, bei den Pfosten
-  sanftere Geschwindigkeiten);
+* das Prozess-Preset mit allen geänderten Werten (Schichthöhe, Wände, Füllung, Stützen, Brim, bei
+  den Pfosten begrenzte Beschleunigung);
 * Lage und Ausrichtung aller Teile auf der Platte;
-* bei den weißen Wandplatten der **Filamentwechsel auf Schwarz ab 3,0 mm** für die erhabenen Leisten;
+* bei den weißen Wandplatten der **Filamentwechsel auf Schwarz** direkt über der Wandfläche (3,0 bzw. 3,08 mm) für die erhabenen Leisten;
 * beim Fensterflügel ein eigener 3-mm-Brim, nur für dieses Teil.
 
 Du musst **nichts mehr einstellen**: Datei öffnen, slicen, drucken. Welche Datei wann dran ist,
@@ -27,7 +27,7 @@ steht in [DRUCKPLAN.md](DRUCKPLAN.md).
 * Links oben: Drucker **Bambu Lab A1 0.4 nozzle**, Platte **Textured PEI Plate**.
 * Filamentliste: 4 Einträge in Weiß, Schwarz, Hellgrau und Dunkelgrau. Druckst du ein anderes PLA als
   Bambu PLA Basic, wähle dort dein Filamentprofil (zum Beispiel *Generic PLA*). Die Farben bleiben.
-* Prozess: der Name aus dem Druckplan, zum Beispiel *Stall 0.20mm Pfosten Stuetzen v2 @BBL A1*.
+* Prozess: der Name aus dem Druckplan, zum Beispiel *Stall 0.24mm Pfosten v3 @BBL A1*.
   Ein Sternchen oder ein Zusatz wie „(…3mf)“ hinter dem Namen ist in Ordnung: Bambu Studio zeigt so,
   dass die Werte aus dem Projekt kommen.
 
@@ -36,8 +36,8 @@ steht in [DRUCKPLAN.md](DRUCKPLAN.md).
 1. **Druckplatte slicen**.
 2. In der Vorschau:
    * **Pfosten-Platten:** grüne Baumstützen nur unter den Scharnieraugen, nicht in den Löchern.
-   * **Wandplatten:** am Ebenen-Schieberegler ist bei 3,00 mm eine farbige Markierung zu sehen, der
-     Filamentwechsel. Darüber sind die Leisten schwarz.
+   * **Wandplatten:** am Ebenen-Schieberegler ist knapp über der Wandfläche (3,00 mm bzw. 3,08 mm)
+     eine farbige Markierung zu sehen, der Filamentwechsel. Darüber sind die Leisten schwarz.
    * Der Brim liegt vollständig auf der Platte.
 3. **Druckplatte drucken**. Im Dialog die AMS-Zuordnung prüfen: Projekt-Filament 1 auf deinen weißen
    Slot, 2 auf Schwarz und so weiter. Bambu Studio ordnet nach Farbe zu, du bestätigst nur.
@@ -46,9 +46,18 @@ steht in [DRUCKPLAN.md](DRUCKPLAN.md).
 
 Die Projekte tragen ihre Einstellungen selbst. Die Preset-Dateien in `Presets/` brauchst du nur, wenn
 du eigene Teile mit denselben Einstellungen drucken willst (**Datei > Importieren > Konfigurationen
-importieren**). Neu ist **Stall 0.20mm Pfosten Stuetzen v2**: wie bisher, aber mit sanfteren
-Geschwindigkeiten und Beschleunigungen für die hohen, schmalen Pfosten. Du musst am Drucker nicht
-mehr auf „Leise“ stellen. Das alte Pfosten-Preset wird nicht mehr benutzt.
+importieren**). Seit dem 9. November sind die Einstellungen auf kürzere Druckzeit abgestimmt:
+
+| Preset | Basis | Für |
+|---|---|---|
+| Stall 0.28mm Boden v2 | 0.28mm Extra Draft | Bodenplatten, Test T2 |
+| Stall 0.24mm Pfosten v3 | 0.24mm Draft | alle Pfosten, Test T3a (2 Wände, Baumstützen, 8-mm-Brim, begrenzte Beschleunigung) |
+| Stall 0.24mm Waende | 0.24mm Draft | Seitenwände, Trennwände, Giebelfelder |
+| Stall 0.28mm Mitteldach v2 | 0.28mm Extra Draft | Mitteldach |
+| Stall 0.28mm Dach | 0.28mm Extra Draft | Seitendächer (vollmassiv) |
+| Stall 0.20mm Standard | 0.20mm Standard | Türen, Fensterflügel, Giebelwände, Boxenfronten, Tests T3b und T4 (ihre Passungen werden bei 0,20 mm getestet, darum unverändert) |
+
+Am Drucker musst du nichts umstellen (auch nicht auf „Leise“).
 
 ## Stützen an den Pfosten entfernen
 

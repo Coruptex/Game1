@@ -30,7 +30,7 @@ Für ein Kind von 9 Jahren gebaut: zerlegbar, ohne Kleber, robust für viel Spie
 | Fensterflügel | Scharnierwand 1,45 mm, Rahmen 2,4 mm | Scharnieraugen 6,4 statt 5,2 mm (Wand 2,05 mm), Rahmen 3,0 mm, Sprossen 3,0 mm |
 | Gitterstäbe | 3 mm breit, an der Trennwand nur 2,8 mm dick | Trennwand: 4 mm breit und erhaben, 4,2 mm dick (schwarz); Boxentür: 3,5 mm; Sprossen der Tore: 3,0 mm |
 | Bodenplatten-Verbindung | 20 mm breite Zungen, 20,5 mm Brücke, 0,25 mm Luft | 14 mm breite Zungen, mehr pro Fuge, 14,5 mm Brücke und 0,4 mm Luft nach oben. Hängt die Brücke etwas durch, klemmt nichts. PrusaSlicer meldet keine langen Brücken mehr |
-| Druck der hohen Pfosten | 26 mm Abstand | 60 mm Abstand (ein umfallender Pfosten reißt die anderen nicht mit), 8 mm Brim, sanftere Geschwindigkeiten im Preset „Pfosten Stuetzen v2“ (am Drucker nichts umstellen) |
+| Druck der hohen Pfosten | 26 mm Abstand | 60 mm Abstand (ein umfallender Pfosten reißt die anderen nicht mit), 8 mm Brim, begrenzte Beschleunigung im Preset „Pfosten v3“ (am Drucker nichts umstellen) |
 | Riegel | 2 Stück, lose | dazu 2 Ersatzriegel auf der Türplatte |
 | Slicer | nur Hinweise | 4 Bambu-Studio-Presets, Druckplatten-Tabelle mit Preset, AMS-Slot und Farbwechsel |
 
@@ -44,7 +44,7 @@ aber empfindlich gegen Toleranzen und soll durch einen Fallriegel ersetzt werden
 | Teile | Druckrichtung | Bewertung | Was zu beachten ist |
 |---|---|---|---|
 | Bodenplatten (6) | flach, 0,24 mm Schichten | sehr gut | große Auflagefläche; unten 14,5-mm-Brücken über den Zungen-Aussparungen |
-| Wände, Trennwände, Boxenfronten, Giebel (16) | flach, Schauseite oben | sehr gut | Filamentwechsel bei 3,0 mm für schwarze Zierleisten (macht das AMS lite) |
+| Wände, Trennwände, Boxenfronten, Giebel (16) | flach, Schauseite oben | sehr gut | Filamentwechsel knapp über der Wandfläche für schwarze Zierleisten (macht das AMS lite, im Projekt gespeichert) |
 | Türen, Fensterflügel, Riegel (14 + 2 Ersatz) | flach | gut | Scharnierbohrungen tropfenförmig, keine Stützen; Fensterflügel mit 3-mm-Brim |
 | Kurze Pfosten (6, 124 mm) | stehend | gut | 8 mm Brim; Oberkante schräg wie das Seitendach |
 | Hohe Pfosten (6, 216 mm) | stehend | **anspruchsvoll** | stehen auf nur 14 x 14 mm; Baumstützen unter 28 Scharnieraugen; 8 mm Brim, sanfte Beschleunigung (im Projekt gespeichert), Platte mit Spülmittel waschen, die erste Stunde zuschauen |
@@ -102,14 +102,14 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 * **Türen nicht mit Gewalt über den Anschlag drücken** (Tore 105 Grad, Boxentüren 90 bis
   105 Grad); das belastet die Scharnieraugen.
 * **PLA** wird bei etwa 55 °C weich (Auto im Sommer, sonnige Fensterbank).
-* **Aufwand:** 24 Platten, rund 88 h und 2,5 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
+* **Aufwand:** 24 Platten, rund 68 h und 2,2 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
   zeigt eigene Werte), dazu 1 bis 2 Stunden Zusammenbau.
 
 ## 6. Drucken
 
 Siehe [BAMBU_STUDIO.md](BAMBU_STUDIO.md) und [DRUCKPLAN.md](DRUCKPLAN.md): Projektdatei öffnen,
 slicen, drucken. AMS lite: 1 Weiß, 2 Schwarz, 3 Hellgrau, 4 Dunkelgrau. Alles andere, auch der
-Filamentwechsel bei 3,0 mm, steht in den Dateien. Reihenfolge: Tests T3a, T3b, T4 (T2), dann die
+Filamentwechsel für die schwarzen Leisten, steht in den Dateien. Reihenfolge: Tests T3a, T3b, T4 (T2), dann die
 freigegebenen Platten (Boden, Eck- und Seitenpfosten, Wände, Dach), nach den Tests der Rest.
 
 ## 7. Die Blender-Datei

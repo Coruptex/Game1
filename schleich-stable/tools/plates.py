@@ -27,7 +27,13 @@ import bambu3mf as b3  # noqa: E402
 LO, HI = 6.0, 250.0          # usable bed area (mm) incl. brim margin
 GAP = 6.0                    # between parts on a plate (flat parts)
 EXT = {"white": 1, "black": 2, "grey": 3, "roof": 4}
-TRIM_Z = 3.0                 # filament change for the black trims: from the layer 2.8-3.0 mm on
+def trim_z(layer, first=0.2, face=2.8):
+    """print_z of the first layer above the panel face (wall_t = 2.8 mm):
+    from this layer on the trims print black (filament change)"""
+    z = first
+    while z < face + 0.05:
+        z = round(z + layer, 3)
+    return z
 
 # (id, title, colour, process, gap, [(part, qty)], release, note)
 # release: "frei" = project written now; "T3" / "T4" = waits for that test
@@ -42,10 +48,10 @@ GROUPS = [
     # bed (A1 = bed slinger) cannot knock over its neighbours
     ("Pfosten_kurz", "Eck- und Seitenpfosten (ohne Scharniere)", "black", "posts", 34,
      [("post_corner", 4), ("post_sidemid", 2)], "frei", ""),
-    ("Waende", "Seitenwände, Trennwände, Giebelfelder", "white", "standard", GAP,
+    ("Waende", "Seitenwände, Trennwände, Giebelfelder", "white", "walls", GAP,
      [("side_wall", 4), ("partition", 2), ("pediment", 2)], "frei", "trim"),
     ("Mitteldach", "Mitteldach", "roof", "central_roof", GAP, [("roof_central", 1)], "frei", ""),
-    ("Seitendaecher", "Seitendächer", "roof", "standard", GAP, [("roof_side_A", 1), ("roof_side_B", 1)], "frei", ""),
+    ("Seitendaecher", "Seitendächer", "roof", "roof", GAP, [("roof_side_A", 1), ("roof_side_B", 1)], "frei", ""),
     ("Pfosten_Scharnier", "Pfosten mit Scharnieraugen", "black", "posts", 60,
      [("post_jamb_L", 2), ("post_jamb_R", 2), ("post_mid", 2)], "T3", "supports"),
     ("Giebelwaende", "Giebelwände mit Fenster", "white", "standard", GAP, [("gable_wing_A", 2), ("gable_wing_B", 2)], "T3", "trim"),
@@ -235,14 +241,18 @@ def build_plate(p):
 
 def slice_opts(p, axes):
     proc = b3.PROCESSES[p["process"]]["keys"]
-    o = {"layer": 0.24 if p["process"] == "floor" else 0.2,
+    pr = b3.PROCESSES[p["process"]]
+    o = {"layer": pr["layer"],
          "walls": int(proc.get("wall_loops", 3)), "infill": int(proc.get("sparse_infill_density", "15%").rstrip("%")),
          "support": proc.get("enable_support") == "1",
          "brim": {"posts": 8, "central_roof": 5}.get(p["process"], 0), "axes": axes, "cli": []}
+    if "top_shell_layers" in proc:
+        o["cli"] += ["--top-solid-layers", proc["top_shell_layers"]]
+    if "bottom_shell_layers" in proc:
+        o["cli"] += ["--bottom-solid-layers", proc["bottom_shell_layers"]]
     if p["process"] == "posts":
-        o["cli"] = ["--external-perimeter-speed", "120", "--perimeter-speed", "150", "--infill-speed", "150",
-                    "--solid-infill-speed", "150", "--travel-speed", "350", "--default-acceleration", "3000",
-                    "--external-perimeter-acceleration", "2000", "--travel-acceleration", "4000"]
+        o["cli"] += ["--default-acceleration", "3000", "--external-perimeter-acceleration", "2000",
+                     "--perimeter-acceleration", "3000", "--infill-acceleration", "4000", "--travel-acceleration", "4000"]
     if any(q[0] in OBJ_SETTINGS for q in p["parts"]):
         o["brim"] = 3                                   # casement brim (PrusaSlicer: whole plate)
     return o
@@ -284,11 +294,11 @@ def main():
         entry = {k: p[k] for k in ("title", "colour", "process", "release", "note", "kind")}
         entry.update({"parts": [os.path.basename(q) for q, *_ in p["parts"]], "issues": issues,
                       "preset": b3.PROCESSES[p["process"]]["name"], "filament": EXT[p["colour"]],
-                      "colour_change": TRIM_Z if p["note"] == "trim" else None})
+                      "colour_change": trim_z(b3.PROCESSES[p["process"]]["layer"]) if p["note"] == "trim" else None})
         if p["release"] == "frei":
             fn = ("TEST_" if p["kind"] == "TEST" else "PROD_") + p["id"] + ".3mf"
             path = os.path.join(out_dir, "TEST" if p["kind"] == "TEST" else "PRODUKTION", fn)
-            cc = [(TRIM_Z, EXT["black"])] if p["note"] == "trim" else []
+            cc = [(trim_z(b3.PROCESSES[p["process"]]["layer"]), EXT["black"])] if p["note"] == "trim" else []
             b3.write_project(path, p["id"], objects_for(p, meshes), p["process"], cc,
                              title=p["title"], description=f"{p['title']} - Bambu Lab A1, PLA, {b3.PROCESSES[p['process']]['name']}")
             chk = b3.check_project(path)

@@ -140,8 +140,11 @@ swin_sill_z = 60;
 /* [Texture] */
 plank_w     = 10;     // board width
 groove_ext  = 0.55;   // V-groove depth, exterior face
-groove_int  = 0.40;   // V-groove depth, interior face
+groove_int  = 0;      // V-groove depth, interior face (bed side). 0: no grooves there --
+                      // they forced slow bridge layers (about 13 % of a wall plate's time)
 trim_h      = 1.4;    // raised trim height (window/door frames, arch band)
+shingle_joint_depth = 0.4; // joints between shingles only 0.4 mm deep (same look, far fewer
+                           // islands in the top layers -> faster); 0 = cut through the rows
 
 /* [Hidden] */
 $fn = 40;

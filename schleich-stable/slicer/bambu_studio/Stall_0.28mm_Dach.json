@@ -1,0 +1,15 @@
+{
+    "type": "process",
+    "from": "User",
+    "is_custom_defined": "0",
+    "version": "1.9.0.0",
+    "name": "Stall 0.28mm Dach @BBL A1",
+    "inherits": "0.28mm Extra Draft @BBL A1",
+    "print_settings_id": "Stall 0.28mm Dach @BBL A1",
+    "wall_loops": "2",
+    "top_shell_layers": "10",
+    "bottom_shell_layers": "10",
+    "enable_support": "0",
+    "brim_type": "auto_brim",
+    "enable_prime_tower": "0"
+}

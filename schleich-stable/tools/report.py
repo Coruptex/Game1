@@ -42,9 +42,9 @@ def fname(pid, p):
 def special(pid, p):
     s = []
     if p.get("colour_change"):
-        s.append("Filamentwechsel auf Schwarz ab 3,0 mm (gespeichert)")
+        s.append(f"Filamentwechsel auf Schwarz ab {p['colour_change']:.2f} mm (gespeichert)".replace(".", ","))
     if p["process"] == "posts":
-        s.append("Brim 8 mm, sanfte Beschleunigung (gespeichert)")
+        s.append("Brim 8 mm, begrenzte Beschleunigung (gespeichert)")
     if p.get("support_moves"):
         s.append("Baumstützen unter den Scharnieraugen")
     if p["process"] == "central_roof":

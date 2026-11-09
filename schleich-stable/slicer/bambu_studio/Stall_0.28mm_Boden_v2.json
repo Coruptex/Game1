@@ -1,0 +1,16 @@
+{
+    "type": "process",
+    "from": "User",
+    "is_custom_defined": "0",
+    "version": "1.9.0.0",
+    "name": "Stall 0.28mm Boden v2 @BBL A1",
+    "inherits": "0.28mm Extra Draft @BBL A1",
+    "print_settings_id": "Stall 0.28mm Boden v2 @BBL A1",
+    "wall_loops": "2",
+    "top_shell_layers": "4",
+    "bottom_shell_layers": "3",
+    "sparse_infill_density": "10%",
+    "enable_support": "0",
+    "brim_type": "no_brim",
+    "enable_prime_tower": "0"
+}

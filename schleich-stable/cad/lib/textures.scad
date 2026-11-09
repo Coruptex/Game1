@@ -88,12 +88,25 @@ module shingle_profile2d(len, t = roof_t, step = tile_step, row = 9) {
 module shingle_slab(len, wid, t = roof_t, step = tile_step, row = 9) {
     translate([0, wid, 0]) rotate([90, 0, 0]) linear_extrude(wid) shingle_profile2d(len, t, step, row);
 }
-// vertical joints between shingles (staggered every row), cut from z0 up
-module shingle_joints(len, wid, row = 9, sw = 12, g = 0.9, z0 = roof_t - 0.3, org = 0) {
-    translate([0, 0, z0]) linear_extrude(tile_step + 2) intersection() {
-        square([len, wid]);
-        union() for (k = [0 : ceil(len / row)])
-            for (y = [-(org % sw) + (k % 2) * sw / 2 - sw : sw : wid + sw])
-                translate([k * row + 0.8, y - g / 2]) square([row - 0.8, g]);
+// vertical joints between shingles (staggered every row), cut from z0 up.
+// depth > 0: the joints only reach `depth` below the shingle surface (fewer
+// separate islands in the top layers -> much faster to print, same look)
+module shingle_joints(len, wid, row = 9, sw = 12, g = 0.9, z0 = roof_t - 0.3, org = 0,
+                      depth = shingle_joint_depth, t = roof_t, step = tile_step) {
+    module prism() {
+        translate([0, 0, z0]) linear_extrude(tile_step + 2) intersection() {
+            square([len, wid]);
+            union() for (k = [0 : ceil(len / row)])
+                for (y = [-(org % sw) + (k % 2) * sw / 2 - sw : sw : wid + sw])
+                    translate([k * row + 0.8, y - g / 2]) square([row - 0.8, g]);
+        }
+    }
+    if (depth <= 0) prism();
+    else intersection() {
+        prism();
+        difference() {
+            translate([0, 0, 0.01]) shingle_slab(len, wid, t, step, row);
+            translate([0, 0, -depth]) shingle_slab(len, wid, t, step, row);
+        }
     }
 }

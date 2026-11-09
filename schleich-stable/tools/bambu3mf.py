@@ -40,32 +40,44 @@ FILAMENT_ID = "GFA00"
 # Process presets: system parent + changed keys (same values as the JSON
 # presets in slicer/bambu_studio/, generated from this table)
 PROCESSES = {
+    # doors, casements, gable walls, stall fronts, tests T3b / T4: the fits of
+    # these parts are tested at 0.20 mm, so their settings stay unchanged
     "standard": {
-        "name": "Stall 0.20mm Standard @BBL A1", "inherits": "0.20mm Standard @BBL A1",
+        "name": "Stall 0.20mm Standard @BBL A1", "inherits": "0.20mm Standard @BBL A1", "layer": 0.20,
         "keys": {"wall_loops": "3", "bottom_shell_layers": "4", "sparse_infill_density": "15%",
                  "enable_support": "0", "brim_type": "auto_brim", "enable_prime_tower": "0",
                  "seam_position": "aligned"}},
+    # side walls, partitions, pediments (thin, fully solid anyway)
+    "walls": {
+        "name": "Stall 0.24mm Waende @BBL A1", "inherits": "0.24mm Draft @BBL A1", "layer": 0.24,
+        "keys": {"wall_loops": "2", "sparse_infill_density": "15%", "enable_support": "0",
+                 "brim_type": "auto_brim", "enable_prime_tower": "0", "seam_position": "aligned"}},
+    # all posts and test T3a: 0.24 mm layers, 2 walls (posts are perimeter-bound),
+    # tree supports under the hinge knuckles, 8 mm brim and limited
+    # accelerations for the tall, slim posts on the moving bed
     "posts": {
-        "name": "Stall 0.20mm Pfosten Stuetzen v2 @BBL A1", "inherits": "0.20mm Standard @BBL A1",
-        "keys": {"wall_loops": "4", "sparse_infill_density": "25%",
+        "name": "Stall 0.24mm Pfosten v3 @BBL A1", "inherits": "0.24mm Draft @BBL A1", "layer": 0.24,
+        "keys": {"wall_loops": "2", "sparse_infill_density": "25%",
                  "enable_support": "1", "support_type": "tree(auto)", "support_style": "tree_slim",
                  "support_threshold_angle": "30", "support_on_build_plate_only": "0", "bridge_no_support": "1",
                  "support_top_z_distance": "0.2", "support_bottom_z_distance": "0.2",
                  "support_interface_top_layers": "2", "support_interface_bottom_layers": "2",
                  "support_object_xy_distance": "0.35",
                  "brim_type": "outer_only", "brim_width": "8", "brim_object_gap": "0.1", "enable_prime_tower": "0",
-                 # tall, slim parts on a moving bed (A1): gentle speeds and accelerations,
-                 # roughly the printer's "silent" mode, so nothing has to be set at the printer
-                 "outer_wall_speed": "120", "inner_wall_speed": "150", "sparse_infill_speed": "150",
-                 "internal_solid_infill_speed": "150", "gap_infill_speed": "120", "travel_speed": "350",
-                 "default_acceleration": "3000", "outer_wall_acceleration": "2000", "travel_acceleration": "4000"}},
+                 "default_acceleration": "3000", "outer_wall_acceleration": "2000", "inner_wall_acceleration": "3000",
+                 "sparse_infill_acceleration": "4000", "travel_acceleration": "4000"}},
     "central_roof": {
-        "name": "Stall 0.20mm Mitteldach @BBL A1", "inherits": "0.20mm Standard @BBL A1",
-        "keys": {"wall_loops": "3", "enable_support": "0", "brim_type": "outer_only", "brim_width": "5",
+        "name": "Stall 0.28mm Mitteldach v2 @BBL A1", "inherits": "0.28mm Extra Draft @BBL A1", "layer": 0.28,
+        "keys": {"wall_loops": "2", "enable_support": "0", "brim_type": "outer_only", "brim_width": "5",
                  "brim_object_gap": "0.1", "enable_prime_tower": "0"}},
+    # side roofs: printed fully solid (stiff plate, no slow bridge layers)
+    "roof": {
+        "name": "Stall 0.28mm Dach @BBL A1", "inherits": "0.28mm Extra Draft @BBL A1", "layer": 0.28,
+        "keys": {"wall_loops": "2", "top_shell_layers": "10", "bottom_shell_layers": "10",
+                 "enable_support": "0", "brim_type": "auto_brim", "enable_prime_tower": "0"}},
     "floor": {
-        "name": "Stall 0.24mm Boden @BBL A1", "inherits": "0.24mm Draft @BBL A1",
-        "keys": {"wall_loops": "3", "bottom_shell_layers": "4", "sparse_infill_density": "15%",
+        "name": "Stall 0.28mm Boden v2 @BBL A1", "inherits": "0.28mm Extra Draft @BBL A1", "layer": 0.28,
+        "keys": {"wall_loops": "2", "top_shell_layers": "4", "bottom_shell_layers": "3", "sparse_infill_density": "10%",
                  "enable_support": "0", "brim_type": "no_brim", "enable_prime_tower": "0"}},
 }
 
