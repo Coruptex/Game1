@@ -106,7 +106,7 @@ Grid of post centre lines (mm): X0 = 0, X1 = 176, X2 = 292, X3 = 468; Y0 = 0, Y1
 | Stall fronts | 4 | One part, rotated copies: door opening, latch stile, barred side section, sill, gallery with knee braces, roof beam with tabs |
 | Pediments | 2 | Door arch, round gable window, name plate; rake carries the central roof |
 | Main door leaves | 4 | 2x2 panes, Z-brace, strap hinges; slide-bolt loops |
-| Stall doors | 4 | One part: boards, bars, neck yoke; click latch; stop bevel |
+| Stall doors | 4 | One part: boards, bars, neck yoke; drop-latch peg and rest stop; stop bevel. Plus a loose drop-latch lever |
 | Casements | 4 | 4 panes |
 | Bolt bars | 2 | Slide through the loops of both leaves |
 | Central roof | 1 | 45 deg, 243 mm long, four skylights, ridge roll, barge boards notched around the gable-door posts; a truss in the middle is notched over the mid posts |
@@ -139,7 +139,7 @@ rotational symmetry (front-left = back-right, front-right = back-left).
 * The casement axis is raised 0.6 mm off the wall, so the knuckle's flat underside cannot
   dig into the wall as it turns (found and fixed through validation).
 
-### Stall-door click latch (no loose parts)
+### Stall-door click latch (replaced by the drop latch on 10 Nov 2026, see VERSCHLUSS.md)
 * A 22 mm cantilever tongue is cut into the door's free stile and flexes **in the print
   plane**. Its 45 deg barb snaps into a recess shaped into the latch stile.
 * Engagement 0.8 mm. Estimated strain at full deflection is about 0.45 % (PLA yields around
@@ -191,7 +191,8 @@ rotational symmetry (front-left = back-right, front-right = back-left).
 
 * Every pin, bar and part can be removed, but none is glued. The **hinge pins (1.75 mm, 30-126 mm long)
   and the 37 mm bolt bars are small parts**. They are captured when assembled, but
-  are a hazard for children under 3. The latch has no loose parts.
+  are a hazard for children under 3. So is the 35 mm drop-latch lever; it is captive on its peg
+  unless turned straight up.
 * Exposed corners are rounded or chamfered: base corners r4, roof eave corners r4, door
   corners r1.2, post edges chamfered 1.2 mm, plinth edges chamfered.
 * No magnets, no metal by default. A printed toy is **not** certified to toy-safety standards

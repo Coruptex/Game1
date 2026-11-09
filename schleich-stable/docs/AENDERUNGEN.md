@@ -1,4 +1,28 @@
-# Änderungsliste (8. und 9. November 2026)
+# Änderungsliste (8. bis 10. November 2026)
+
+## Deine Testergebnisse, Fallriegel, Pfostenblock, STL (10. November)
+
+* **Alles als STL-Dateien**, ohne meine Druckeinstellungen. Die Bambu-Studio-Projekte sind
+  entfernt. Was ich beim Einstellen empfehle und womit die Tests gedruckt wurden, steht in
+  `LIES_MICH.md`.
+* **Testergebnisse übernommen:**
+  * Pfosten-Scharnieraugen: Loch **2,05 mm** (T3a; vorher 1,85 und gesperrt).
+  * Wandnuten in den Pfosten: **0,15 mm** Luft je Seite (T3a „15“; vorher 0,20). Die Nut in
+    Sockel und Boden bleibt bei 0,20 mm, denn so ist der Fuß aus T3b gebaut, und der hat gepasst.
+  * Oberes Fensterauge: **1,95 mm** (T3b), war schon so eingestellt, jetzt bestätigt.
+* **Fallriegel eingebaut** in die 4 Boxentüren und 4 Boxenfronten, auf deinen Wunsch noch ohne
+  T4-Ergebnis. Der alte Klickverschluss ist entfernt. Neu ist der lose Hebel (4 Stück). Am
+  Rechner mit den echten Teilen nachgeprüft ([VERSCHLUSS.md](VERSCHLUSS.md)). Bitte T4 vor den
+  Boxentüren drucken.
+* **Pfostenblock** gegen das Umfallen: 6 Pfosten werden zusammen gedruckt, verbunden über eine
+  dünne Mittelwand und Stege mit kleinen Bruchzähnen in den Wandnuten. Die Einzelpfosten gibt es
+  weiterhin.
+* **Wände zweiteilig:** weiße Wand und schwarze Leisten als getrennte Dateien mit gleichen
+  Koordinaten (für die Filamentzuordnung pro Teil). Einteilige Ersatzdateien liegen bei.
+* Geprüft: alle Teile neu exportiert, keine Überschneidung, alle Stifte frei, Türen und Fenster
+  schwenken wie vorher, Pferde passen. Beim Pfostenblock berühren die Stege die Pfosten nur an
+  den Zähnen (sonst mindestens 0,5 mm Abstand); im Probe-Slicing werden die Zähne gedruckt.
+
 
 ## Schlankere Testplatten, 68-Stunden-Variante (9. November)
 
@@ -117,7 +141,7 @@ geht das meist gut; für die Pfosten nicht, die kippeln sonst.
 ## Bambu-Studio-Projekte
 
 * Jede Platte ist ein fertiges Projekt mit Drucker, Filamenten, Prozess, Ausrichtung, Brim, Stützen
-  und Filamentwechsel ([BAMBU_STUDIO.md](BAMBU_STUDIO.md)). Die alten Nur-Geometrie-Dateien sind weg.
+  und Filamentwechsel (am 10. November durch STL-Dateien ersetzt). Die alten Nur-Geometrie-Dateien sind weg.
 * Neues Pfosten-Preset **v2** mit sanfteren Geschwindigkeiten und Beschleunigungen. Am Drucker
   musst du nicht mehr auf „Leise“ stellen.
 * Getrennte Ordner: **1_TEST** und **2_PRODUKTION**. In 2_PRODUKTION liegen nur die Platten, die nicht

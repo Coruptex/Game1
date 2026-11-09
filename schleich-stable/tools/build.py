@@ -16,7 +16,6 @@ import argparse, concurrent.futures as cf, os, re, subprocess, sys, time
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CAD = os.path.join(ROOT, "cad", "stable.scad")
 SWING_ANGLES = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
-LATCH_ANGLES = [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6]          # fine sweep, stall door FL
 CASE_ANGLES = list(range(0, 181, 5))                         # fine sweep, casement FL (whole opening path)
 PINS = [f"pin_{k}_{q}" for k in ("main", "stall", "case") for q in ("FL", "FR", "BL", "BR")]
 # single test coupons -> stl/tests/<name>.stl: (name, coupon part, bore override)
@@ -36,13 +35,22 @@ def read_instances():
     return re.findall(r'\["([\w]+)",\s*"([\w]+)",\s*"([\w]+)"\]', block)
 
 
+# loose print parts that are not instances of their own (they ride on another
+# part in the assembly): (print part, colour, quantity)
+EXTRA_PARTS = [("stall_lever", "door", 4)]      # drop-latch lever, hangs on the stall door peg
+# print aids: six posts printed as one stiff group (cad/parts/post_blocks.scad) -> stl/blocks/
+BLOCKS = ["posts_block_short", "posts_block_hinge"]
+# two-colour panels: white wall (z <= wall_t) and black trims (z >= wall_t) -> stl/split/
+SPLIT = ["side_wall", "gable_wing_A", "gable_wing_B", "partition", "stall_front", "pediment"]
+
+
 def unique_parts(insts):
     out, seen = [], set()
     for _, p, c in insts:
         if p not in seen:
             seen.add(p)
             out.append((p, c, sum(1 for _, q, _ in insts if q == p)))
-    return out
+    return out + list(EXTRA_PARTS)
 
 
 def export(job):
@@ -88,6 +96,16 @@ def main():
             if a.only and p not in a.only:
                 continue
             jobs.append((os.path.join(ROOT, "stl", p + ".stl"), {"part": f'"{p}"', "mode": '"print"'}, a.backend))
+        for p in SPLIT:
+            if a.only and p not in a.only:
+                continue
+            for half in ("base", "trim"):
+                jobs.append((os.path.join(ROOT, "stl", "split", f"{p}__{half}.stl"),
+                             {"part": f'"{p}"', "mode": '"print"', "split": f'"{half}"'}, a.backend))
+        for p in BLOCKS:
+            if a.only and p not in a.only:
+                continue
+            jobs.append((os.path.join(ROOT, "stl", "blocks", p + ".stl"), {"part": f'"{p}"', "mode": '"print"'}, a.backend))
     if a.placed:
         for n, _, _ in insts:
             if a.only and n not in a.only:
@@ -116,10 +134,6 @@ def main():
             for ang in SWING_ANGLES:
                 jobs.append((os.path.join(ROOT, "build", "swing", f"{n}_{ang:03d}.stl"),
                              {"part": f'"{n}"', "mode": '"placed"', "door_ang": ang}, a.backend))
-    if a.swing and (not a.only or "stall_door_FL" in a.only):
-        for ang in LATCH_ANGLES:
-            jobs.append((os.path.join(ROOT, "build", "latch", f"stall_door_FL_{ang:04.1f}.stl"),
-                         {"part": '"stall_door_FL"', "mode": '"placed"', "door_ang": ang}, a.backend))
     if a.swing and (not a.only or "casement_FL" in a.only):
         for ang in CASE_ANGLES:
             jobs.append((os.path.join(ROOT, "build", "swing_fine", f"casement_FL_{ang:03d}.stl"),

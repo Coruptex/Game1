@@ -14,8 +14,8 @@ Für ein Kind von 9 Jahren gebaut: zerlegbar, ohne Kleber, robust für viel Spie
 ## Kurzfazit
 
 * **Gut druckbar auf dem Bambu Lab A1:** 24 Druckplatten, alle Teile passen aufs Bett, auch mit
-  Brim und Stützen. Stützen nur unter den Scharnieraugen der hohen Pfosten. Jede Platte ist ein
-  fertiges Bambu-Studio-Projekt mit allen Einstellungen ([BAMBU_STUDIO.md](BAMBU_STUDIO.md)).
+  Brim und Stützen. Stützen nur unter den Scharnieraugen der hohen Pfosten. Seit dem
+  10. November gibt es alle Teile als STL-Dateien ([STL_LIES_MICH.md](STL_LIES_MICH.md)).
 * **Die Schwachstellen sind überarbeitet:** Das Dach besteht jetzt aus 3 Teilen und ist
   verriegelt. Fenster, Gitterstäbe und Bodenverbindung sind kräftiger.
 * **Heikelster Druck bleibt die Platte mit den sechs 216 mm hohen Pfosten**, weil das
@@ -102,15 +102,15 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 * **Türen nicht mit Gewalt über den Anschlag drücken** (Tore 105 Grad, Boxentüren 90 bis
   105 Grad); das belastet die Scharnieraugen.
 * **PLA** wird bei etwa 55 °C weich (Auto im Sommer, sonnige Fensterbank).
-* **Aufwand:** 24 Platten, rund 67½ h und 2,25 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
-  zeigt eigene Werte), dazu 1 bis 2 Stunden Zusammenbau.
+* **Aufwand:** rund 2,3 kg Filament. Die Druckzeit hängt von deinen Einstellungen ab (mit meinen
+  früheren Einstellungen etwa 68 h), dazu 1 bis 2 Stunden Zusammenbau.
 
 ## 6. Drucken
 
-Siehe [BAMBU_STUDIO.md](BAMBU_STUDIO.md) und [DRUCKPLAN.md](DRUCKPLAN.md): Projektdatei öffnen,
-slicen, drucken. AMS lite: 1 Weiß, 2 Schwarz, 3 Hellgrau, 4 Dunkelgrau. Alles andere, auch der
-Filamentwechsel für die schwarzen Leisten, steht in den Dateien. Reihenfolge: Tests T3a, T3b, T4 (T2), dann die
-freigegebenen Platten (Boden, Eck- und Seitenpfosten, Wände, Dach), nach den Tests der Rest.
+Siehe [STL_LIES_MICH.md](STL_LIES_MICH.md) und [TEILELISTE.md](TEILELISTE.md): STL-Dateien in
+Druckrichtung, Einstellungen wählst du selbst. Farben: Weiß, Schwarz, Hellgrau, Dunkelgrau; die
+Wände bestehen aus Wand- und Leisten-Datei. Reihenfolge: T4 vor den Boxentüren, T2 vor Boden und
+Dach, alles andere sofort.
 
 ## 7. Die Blender-Datei
 

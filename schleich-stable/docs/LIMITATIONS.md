@@ -9,16 +9,14 @@
 | Doors and windows swing without collision | **Digitally**: swept at 15 deg steps. Main doors 0-105 deg; stall doors 0-90 deg at the gables (they then meet the closed main leaf), 0-105 deg in the middle; casements 0-150 deg. All 14 moving parts open at 90 deg at once: no collision |
 | Horses fit | **Digitally**: a blocky proxy of the design horse (170 x 53 x 120 mm, larger than any real figure) in every stall, both ways round; led through an open stall door and, with an estimated rider, through the main door |
 | Hinge pins pass through all knuckles | **Digitally**: virtual 1.75 mm pins, no contact |
-| Latch engages (barb seated when closed, 0.8 mm interference while passing) | **Digitally**: fine sweep of the stall-door angle |
+| Drop latch on the stall doors (built in since 10 Nov 2026) | **Digitally**: kinematic simulation with the real stall door and stall front (`tools/latch_sim.py production`): free when closed, locks with 1.9 mm play, ramp lifts the lever up to 3.3 mm, captive except pointing up, locks in all +-1 mm / +-0.4 mm tolerance cases. Not printed yet (test T4) |
 | Roof units lift off; panels slide out of their grooves | **Digitally**: translation sweeps |
 | Support material only where intended | **Digitally**: down-facing area per part and PrusaSlicer's stability check. Only the flat undersides of the post hinge knuckles need support (owner's choice; `knuckle_chamfer = true` removes it). Elsewhere only bridges of at most 16.4 mm remain |
 | Side roofs locked by the central roof | **Digitally**: lift sweep, the side roof stops after 1.25 mm, before it clears its 1.6 mm tabs; it lifts freely once the central roof is off |
-| Print time and filament | **Estimated** with PrusaSlicer 2.7.2 using A1-equivalent settings, not Bambu Studio |
-| Fits (grooves, sockets, bores, latch, tile fingers, tabs) | **Partly tested.** T1 printed by the owner (Nov 2026): door-side bore 2.15 confirmed, post-side bores 1.75-1.95 all too tight. Everything else is calculated; test plates T2, T3a, T3b, T4 are open (see VERBINDUNGEN.md) |
+| Print time and filament | **Estimated** with PrusaSlicer 2.7.2 using A1-equivalent settings; the owner now uses his own slicer settings |
+| Fits (grooves, sockets, bores, latch, tile fingers, tabs) | **Partly tested** by the owner (Nov 2026): door bore 2.15 (T1), post bore 2.05 and post groove 0.15 (T3a), window pin clamp 1.95 and plinth groove 0.20 (T3b) confirmed. Floor sockets, tile interlock, roof tabs (T2) and the latches (T4) are calculated only (see VERBINDUNGEN.md). Confirmed with the owner's earlier slicer settings |
 | Casement window path | **Digitally**: 5 deg sweep 0-180 deg, free to 175 deg, min. clearance 0.5 mm (0.6 mm to the black frame) |
-| Drop latch (proposed replacement of the click latch) | **Digitally**: kinematic simulation of the T4 rig incl. +-1 mm / +-0.4 mm tolerance cases (`tools/latch_sim.py`); not printed yet |
-| Bambu Studio project files | **Structure, geometry and settings checked by script; supports, brim and space checked with PrusaSlicer.** Bambu Studio itself could not be run in the build environment |
-| Latch force (~2 N), strain (~0.45 %) and fatigue life | **Calculated only** (beam theory, typical PLA properties) |
+| STL delivery | **Checked by script:** every file watertight, wall and trim halves add up to the one-piece part. Post blocks: fins touch the posts only at the teeth (0.5 mm elsewhere), the teeth appear in a PrusaSlicer slice. Not opened in Bambu Studio here |
 | Strength under play loads | **Not tested**; judged from section sizes and load paths |
 | Safety (EN 71 / ASTM F963) | **Not assessed or certified** |
 
@@ -68,11 +66,14 @@
   design: carry the stable level, or take the roof off first.
 * **No glazing:** the windows and skylights are open. Thin clear PETG could be cut and fitted
   if wanted.
-* **Black trim** needs a filament change at Z = 2.8 mm, or painting. Without it, the panels are
-  plain white.
-* **Click latch:** sensitive to tolerances (0.8 mm engagement against about +-1 mm of play from
-  the stall front floating in its grooves and the hinge) and to PLA wear. A drop latch is proposed
-  instead (docs/VERSCHLUSS.md, test plate T4); it replaces the click latch only after the test.
+* **Black trim:** delivered as separate trim STLs (multi-part object) or as one-piece files with a
+  filament change at Z = 2.8 mm. Without it, the panels are plain white.
+* **Drop latch:** built into the stall doors and fronts at the owner's request before the T4
+  test. If T4 shows a problem, lever, peg and catch are changed and the stall doors, stall fronts
+  and levers re-exported. The lever is a loose part (35 mm).
+* **Post blocks:** the break-off teeth leave small stubs at the groove bottoms; the panels stop
+  0.5 mm short of the groove bottom, so the stubs do not matter. The force needed to break the
+  teeth was not measured.
 * **OpenSCAD version:** built and tested with OpenSCAD 2021.01 (CGAL). Newer versions should
   work, faster with `--backend manifold`, but that was not tested here.
 * **Main door height:** 160 mm clear at the crown. The rider height is an estimate, and a tall

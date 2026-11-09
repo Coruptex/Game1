@@ -14,12 +14,14 @@ include <lib/common.scad>
 include <lib/textures.scad>
 include <lib/hinges.scad>
 include <lib/latch.scad>
+include <lib/droplatch.scad>
 include <parts/floor.scad>
 include <parts/posts.scad>
 include <parts/panels.scad>
 include <parts/frames.scad>
 include <parts/doors.scad>
 include <parts/roof.scad>
+include <parts/post_blocks.scad>
 include <instances.scad>
 
 /* [Selection] */
@@ -52,4 +54,4 @@ module echo_dims() {
 if (part == "dims") echo_dims();
 else if (part == "assembly") assembly(show_roof, door_ang, explode);
 else if (mode == "placed") inst(part, door_ang);
-else print_part(part);
+else sp() print_part(part);    // split = "base" / "trim": two-colour panels cut at the wall face

@@ -1,21 +1,21 @@
 # Test coupons: print these first
 
-The stable needs about 88 printing hours, so check the fits before committing to it. The test
+The stable needs many printing hours, so check the fits before committing to it. The test
 plates reproduce every risky mechanism at **full scale**, each with several clearance
 variants. The value engraved on each variant is the parameter it tests. Step-by-step
 instructions in German: [TESTANLEITUNG.md](TESTANLEITUNG.md).
 
-| Plate | Bambu Studio project | Contents | Status |
+| Plate | Files | Contents | Status |
 |---|---|---|---|
 | T1 | (printed) | 3 hinge post stubs 1.75/1.85/1.95, 3 hinge leaves 2.15/2.30/2.45, 3 click-latch pairs | **printed Nov 2026:** leaf 2.15 best (larger too loose) -> `bore_free = 2.15`; all three post stubs too tight |
-| T2 | `bambu/TEST/TEST_T2_Boden_Passungen.3mf` | socket plate, tile interlock (floor settings, 0.24 mm layers) | open (only if not printed yet) |
-| T3a | `bambu/TEST/TEST_T3a_Pfosten_Scharnier.3mf` | 5 post stubs 2.05/2.15/2.25/2.35/2.45 (upright, tree supports, same preset as the posts), groove post | open |
-| T3b | `bambu/TEST/TEST_T3b_Tuer_Fenster.3mf` | 2 door leaves 2.15, gable-wing window section + production casement + stand, window pin clamps 1.85/1.95/2.05, wall strip, roof-tab plate + key | open |
-| T4 | `bambu/TEST/TEST_T4_Verschluss.3mf` | drop-latch test rig (frame, door, lever, stand), main-door bolt loops + bolt bar | open |
+| T2 | `1_TEST_noch_offen/T2_Boden_und_Dach/` in the STL package | socket plate, tile interlock, roof-tab plate (+ groove post and tab key from T3a) | **open** |
+| T3a | (printed) | 5 post stubs 2.05 ... 2.45, groove post, wall strip, tab key | **printed Nov 2026:** post stub 2.05 best -> `bore_post = 2.05`; groove 15 best -> `fit_slide_post = 0.15` |
+| T3b | (printed) | door leaf 2.15, gable-wing window section + casement + stand, window pin clamps 1.85/1.95/2.05 | **printed Nov 2026:** stand fits (plinth groove 0.20 stays); pin clamp 1.95 best -> `bore_win_hold = 1.95` |
+| T4 | `1_TEST_noch_offen/T4_Fallriegel/` in the STL package | drop-latch test rig (frame, door, lever; stand from T3b), main-door bolt loops + bolt bar | **open** (drop latch already built into the stall doors at the user's request) |
 
-Every project carries the same printer, filament and process settings as the production plates
-of the same part type. Source: `cad/tests/coupons.scad` (single coupons are exported by
-`tools/build.py`, arranged by `tools/plates.py`).
+T1-T3 were printed with the Bambu Studio presets in `slicer/bambu_studio/`. Since 10 Nov 2026
+the user sets up the slicer himself; the remaining tests should use the settings of the parts
+they stand for. Source: `cad/tests/coupons.scad` (single coupons exported by `tools/build.py`).
 
 Fit parameters and the coupons that set them:
 
@@ -26,10 +26,11 @@ Fit parameters and the coupons that set them:
 | `bore_win_hold`, `bore_win_free` | flat (gable-wing window frame) | T3b pin clamps, window section |
 | drop latch (`cad/lib/droplatch.scad`) | flat | T4 rig |
 | main-door bolt loops | flat | T4 bolt plate |
-| `fit_slide` | upright post, flat panel | T3a groove post + T3b wall strip |
+| `fit_slide_post` | upright post, flat panel | T3a groove post + wall strip (confirmed 0.15) |
+| `fit_slide` | flat plinth / floor groove | T3b stand (fits at 0.20) |
 | `fit_socket` | flat floor, upright post | T2 socket plate + T3a groove post |
-| `fit_tile` | flat floor (0.24 mm) | T2 tiles |
-| `fit_tab` | flat | T3b tab plate + key |
+| `fit_tile` | flat floor | T2 tiles |
+| `fit_tab` | flat | T2 tab plate + T3a tab key |
 
 The sections below describe the original T1/T2 coupons, which are reused in T2/T3.
 

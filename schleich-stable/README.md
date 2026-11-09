@@ -16,10 +16,10 @@ mymodelhorse.com, but it is an original design and is not affiliated with Schlei
 | Size | **489 x 253 mm** base; **497 x 268 x 276 mm** overall (roof eaves and door bolts) |
 | Stalls | 4, each 173 x 113 mm inside, for horses up to 170 x 53 x 120 mm (checked in the validation with a horse proxy) |
 | Aisle / main door | 113 mm aisle; arched double doors 100 mm wide, 160 mm clear at the crown |
-| Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: click latch, a drop latch (test plate T4) is proposed to replace it; left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
+| Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: gravity drop latch (lever on a peg, T-catch on the stall front; test piece T4 still to be printed); left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
 | Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows (hinge outside the window frame, which runs all the way round), 3 lift-off roof units (the central roof locks the side roofs) |
-| Parts | 51 printed pieces from 26 STL files; 12 hinge pins cut from 1.75 mm filament |
-| Print | 24 plates, about **67.5 h** and **2.25 kg PLA** (PrusaSlicer estimate with the same settings); every plate is a ready **Bambu Studio project** in `bambu/` |
+| Parts | 55 printed pieces from 27 STL files (plus two optional post blocks that print the 12 posts as two stiff groups); 12 hinge pins cut from 1.75 mm filament |
+| Print | about **2.3 kg PLA**; delivered as **STL files** (German names, print orientation, two-colour walls as separate wall/trim files), slicer settings chosen by the user |
 
 This is the compact version (v2). The first, full-size version was 565 x 357 x 329 mm with
 3.4 kg / 116 h of printing. Section 4 of the dimension plan explains where the space was
@@ -31,15 +31,13 @@ saved and why nothing was simply scaled down.
 
 ## Quick start
 
-1. **Print the test plates** in `bambu/TEST/` (T3a, T3b, T4, T2; all four needed) and follow
-   [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md) (German). T1 has been printed already.
-2. Enter the confirmed fits in `cad/config.scad` and regenerate (see below). Plates that wait for
-   a test (posts with hinges, gable walls, casements, stall fronts, doors) get their project
-   files only then.
-3. **Print the released plates** in `bambu/PRODUKTION/`: open the project in Bambu Studio, slice,
-   print ([docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md), order and status in
-   [docs/DRUCKPLAN.md](docs/DRUCKPLAN.md)).
-4. **Assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
+1. `python3 tools/build.py && python3 tools/stl_package.py` -> `build/Stall_STL.zip` (German
+   guide inside: [docs/STL_LIES_MICH.md](docs/STL_LIES_MICH.md), parts list
+   [docs/TEILELISTE.md](docs/TEILELISTE.md)).
+2. **Open tests:** T4 (drop latch, before the stall doors) and T2 (floor and roof fits), see
+   [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md). T1, T3a and T3b are printed and their results
+   are in `cad/config.scad`.
+3. **Print** the parts, **assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
 
 What changed in this round: [docs/AENDERUNGEN.md](docs/AENDERUNGEN.md) (German).
 
@@ -52,10 +50,10 @@ is coloured and opens in any glTF viewer.
 
 * [docs/ANALYSE.md](docs/ANALYSE.md) (Deutsch): Druckbarkeit, Überarbeitung, Scharniere, Stärken und Schwächen
 * [docs/AENDERUNGEN.md](docs/AENDERUNGEN.md) (Deutsch): Änderungsliste dieser Runde
-* [docs/BAMBU_STUDIO.md](docs/BAMBU_STUDIO.md) (Deutsch): die fertigen Bambu-Studio-Projekte öffnen, prüfen, drucken
-* [docs/DRUCKPLAN.md](docs/DRUCKPLAN.md) (Deutsch): alle Platten mit Status, Preset, AMS-Slot, Zeit, Filament, Reihenfolge
-* [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md) (Deutsch): Teststücke T2, T3a, T3b, T4: was zusammengehört, was getestet wird, woran man ein gutes Ergebnis erkennt
-* [docs/VERSCHLUSS.md](docs/VERSCHLUSS.md) (Deutsch): Klickverschluss erklärt, Vergleich, Empfehlung Fallriegel
+* [docs/STL_LIES_MICH.md](docs/STL_LIES_MICH.md) (Deutsch): die STL-Lieferung: Ordner, Reihenfolge, zweifarbige Wände, Pfostenblock, Vergleichswerte
+* [docs/TEILELISTE.md](docs/TEILELISTE.md) (Deutsch): alle Dateien mit Stückzahl, Farbe, Stützen, Brim (generated)
+* [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md) (Deutsch): bisherige Ergebnisse, offene Tests T2 und T4
+* [docs/VERSCHLUSS.md](docs/VERSCHLUSS.md) (Deutsch): Klickverschluss erklärt, Vergleich, Fallriegel (eingebaut)
 * [docs/VERBINDUNGEN.md](docs/VERBINDUNGEN.md) (Deutsch): alle Verbindungen, rechnerisch geprüft oder durch Testdruck bestätigt
 * [docs/DIMENSION_PLAN.md](docs/DIMENSION_PLAN.md): horse sizes, how each dimension follows from them, comparison with the reference and v1
 * [docs/SPEC.md](docs/SPEC.md): reference analysis, requirements, dimensions, mechanisms, CAD workflow
@@ -72,14 +70,14 @@ cad/            OpenSCAD source (parametric)
   config.scad     ALL dimensions and tolerances
   stable.scad     main file: pick `part` (assembly or a printable part)
   instances.scad  where every part sits in the assembly, which STL it uses
-  lib/            textures, hinges, click latch, drop latch (test), helpers
-  parts/          floor, posts, panels, frames, doors, roof
+  lib/            textures, hinges, drop latch, click latch (T1 coupons only), helpers
+  parts/          floor, posts, panels, frames, doors, roof, post blocks (print aid)
   tests/          test coupons
-stl/            printable parts (print orientation, current model state; parts that still wait
-                for a test result are marked in docs/DRUCKPLAN.md), stl/tests/ test coupons
-bambu/          Bambu Studio projects: TEST/ (print first), PRODUKTION/ (released plates)
-tools/          build, validate, plates/slicing, report, render and Blender scripts
-slicer/         Bambu Studio process presets (the projects carry them already)
+stl/            printable parts (print orientation), stl/split/ wall + trim halves,
+                stl/blocks/ post blocks, stl/tests/ test coupons
+tools/          build, validate, STL package, render and Blender scripts (plates.py /
+                bambu3mf.py / report.py made the former Bambu Studio projects)
+slicer/         the Bambu Studio process presets the tests T1-T3 were printed with (reference)
 blender/        Blender scene of the assembled stable (generated)
 docs/           documentation and renders
 ```
@@ -94,9 +92,10 @@ Blender (renders only).
 python3 tools/build.py                    # all printable STLs -> stl/ (about 1 min with OpenSCAD 2021)
 python3 tools/build.py --placed --swing   # + assembled poses for validation -> build/
 python3 tools/validate.py                 # writes docs/VALIDATION.md (incl. horse-fit checks)
-python3 tools/latch_sim.py                # drop latch test rig: kinematic check
-python3 tools/plates.py                   # plates -> Bambu Studio projects in bambu/, slice checks
-python3 tools/report.py                   # writes docs/DRUCKPLAN.md, docs/BOM.md, slicer presets
+python3 tools/latch_sim.py                # drop latch, T4 test rig: kinematic check
+python3 tools/latch_sim.py production     # drop latch on the real stall door + stall front
+python3 tools/stl_package.py              # STL delivery -> build/Stall_STL.zip, docs/TEILELISTE.md, docs/BOM.md
+blender -b -P tools/render_blocks.py && python3 tools/annotate_blocks.py   # post block picture
 blender -b -P tools/render_window.py -- 150 && python3 tools/annotate_window.py   # window close-ups
 blender -b -P tools/render_latch.py && python3 tools/annotate_latch.py           # latch images
 python3 tools/render_export.py && tools/render_all.sh   # renders -> docs/images/

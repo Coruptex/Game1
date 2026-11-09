@@ -301,23 +301,14 @@ def check_pins(placed, report):
 
 
 def check_latch(placed, report):
-    """stall door FL closing: the barb must overlap the stile (= tongue deflection)
-    between closed and a few degrees open, and be free when fully closed"""
-    files = sorted(glob.glob(os.path.join(ROOT, "build", "latch", "stall_door_FL_*.stl")))
-    if not files or "stall_front_FL" not in placed:
-        return []
-    _, msf, _ = placed["stall_front_FL"]
-    res = []
-    for f in files:
-        ang = float(os.path.basename(f).rsplit("_", 1)[1][:-4])
-        tm = load(f); m = to_mf(tm)
-        ov = m ^ msf
-        v = ov.volume()
-        depth = 0.0
-        if v > 1e-4:
-            bb = ov.bounding_box()
-            depth = round(min(bb[3] - bb[0], bb[4] - bb[1]), 2)
-        res.append({"angle": ang, "overlap_mm3": round(v, 3), "overlap_extent_mm": depth})
+    """stall-door drop latch: results of tools/latch_sim.py production (real
+    stall door FL and stall front FL, cropped around the latch)"""
+    f = os.path.join(ROOT, "build", "latch_sim_production.json")
+    if not os.path.exists(f):
+        return {}
+    d = json.load(open(f))
+    res = {k: d[k] for k in ("closed", "locked", "max_lift_deg", "max_lift_mm_at_notch", "captive")}
+    res["tolerance_all_lock"] = all(t["closed_free"] and t["blocked_at_deg"] for t in d["tolerance"])
     report["latch"] = res
     return res
 
@@ -528,13 +519,13 @@ def write_md(rep, path):
         for p in rep["pins"]:
             L.append(f"| {p['pin']} | {p['length_mm']} | {'yes' if p['clear'] else '**no**'} | {p['touching'] or ''} |")
     if rep.get("latch"):
-        L += ["", "## Stall-door click latch (door FL closing, fine sweep)", "",
-              "Overlap between the barb and the latch stile = how far the flexure tongue must deflect.",
-              "Expected: zero when fully closed (barb seated in its recess), a small overlap of about",
-              "0.8 mm while the barb rides over the crest, zero once clear.", "",
-              "| door angle deg | overlap mm3 | overlap extent mm |", "|---|---|---|"]
-        for r in rep["latch"]:
-            L.append(f"| {r['angle']} | {r['overlap_mm3']} | {r['overlap_extent_mm']} |")
+        r = rep["latch"]
+        L += ["", "## Stall-door drop latch (door FL + stall front FL, tools/latch_sim.py production)", "",
+              f"* closed: lever/front overlap {r['closed']['lever_frame_mm3']} mm3, lever/door {r['closed']['lever_door_mm3']} mm3, door/front {r['closed']['door_frame_mm3']} mm3",
+              f"* locked: the lowered lever stops the door at {r['locked']['blocked_at_deg']:.1f} deg = {r['locked']['play_mm_at_catch']} mm play at the catch",
+              f"* closing: the ramp lifts the lever by up to {r['max_lift_deg']} deg ({r['max_lift_mm_at_notch']} mm at the notch), then it drops in",
+              f"* captive: pulled off level {r['captive']['pull_off_level_mm3']} mm3 overlap (blocked), pointing up {r['captive']['pull_off_up_mm3']} mm3 (comes off)",
+              f"* stall front shifted +-1 mm along the panel and +-0.4 mm in height: locks every time = {r['tolerance_all_lock']}"]
     h = rep.get("horses")
     if h:
         L += ["", "## Horse fit (design horse %g x %g x %g mm)" % tuple(h["design_horse"]), "",
@@ -609,8 +600,7 @@ def main():
     print("   all open at 90:", rep.get("all_open_90"))
     for p in rep.get("pins", []):
         print("   pin", p)
-    for r in rep.get("latch", []):
-        print("   latch", r)
+    print("   latch", rep.get("latch"))
     for r in rep["horses"]["stalls"]:
         print("   horse", r)
     for r in rep["horses"]["lift_out_FL"]:

@@ -105,6 +105,7 @@ module bolt_bar_world(ang = 0) {
 sd_w  = (sf_ud - latch_gap) - sd_ax[1];            // axis -> free edge
 sd_y0 = sill_top + 1;
 sd_y1 = stall_door_top - 1;
+sd_lever_px = sd_w - fl_px_in;                     // drop latch pivot (door local x)
 module sd_outline2d() { offset(r = 1.2) offset(delta = -1.2) sd_outline2d_raw(); }
 module sd_outline2d_raw() {
     xm = (dk_door / 2 + swing_gap + sd_w) / 2;
@@ -128,31 +129,34 @@ module sd_trims2d() {
         sd_outline2d();
         sd_openings2d();
         translate([11, sd_y0 + 6]) square([sd_w - 19, 76 - sd_y0 - 6]);   // boards stay white
-        translate([sd_w - latch_w - latch_slot - 1, latch_y0 - 1]) square([10, latch_len + 3]);
     }
 }
 module stall_door_axis(right = false) {
     module d() {
         board_panel(0, sd_w + 1, sd_y0, sd_y1, sd_t, xc = sd_w / 2) {
             sd_outline2d();
-            union() { sd_openings2d(); latch_tongue_cut2d(sd_w, latch_y0); }
+            sd_openings2d();
             sd_trims2d();
             union() {
                 knuckles_moving_y(sd_z[0], sd_z[1], sd_n, dk_door, 1, dk_door / 2 + swing_gap);
-                latch_barb(sd_w, latch_y0, sd_t);
+                fl_door_hardware(sd_lever_px, sd_lever_py, sd_t);     // drop latch: boss, peg, key, rest stop
             }
             // 4: free-edge chamfer on the stall side (bears on the stop bevel)
-            for (r = [[sd_y0 - 1, latch_y0 - 1], [latch_y0 + latch_len + 2, sd_y1 + 1]])
-                translate([sd_w, r[0], 0]) rotate([-90, 0, 0]) linear_extrude(r[1] - r[0])
-                    mirror([0, 1]) polygon([[0.5, -0.5], [-(stop_bevel - latch_gap + 0.4) - 0.5, -0.5], [0.5, stop_bevel - latch_gap + 0.4 + 0.5]]);
+            translate([sd_w, sd_y0 - 1, 0]) rotate([-90, 0, 0]) linear_extrude(sd_y1 - sd_y0 + 2)
+                mirror([0, 1]) polygon([[0.5, -0.5], [-(stop_bevel - latch_gap + 0.4) - 0.5, -0.5], [0.5, stop_bevel - latch_gap + 0.4 + 0.5]]);
         }
     }
     if (right) mirror([1, 0, 0]) d(); else d();
 }
-// world placement of the front-left stall door; ang > 0 opens into the aisle
-module stall_door_world(ang = 0) {
+// world placement of the front-left stall door; ang > 0 opens into the aisle.
+// The drop-latch lever hangs on its peg, resting level. Between 0 and 20 deg
+// it has to be lifted (checked by tools/latch_sim.py), so it is left out there.
+module stall_door_world(ang = 0, lever = true) {
     translate([sd_ax[0], sd_ax[1], 0]) rotate([0, 0, -ang])
-        multmatrix([[0, 0, 1, -kz(dk_door)], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]) stall_door_axis();
+        multmatrix([[0, 0, 1, -kz(dk_door)], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]) {
+            stall_door_axis();
+            if (lever && (ang == 0 || ang >= 20)) fl_lever_on_door(sd_lever_px, sd_lever_py, sd_t, 0);
+        }
 }
 module stall_door_print(right = false) { translate([right ? sd_w + 1 : 0, 0, 0]) stall_door_axis(right); }
 

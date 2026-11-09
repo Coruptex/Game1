@@ -1,6 +1,6 @@
-// DROP LATCH ("Fallriegel") for the stall doors -- TEST DESIGN (test plate T4).
-// Not used by the production parts yet: it replaces the click latch only
-// after the T4 test has been printed and approved.
+// DROP LATCH ("Fallriegel") for the stall doors. Used by the production
+// stall doors and stall fronts since 10 Nov 2026 (user's choice, the T4 test
+// is still open) and by the T4 test rig.
 //
 // A lever hangs on a peg on the aisle face of the door, near the free edge.
 // Its tip has a notch that drops over a T-shaped catch on the latch stile of
@@ -93,7 +93,7 @@ module fl_door_hardware(px, py, t) {
     zb = t + fl_lift;                       // boss top = lever back face
     zk = zb + fl_t + fl_ax;                 // key underside starts here
     translate([px, py, 0]) {
-        translate([0, 0, t - 0.3]) cylinder(d = fl_boss_d, h = fl_lift + 0.3, $fn = 48);
+        translate([0, 0, t - 0.7]) cylinder(d = fl_boss_d, h = fl_lift + 0.7, $fn = 48);   // from below the board grooves
         translate([0, 0, zb - 0.01]) cylinder(d = fl_peg_d, h = fl_t + fl_ax + 2.4, $fn = 32);
         // one-sided key pointing up (+y): 45 deg underside, 0.8 mm flat top
         hull() {
@@ -102,7 +102,7 @@ module fl_door_hardware(px, py, t) {
                 intersection() { circle(r = fl_key_r, $fn = 48); translate([-fl_key_w / 2, -fl_peg_d / 2 + 0.3]) square([fl_key_w, fl_key_r + 2]); }
         }
         // rest stop under the arm: holds the lever level when the door is open
-        translate([6, -fl_h / 2 - 3.5, t - 0.3]) cube([4, 3.5, fl_lift + fl_t - 0.4 + 0.3]);
+        translate([6, -fl_h / 2 - 3.5, t - 0.7]) cube([4, 3.5, fl_lift + fl_t - 0.4 + 0.7]);
     }
 }
 
@@ -119,7 +119,7 @@ module fl_catch(u, y, t) {
     zt = z0 + fl_head_h;                        // top of the T-head
     r  = fl_cs_d / 2;
     translate([u, y, 0]) {
-        translate([0, 0, t - 0.3]) cylinder(d = fl_cs_d, h = z0 - t + 0.31, $fn = 32);
+        translate([0, 0, t - 0.7]) cylinder(d = fl_cs_d, h = z0 - t + 0.71, $fn = 32);
         // T-head: bar along u, as high as the shaft (nothing above the shaft
         // that could cam the lever up), underside chamfered 45 deg from the
         // shaft out to the lobe ends; the upper front edge is a 45 deg ramp

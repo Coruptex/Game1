@@ -126,6 +126,9 @@ module print_part(p) {
     else if (p == "main_leaf_B") main_leaf_print(true);
     else if (p == "bolt_bar") bolt_bar_print();
     else if (p == "stall_door") stall_door_print(false);
+    else if (p == "stall_lever") fl_lever_print();
+    else if (p == "posts_block_short") posts_block_short();
+    else if (p == "posts_block_hinge") posts_block_hinge();
     else if (p == "casement_A") casement_print(false);
     else if (p == "casement_B") casement_print(true);
     else if (p == "roof_central") c_tent_print();

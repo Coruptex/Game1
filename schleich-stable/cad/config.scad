@@ -23,7 +23,11 @@ horse_h = 120;
 rider_h = 155;
 
 /* [Fits and tolerances] */
-// Clearance per side for panels sliding into post / floor grooves
+// Clearance per side for panels sliding into the vertical POST grooves.
+// Test T3a (Nov 2026, groove post 15 / 20 / 30): 0.15 fitted best. Confirmed.
+fit_slide_post = 0.15;
+// Clearance per side for panel bottoms in the plinth / floor grooves (flat
+// prints). The T3b stand uses this groove and fitted at 0.20.
 fit_slide  = 0.20;
 // Clearance per side for roof tabs in roof pockets
 fit_tab    = 0.25;
@@ -48,17 +52,16 @@ knuckle_chamfer = false;
 pin_d      = 1.75;
 // Three kinds of pin bore, each with its own print orientation and test:
 // 1) Bore in the POSTS (printed upright, bore vertical in the print, the
-//    knuckles stand on tree supports). Test T1 (Nov 2026): 1.75 / 1.85 /
-//    1.95 were all too tight. Test T3 tries 2.05 ... 2.45. The posts are
-//    NOT released for printing until T3 has confirmed a value here.
-bore_post  = 1.85;
+//    knuckles stand on supports). Test T1 (Nov 2026): 1.75 / 1.85 / 1.95
+//    were all too tight. Test T3a (2.05 ... 2.45): 2.05 fitted best. Confirmed.
+bore_post  = 2.05;
 // 2) Bore in the DOOR and CASEMENT knuckles (printed flat, teardrop bore,
 //    the pin turns in it). Test T1 (Nov 2026): 2.15 worked best, 2.30 and
 //    2.45 were too loose. Confirmed by test print.
 bore_free  = 2.15;
 // 3) Bores in the flat-printed WINDOW FRAME knuckles on the gable wings
 //    (teardrop): the top knuckle clamps the pin so it cannot slide out
-//    (T3 coupon "Fensterstift" tries 1.85 / 1.95 / 2.05, value provisional),
+//    (T3b coupon "Fensterstift" 1.85 / 1.95 / 2.05: 1.95 held best. Confirmed),
 //    the lower knuckles are free like the casement.
 bore_win_hold = 1.95;
 bore_win_free = 2.15;
@@ -176,7 +179,8 @@ function z_side_roof(x) = z_eave_side + (x - X0) * tan(pitch_side);
 // central roof underside height at world X
 function z_c_roof(x) = Z_c_apex - abs(x - XC) * tan(pitch_c);
 
-groove_w = wall_t + 2 * fit_slide;   // width of every panel groove
+groove_w = wall_t + 2 * fit_slide;        // panel groove in plinth / floor
+groove_w_post = wall_t + 2 * fit_slide_post;   // panel groove in the posts
 // how far a panel edge reaches into a post groove
 panel_in = post_groove_d - 0.5;
 

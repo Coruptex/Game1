@@ -18,13 +18,13 @@ include <../lib/common.scad>
 include <../lib/textures.scad>
 include <../lib/hinges.scad>
 include <../lib/latch.scad>
+include <../lib/droplatch.scad>
 // part files only define modules/constants (finger, tab, bevel sizes ...)
 include <../parts/floor.scad>
 include <../parts/posts.scad>
 include <../parts/panels.scad>
 include <../parts/frames.scad>
 include <../parts/doors.scad>
-include <../lib/droplatch.scad>
 
 part = "plate_T1"; // [plate_T1, plate_T2, plate_T3a, plate_T3b, plate_T4, hinge_post, hinge_leaf, latch_stile, latch_door, groove_post, panel_strip, socket_plate, tile_a, tile_b, tab_plate, tab_key]
 

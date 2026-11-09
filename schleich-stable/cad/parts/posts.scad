@@ -49,7 +49,7 @@ module post_body(x, y, z0, z1) {
 }
 // groove cutter on a face ("+x","-x","+y","-y") of the post at (x,y)
 module post_groove(x, y, face, z0, z1) {
-    d = post_groove_d; w = groove_w;
+    d = post_groove_d; w = groove_w_post;
     if (face == "+x") translate([x + PW2 - d, y - w / 2, z0]) cube([d + 1, w, z1 - z0]);
     if (face == "-x") translate([x - PW2 - 1, y - w / 2, z0]) cube([d + 1, w, z1 - z0]);
     if (face == "+y") translate([x - w / 2, y + PW2 - d, z0]) cube([w, d + 1, z1 - z0]);

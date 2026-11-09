@@ -13,8 +13,10 @@ the frame or its T-catch:
     before the lever hits the T-head.
   * captive: the lever comes off its peg only when it points straight up.
 
-  python3 tools/latch_sim.py          (exports the rig parts first)
-Writes build/latch_sim.json and docs/images/latch_curve.png.
+  python3 tools/latch_sim.py              T4 test rig (exports the rig parts first)
+  python3 tools/latch_sim.py production   real stall door FL + stall front FL,
+                                          cropped around the latch
+Writes build/latch_sim[_production].json and docs/images/latch_curve[_production].png.
 """
 import json, os, subprocess, sys
 import numpy as np
@@ -26,14 +28,38 @@ OUT = os.path.join(ROOT, "build", "latch_rig")
 SCAD = os.path.join(ROOT, "cad", "tests", "coupons.scad")
 
 
+PROD = len(sys.argv) > 1 and sys.argv[1] == "production"
+if PROD:
+    OUT = os.path.join(ROOT, "build", "latch_prod")
+    os.makedirs(OUT, exist_ok=True)
+    WRAP = os.path.join(OUT, "prod.scad")
+    open(WRAP, "w").write(
+        'include <../../cad/stable.scad>\n'
+        'which = "none";\n'
+        'module crop(x0, x1, y0, y1) intersection() { children(); translate([x0, y0, -5]) cube([x1 - x0, y1 - y0, 40]); }\n'
+        'if (which == "rig_frame") crop(sd_w - 40, sd_w + 40, sd_lever_py - 30, sd_lever_py + 30) translate([-sd_ax[1], 0, 0]) stall_front_local();\n'
+        'if (which == "rig_door") crop(sd_w - 45, sd_w + 5, sd_lever_py - 30, sd_lever_py + 30) stall_door_axis();\n'
+        'if (which == "fl_lever") fl_lever();\n'
+        'if (which == "dims") echo(str("RIG ", sd_lever_px, " ", sd_lever_py, " ", sd_t + fl_lift, " ", kz(dk_door), " ", fl_L(), " ", fl_lift_open));\n')
+
+
 def export(part):
     os.makedirs(OUT, exist_ok=True)
     f = os.path.join(OUT, part + ".stl")
-    subprocess.run(["openscad", "-o", f, "-D", f'part="{part}"', SCAD], check=True, capture_output=True)
+    if PROD:
+        subprocess.run(["openscad", "-o", f, "-D", 'part="none"', "-D", f'which="{part}"', WRAP], check=True, capture_output=True)
+    else:
+        subprocess.run(["openscad", "-o", f, "-D", f'part="{part}"', SCAD], check=True, capture_output=True)
     return f
 
 
 def dims():
+    if PROD:
+        echo = os.path.join(OUT, "dims.echo")
+        subprocess.run(["openscad", "-o", echo, "-D", 'part="none"', "-D", 'which="dims"', WRAP], capture_output=True, text=True, check=True)
+        line = [l for l in open(echo).read().splitlines() if "RIG " in l][0]
+        v = [float(x) for x in line.split("RIG ")[1].strip('"').split()]
+        return dict(px=v[0], py=v[1], pz=v[2], kz=v[3], L=v[4], lift_open=v[5])
     """read rig constants from OpenSCAD via echo"""
     tmp = os.path.join(OUT, "dims.scad")
     open(tmp, "w").write('use_part = 0;\ninclude <../../cad/tests/coupons.scad>\n'
@@ -144,7 +170,8 @@ def main():
             tol.append({"dx": dx, "dy": dy, "closed_free": closed_free, "blocked_at_deg": blocked, "max_lift_deg": round(mx, 1)})
     res["tolerance"] = tol
     os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
-    json.dump(res, open(os.path.join(ROOT, "build", "latch_sim.json"), "w"), indent=1)
+    sfx = "_production" if PROD else ""
+    json.dump(res, open(os.path.join(ROOT, "build", f"latch_sim{sfx}.json"), "w"), indent=1)
     print(json.dumps({k: v for k, v in res.items() if k != "lift_curve"}, indent=1))
     print("lift curve (door angle deg, lever lift deg):")
     print("  " + "  ".join(f"{a:.2f}:{b}" for a, b in curve))
@@ -157,9 +184,9 @@ def main():
         fig, ax = plt.subplots(figsize=(6.4, 3.4), dpi=150)
         ax.plot(xs, ys, color="#2b5d8a", lw=2)
         ax.set_xlabel("Tür-Öffnungswinkel (Grad)"); ax.set_ylabel("nötiger Hub des Riegels (Grad)")
-        ax.set_title("Fallriegel T4: Riegel gleitet über die Rampe und fällt ein")
+        ax.set_title(("Fallriegel Boxentür" if PROD else "Fallriegel T4") + ": Riegel gleitet über die Rampe und fällt ein")
         ax.grid(alpha=0.3); fig.tight_layout()
-        fig.savefig(os.path.join(ROOT, "docs", "images", "latch_curve.png"))
+        fig.savefig(os.path.join(ROOT, "docs", "images", f"latch_curve{sfx}.png"))
     except Exception as e:  # noqa: BLE001
         print("plot skipped:", e)
 

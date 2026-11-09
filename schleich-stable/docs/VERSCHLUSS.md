@@ -1,9 +1,9 @@
 # Boxentür-Verschluss: Prüfung und Empfehlung
 
-Stand 8. November 2026. Alles hier ist **berechnet bzw. am Rechner simuliert**. Gedruckt und
-getestet ist der neue Verschluss noch nicht; dafür gibt es das Teststück **T4**
-([TESTANLEITUNG.md](TESTANLEITUNG.md)). Die endgültigen Boxentüren und Boxenfronten bekommen den
-neuen Verschluss erst, wenn dein T4-Test gut ausfällt.
+Stand 10. November 2026. Auf deinen Wunsch ist der **Fallriegel jetzt in die Boxentüren und
+Boxenfronten eingebaut** (STL-Dateien). Gedruckt und getestet ist er noch nicht. Druck deshalb
+zuerst das kleine Teststück **T4** ([TESTANLEITUNG.md](TESTANLEITUNG.md)), dann erst die vier
+Boxentüren und Boxenfronten. Alles hier ist berechnet bzw. am Rechner simuliert.
 
 ## 1. So funktioniert der bisherige Klickverschluss
 
@@ -89,6 +89,18 @@ Was am Rechner geprüft ist (`tools/latch_sim.py`, Ergebnis in `build/latch_sim.
 **Noch nicht geprüft, das zeigt erst dein T4-Test:** wie leicht der Hebel wirklich gleitet und
 einfällt, wie fest der Druck hält, ob sich nach vielen Wiederholungen etwas abnutzt.
 
-**Nach erfolgreichem Test** übertrage ich den Fallriegel auf die Boxentüren (Zapfen und
-Anschlag) und die Boxenfronten (T-Haken). Den alten Klickverschluss entferne ich dann. Dazu
-kommen eine neue Validierung (Türschwung, Pferdedurchgang) und neue Projektdateien.
+**Eingebaut am 10. November** (ohne T4-Ergebnis, auf deinen Wunsch): Boxentür mit Zapfen,
+Schlüsselnase und Anschlag, Boxenfront mit T-Haken, dazu der lose Hebel (4 Stück). Der alte
+Klickverschluss ist entfernt. Der Hebeldrehpunkt sitzt 66 mm über dem Tisch auf den glatten
+Brettern der Tür. Am Rechner mit der echten Boxentür und Boxenfront nachgeprüft:
+
+* geschlossen berührt nichts; der Hebel sperrt die Tür nach 1,9 mm Spiel;
+* beim Schließen hebt die Schräge den Hebel um bis zu 3,3 mm an, dann fällt er ein;
+* der Hebel geht nur senkrecht nach oben gestellt ab;
+* Boxenfront ±1 mm seitlich, Tür ±0,4 mm in der Höhe: sperrt in allen 9 Fällen;
+* Türschwung und Pferdedurchgang unverändert (Tür frei bis 90 bzw. 105 Grad).
+
+![Nötiger Hub beim Schließen an der echten Boxentür](images/latch_curve_production.png)
+
+Fällt T4 schlecht aus, sag mir, was nicht passt. Dann ändere ich Hebel, Zapfen und Haken und
+schicke dir neue STL-Dateien für Boxentüren, Boxenfronten und Hebel.

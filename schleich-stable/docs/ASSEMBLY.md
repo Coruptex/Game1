@@ -107,8 +107,12 @@ below.
 2. Slide a `stall_front` down between the two aisle posts of the stall. Its door opening goes
    to the post that carries the stall door, and its barred section to the other post. The
    raised frame and bars face the aisle.
-3. Close the stall door. It should **click** into the latch with a light push, and open with
-   a light pull.
+3. **Drop-latch lever** (`stall_lever`, one per stall door): hold the lever pointing straight
+   up so that its keyway lines up with the nose on the door peg, push it on, then turn it down
+   until it rests on the small stop. It cannot come off in any other position.
+4. Close the stall door with a light push: the lever rides up the ramp of the T-catch on the
+   stall front and drops in behind it. To open, lift the lever by its round grip (about 4 mm)
+   and pull the door.
 
 ## 6. Pediments
 

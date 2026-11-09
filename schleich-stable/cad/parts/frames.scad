@@ -17,7 +17,8 @@ sf_vl = stall_door_top + 6;           // top of lintel
 sf_vtop = z_c_roof(X1 - wall_t / 2) - 0.3;   // beam top (under central roof)
 sf_vb  = sf_vtop - 12;                // beam bottom
 sf_bars = [78, 128];                  // bar zone of the fixed section (world Z)
-latch_y0 = 56;                        // tongue root height (world Z)
+latch_y0 = 56;                        // old click latch (T1 coupons only)
+sd_lever_py = 66;                     // drop latch: lever pivot height (world Z), on the plain boards
 stop_bevel = 2.4;
 // roof-beam tabs, symmetric about the stall centre so that the rotated
 // copies hit the same pockets in the central roof
@@ -68,12 +69,13 @@ module stall_front_local() {
                        translate([sf_u0 - 1, sf_vtop - 0.5]) square([300, 20]);
                        no_trim_in_grooves2d(sf_uh, sf_um);
                        translate([sf_ud - 1, 0]) square([3.5, 400]); }  // latch path stays flat
-        // 3: stop bevel on the latch stile edge (outside the latch zone)
-        for (r = [[sill_top + 2, latch_y0 - 2], [latch_y0 + latch_len + 3, stall_door_top - 2]])
-            translate([sf_ud, r[0], 0]) rotate([-90, 0, 0]) linear_extrude(r[1] - r[0])
+        // 3: stop bevel along the latch stile edge, T-catch of the drop latch
+        union() {
+            translate([sf_ud, sill_top + 2, 0]) rotate([-90, 0, 0]) linear_extrude(stall_door_top - 2 - sill_top - 2)
                 mirror([0, 1]) polygon([[0.3, 0], [-stop_bevel, 0], [0.3, stop_bevel + 0.3]]);
-        // 4: latch recess in the stile edge
-        latch_notch_cut(sf_ud, latch_y0, wall_t);
+            fl_catch(sf_ud + fl_c_in, sd_lever_py + fl_cs_y, wall_t);
+        }
+        union() {}
     }
 }
 // front-left placement: local x -> world Y, local z -> world +X (aisle side)
