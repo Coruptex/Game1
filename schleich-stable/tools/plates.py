@@ -250,6 +250,8 @@ def slice_opts(p, axes):
         o["cli"] += ["--top-solid-layers", proc["top_shell_layers"]]
     if "bottom_shell_layers" in proc:
         o["cli"] += ["--bottom-solid-layers", proc["bottom_shell_layers"]]
+    if "support_interface_top_layers" in proc:
+        o["cli"] += ["--support-material-interface-layers", proc["support_interface_top_layers"]]
     if p["process"] == "posts":
         o["cli"] += ["--default-acceleration", "3000", "--external-perimeter-acceleration", "2000",
                      "--perimeter-acceleration", "3000", "--infill-acceleration", "4000", "--travel-acceleration", "4000"]

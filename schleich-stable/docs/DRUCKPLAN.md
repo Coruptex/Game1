@@ -18,7 +18,7 @@ einschließlich Brim und Stützen liegen innerhalb des 256-mm-Betts.
 | Datei (`1_TEST/`) | Inhalt | Preset | Slot | Besonderheit | Zeit | Filament | passt mit Brim/Stützen |
 |---|---|---|---|---|---|---|---|
 | `TEST_T2_Boden_Passungen.3mf` | T2 (nur falls noch nicht gedruckt): Bodensockel und Bodenverzahnung | Stall 0.28mm Boden v2 @BBL A1 | 2 Schwarz |  | 0 h 27 min | 20 g | ja |
-| `TEST_T3a_Pfosten_Scharnier.3mf` | T3a: Pfosten-Scharnieraugen 2,05 bis 2,45 und Nutenpfosten | Stall 0.24mm Pfosten v3 @BBL A1 | 2 Schwarz | Brim 8 mm, begrenzte Beschleunigung (gespeichert); Baumstützen unter den Scharnieraugen | 3 h 38 min | 84 g | ja |
+| `TEST_T3a_Pfosten_Scharnier.3mf` | T3a: Pfosten-Scharnieraugen 2,05 bis 2,45 und Nutenpfosten | Stall 0.24mm Pfosten v3 @BBL A1 | 2 Schwarz | Brim 8 mm, begrenzte Beschleunigung (gespeichert); Baumstützen unter den Scharnieraugen | 3 h 26 min | 77 g | ja |
 | `TEST_T3b_Tuer_Fenster.3mf` | T3b: Türflügel-Teststücke 2,15, Fenster-Teststück, Fensterstift, Wand- und Dachzapfen | Stall 0.20mm Standard @BBL A1 | 2 Schwarz | Brim 3 mm am Fensterflügel | 2 h 03 min | 69 g | ja |
 | `TEST_T4_Verschluss.3mf` | T4: Fallriegel-Prüfstand und Tor-Riegel | Stall 0.20mm Standard @BBL A1 | 2 Schwarz |  | 1 h 05 min | 36 g | ja |
 
@@ -39,7 +39,7 @@ Projektdateien erzeuge ich, sobald du mir die Testergebnisse meldest.
 | P04 | `PROD_P04_Boden_LB.3mf` | floor_LB | **freigegeben** | Stall 0.28mm Boden v2 @BBL A1 | 3 Hellgrau |  | 2 h 25 min | 105 g | ja |
 | P05 | `PROD_P05_Boden_AB.3mf` | floor_AB | **freigegeben** | Stall 0.28mm Boden v2 @BBL A1 | 3 Hellgrau |  | 1 h 36 min | 55 g | ja |
 | P06 | `PROD_P06_Boden_RB.3mf` | floor_RB | **freigegeben** | Stall 0.28mm Boden v2 @BBL A1 | 3 Hellgrau |  | 2 h 25 min | 105 g | ja |
-| P07 | `PROD_P07_Pfosten_kurz.3mf` | 4 x post_corner, 2 x post_sidemid | **freigegeben** | Stall 0.24mm Pfosten v3 @BBL A1 | 2 Schwarz | Brim 8 mm, begrenzte Beschleunigung (gespeichert) | 4 h 39 min | 101 g | ja |
+| P07 | `PROD_P07_Pfosten_kurz.3mf` | 4 x post_corner, 2 x post_sidemid | **freigegeben** | Stall 0.24mm Pfosten v3 @BBL A1 | 2 Schwarz | Brim 8 mm, begrenzte Beschleunigung (gespeichert) | 4 h 12 min | 93 g | ja |
 | P08 | `PROD_P08_Waende_1.3mf` | partition | **freigegeben** | Stall 0.24mm Waende @BBL A1 | 1 Weiß + 2 | Filamentwechsel auf Schwarz ab 3,08 mm (gespeichert) | 1 h 48 min | 69 g | ja |
 | P09 | `PROD_P09_Waende_2.3mf` | partition | **freigegeben** | Stall 0.24mm Waende @BBL A1 | 1 Weiß + 2 | Filamentwechsel auf Schwarz ab 3,08 mm (gespeichert) | 1 h 48 min | 69 g | ja |
 | P10 | `PROD_P10_Waende_3.3mf` | 2 x pediment, 2 x side_wall | **freigegeben** | Stall 0.24mm Waende @BBL A1 | 1 Weiß + 2 | Filamentwechsel auf Schwarz ab 3,08 mm (gespeichert) | 3 h 00 min | 115 g | ja |
@@ -47,7 +47,7 @@ Projektdateien erzeuge ich, sobald du mir die Testergebnisse meldest.
 | P12 | `PROD_P12_Mitteldach.3mf` | roof_central | **freigegeben** | Stall 0.28mm Mitteldach v2 @BBL A1 | 4 Dunkelgrau | Brim 5 mm | 5 h 15 min | 193 g | ja |
 | P13 | `PROD_P13_Seitendaecher_1.3mf` | roof_side_A | **freigegeben** | Stall 0.28mm Dach @BBL A1 | 4 Dunkelgrau |  | 4 h 27 min | 174 g | ja |
 | P14 | `PROD_P14_Seitendaecher_2.3mf` | roof_side_B | **freigegeben** | Stall 0.28mm Dach @BBL A1 | 4 Dunkelgrau |  | 4 h 26 min | 174 g | ja |
-| P15 | `(folgt nach dem Test)` | 2 x post_jamb_L, 2 x post_jamb_R, 2 x post_mid | gesperrt bis T3 | Stall 0.24mm Pfosten v3 @BBL A1 | 2 Schwarz | Brim 8 mm, begrenzte Beschleunigung (gespeichert); Baumstützen unter den Scharnieraugen | 11 h 03 min | 219 g | ja |
+| P15 | `(folgt nach dem Test)` | 2 x post_jamb_L, 2 x post_jamb_R, 2 x post_mid | gesperrt bis T3 | Stall 0.24mm Pfosten v3 @BBL A1 | 2 Schwarz | Brim 8 mm, begrenzte Beschleunigung (gespeichert); Baumstützen unter den Scharnieraugen | 10 h 35 min | 207 g | ja |
 | P16 | `(folgt nach dem Test)` | gable_wing_A | gesperrt bis T3 | Stall 0.20mm Standard @BBL A1 | 1 Weiß + 2 | Filamentwechsel auf Schwarz ab 3,00 mm (gespeichert) | 1 h 44 min | 58 g | ja |
 | P17 | `(folgt nach dem Test)` | gable_wing_A | gesperrt bis T3 | Stall 0.20mm Standard @BBL A1 | 1 Weiß + 2 | Filamentwechsel auf Schwarz ab 3,00 mm (gespeichert) | 1 h 44 min | 58 g | ja |
 | P18 | `(folgt nach dem Test)` | gable_wing_B | gesperrt bis T3 | Stall 0.20mm Standard @BBL A1 | 1 Weiß + 2 | Filamentwechsel auf Schwarz ab 3,00 mm (gespeichert) | 1 h 44 min | 58 g | ja |
@@ -60,9 +60,9 @@ Projektdateien erzeuge ich, sobald du mir die Testergebnisse meldest.
 
 | Summe | Platten | Zeit | Filament |
 |---|---|---|---|
-| freigegeben | 14 | 39 h 52 min | 1,49 kg |
-| gesperrt (nach T3/T4) | 10 | 27 h 37 min | 0,76 kg |
-| **ganzer Stall** | **24** | **67 h 29 min** | **2,25 kg** |
+| freigegeben | 14 | 39 h 25 min | 1,48 kg |
+| gesperrt (nach T3/T4) | 10 | 27 h 09 min | 0,75 kg |
+| **ganzer Stall** | **24** | **66 h 34 min** | **2,23 kg** |
 
 Filamentkosten bei 19,99 €/kg: etwa **45 €** für den ganzen Stall (ohne Tests und Fehldrucke).
 

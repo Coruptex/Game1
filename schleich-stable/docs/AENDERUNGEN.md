@@ -2,13 +2,13 @@
 
 ## Kürzere Druckzeit (9. November)
 
-Ganzer Stall: **etwa 68 statt 88 Stunden** (−24 %), 2,2 statt 2,5 kg Filament (PrusaSlicer-Schätzung
+Ganzer Stall: **etwa 67 statt 88 Stunden** (−25 %), 2,2 statt 2,5 kg Filament (PrusaSlicer-Schätzung
 mit den gleichen Einstellungen; Bambu Studio zeigt eigene Werte). Gemessen habe ich vorher, wo die
 Zeit wirklich hingeht, und nur geändert, was keine getestete Passung berührt:
 
 | Was | Vorher | Jetzt | Wirkung |
 |---|---|---|---|
-| Pfosten (alle, auch Test T3a) | 0,20 mm, 4 Wände, sanfte Geschwindigkeit | **0,24 mm, 2 Wände**, normale Geschwindigkeit, nur die Beschleunigung begrenzt | hohe Pfosten 17,7 → 11,0 h, kurze 7,6 → 4,7 h |
+| Pfosten (alle, auch Test T3a) | 0,20 mm, 4 Wände, 25 %, sanfte Geschwindigkeit | **0,24 mm, 2 Wände**, 20 %, normale Geschwindigkeit, nur die Beschleunigung begrenzt; Stützen mit einer statt zwei Kontaktlagen (auch leichter zu entfernen) | hohe Pfosten 17,7 → 10,6 h, kurze 7,6 → 4,2 h |
 | Boden | 0,24 mm, 3 Wände, 15 % | **0,28 mm**, 2 Wände, 10 % | 6 Platten zusammen 15,6 → 12,8 h |
 | Seitenwände, Trennwände, Giebelfelder | 0,20 mm, 3 Wände | **0,24 mm**, 2 Wände | 9,9 → 8,2 h |
 | Dach | 0,20 mm | **0,28 mm**, Seitendächer vollmassiv (steifer, keine langsamen Brückenlagen) | 19,5 → 14,1 h |
@@ -22,6 +22,16 @@ T3b und T4. Nach deinen Tests kann ich auch diese Platten beschleunigen.
 Die Pfosten-Testplatte T3a und der Boden-Test T2 sind mit den neuen Einstellungen erzeugt, damit sie
 genau so gedruckt werden wie die Pfosten und Bodenplatten später. Der Filamentwechsel der Wände liegt
 bei 0,24-mm-Schichten bei 3,08 mm (erste Schicht über der Wandfläche), auch das ist gespeichert.
+
+**Grenze ohne Qualitätsverlust:** Viel weiter geht es mit der 0,4-mm-Düse nicht. Die großen flachen
+Teile laufen schon an der Durchflussgrenze des Filaments (21 mm³/s). Was noch ginge, kostet sichtbar
+Qualität (gemessen):
+
+| Möglichkeit | Ersparnis | Nachteil |
+|---|---|---|
+| Pfosten mit 0,28 statt 0,24 mm | etwa 2,6 h | deutlichere Schichtlinien an den schwarzen Pfosten, Scharnierlücken ungenauer |
+| Scharnieraugen mit 45-Grad-Schräge statt Stützen | etwa 2,6 h | die Schräge unter jedem Auge, die du nicht wolltest |
+| Wände mit 0,28 mm | etwa 0,8 h | gröbere Bretterfugen und Leistenkanten |
 
 Wer noch schneller will: Am A1 kann man während des Drucks auf „Sport“ stellen. Für Boden und Dach
 geht das meist gut; für die Pfosten nicht, die kippeln sonst.
