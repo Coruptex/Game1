@@ -29,8 +29,8 @@ Stand 8. November 2026, nach der Überarbeitung. Es gibt drei Stufen:
 |---|---|---|---|---|---|
 | Bodenverzahnung | 6 Bodenplatten, Zungen 14 mm breit | 0,25 mm je Seite, 0,4 mm nach oben | ja, Spalt 0,25 mm; Platten schieben sich waagerecht zusammen | T2 (Bodenverzahnung) | **Test offen** |
 | Pfostensockel | 12 Pfosten in den Bodenplatten | 0,20 mm je Seite | ja | T2 (Sockelplatte + Nutenpfosten aus T3a) | **Test offen** |
-| Wandnuten | Wände, Giebelwände, Trennwände, Boxenfronten, Giebelfelder in den Pfostennuten und in der Sockel- bzw. Bodennut | 0,20 mm je Seite, 0,5 mm Luft am Nutgrund | ja, Spalt 0,2 mm; jede Wand lässt sich senkrecht herausziehen | T3b (Wandstreifen) + T3a (Nutenpfosten) | **Test offen** |
-| Dachzapfen | Zapfen der Giebelwände und Trennwände in den Taschen der Seitendächer, Zapfen der Boxenfronten im Mitteldach | 0,25 mm je Seite | ja | T3b (Zapfenplatte) | **Test offen** |
+| Wandnuten | Wände, Giebelwände, Trennwände, Boxenfronten, Giebelfelder in den Pfostennuten und in der Sockel- bzw. Bodennut | 0,20 mm je Seite, 0,5 mm Luft am Nutgrund | ja, Spalt 0,2 mm; jede Wand lässt sich senkrecht herausziehen | T3a (Wandstreifen + Nutenpfosten, beide 0,24 mm) | **Test offen** |
+| Dachzapfen | Zapfen der Giebelwände und Trennwände in den Taschen der Seitendächer, Zapfen der Boxenfronten im Mitteldach | 0,25 mm je Seite | ja | T2 (Zapfenplatte, 0,28 mm) + T3a (Wandzapfen-Stück, 0,24 mm) | **Test offen** |
 | Dachverriegelung | Sperrrippen der Seitendächer unter dem Mitteldach | 1,0 mm | ja (sperrt nach 1,25 mm) | nicht nötig (große Luft) | rechnerisch geprüft |
 | Türscharnier, Türseite | Tore, Boxentüren (flach gedruckt, Tropfenloch) | Loch **2,15 mm** auf 1,75-mm-Stift | ja | **T1: 2,15 am besten (deine Meldung)** | **bestätigt** (Teststück allein) |
 | Türscharnier, Pfostenseite | stehend gedruckte Pfosten mit Baumstützen | Loch noch offen | ja (Stift läuft frei durch) | T1: 1,75 / 1,85 / 1,95 alle zu eng (deine Meldung). T3a: 2,05 bis 2,45 | **Test offen**, Pfosten gesperrt |
@@ -46,7 +46,7 @@ Die Tabelle der geplanten Luftspalte zwischen allen Nachbarteilen steht in
 ## Was nach deinen Tests passiert
 
 1. Deine Ergebnisse trage ich in `cad/config.scad` ein: `bore_post` aus T3a, `bore_win_hold`
-   aus T3b, die Passungen aus T2 und T3b, falls nötig.
+   aus T3b, die Passungen aus T2 und T3a, falls nötig.
 2. Bei einem guten T4 baue ich den Fallriegel in Boxentüren und Boxenfronten ein und entferne
    den Klickverschluss.
 3. Alles wird neu exportiert und validiert. Dann erzeuge ich die gesperrten Produktionsplatten

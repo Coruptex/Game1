@@ -102,7 +102,7 @@ Der Scharnierstift ist **ein Stück ganz normales 1,75-mm-Filament.**
 * **Türen nicht mit Gewalt über den Anschlag drücken** (Tore 105 Grad, Boxentüren 90 bis
   105 Grad); das belastet die Scharnieraugen.
 * **PLA** wird bei etwa 55 °C weich (Auto im Sommer, sonnige Fensterbank).
-* **Aufwand:** 24 Platten, rund 67 h und 2,2 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
+* **Aufwand:** 24 Platten, rund 67½ h und 2,25 kg Filament (PrusaSlicer-Schätzung; Bambu Studio
   zeigt eigene Werte), dazu 1 bis 2 Stunden Zusammenbau.
 
 ## 6. Drucken

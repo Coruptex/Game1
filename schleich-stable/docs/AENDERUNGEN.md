@@ -1,14 +1,30 @@
 # Änderungsliste (8. und 9. November 2026)
 
+## Schlankere Testplatten, 68-Stunden-Variante (9. November)
+
+* Du hast die **68-Stunden-Variante** gewählt: Pfosten mit 25 % Füllung und zwei Kontaktlagen an
+  den Stützen. Der kleine Zusatzschritt (20 %, eine Kontaktlage, 1 h weniger) ist zurückgenommen.
+  Ganzer Stall: 67 h 29 min (Schätzung).
+* Testplatten verkleinert, nur was eine eigene Frage beantwortet, bleibt drauf
+  ([TESTANLEITUNG.md](TESTANLEITUNG.md), Abschnitt „Was auf den Platten liegt“):
+  * T3b: ein Türflügel-Teststück statt zwei. T4: kein eigener Fuß mehr, der aus T3b passt.
+  * Wandstreifen und Wandzapfen-Stück liegen jetzt auf T3a (0,24 mm wie die Wände), die
+    Zapfenplatte auf T2 (0,28 mm wie das Dach). Vorher lagen sie auf T3b mit 0,20 mm, das hätte
+    nach der Umstellung der Schichthöhen nicht mehr ganz gepasst.
+  * **T2 ist jetzt Pflicht**, auch wenn du es früher gedruckt hast: Boden jetzt 0,28 statt 0,24 mm.
+  * Alle Tests zusammen: etwa 6 h 40 min statt 7 h (die Pfostenstücke bleiben alle 5).
+* Die Tests darfst du in einer selten genutzten Farbe drucken, wenn es dieselbe Filamentsorte ist.
+
+
 ## Kürzere Druckzeit (9. November)
 
-Ganzer Stall: **etwa 67 statt 88 Stunden** (−25 %), 2,2 statt 2,5 kg Filament (PrusaSlicer-Schätzung
+Ganzer Stall: **etwa 67½ statt 88 Stunden** (−24 %), 2,25 statt 2,5 kg Filament (PrusaSlicer-Schätzung
 mit den gleichen Einstellungen; Bambu Studio zeigt eigene Werte). Gemessen habe ich vorher, wo die
 Zeit wirklich hingeht, und nur geändert, was keine getestete Passung berührt:
 
 | Was | Vorher | Jetzt | Wirkung |
 |---|---|---|---|
-| Pfosten (alle, auch Test T3a) | 0,20 mm, 4 Wände, 25 %, sanfte Geschwindigkeit | **0,24 mm, 2 Wände**, 20 %, normale Geschwindigkeit, nur die Beschleunigung begrenzt; Stützen mit einer statt zwei Kontaktlagen (auch leichter zu entfernen) | hohe Pfosten 17,7 → 10,6 h, kurze 7,6 → 4,2 h |
+| Pfosten (alle, auch Test T3a) | 0,20 mm, 4 Wände, 25 %, sanfte Geschwindigkeit | **0,24 mm, 2 Wände**, 25 %, normale Geschwindigkeit, nur die Beschleunigung begrenzt; Stützen wie bisher mit zwei Kontaktlagen | hohe Pfosten 17,7 → 11,1 h, kurze 7,6 → 4,7 h |
 | Boden | 0,24 mm, 3 Wände, 15 % | **0,28 mm**, 2 Wände, 10 % | 6 Platten zusammen 15,6 → 12,8 h |
 | Seitenwände, Trennwände, Giebelfelder | 0,20 mm, 3 Wände | **0,24 mm**, 2 Wände | 9,9 → 8,2 h |
 | Dach | 0,20 mm | **0,28 mm**, Seitendächer vollmassiv (steifer, keine langsamen Brückenlagen) | 19,5 → 14,1 h |
@@ -92,11 +108,11 @@ geht das meist gut; für die Pfosten nicht, die kippeln sonst.
 
 * **T3a:** 5 Pfosten-Scharnierstücke (2,05 bis 2,45) und der Nutenpfosten. Gleiche Druckrichtung und
   Einstellungen wie die echten Pfosten.
-* **T3b:** Türflügel-Teststücke 2,15 (für den zusammengebauten Scharniertest), ein Stück Giebelwand
+* **T3b:** ein Türflügel-Teststück 2,15 (für den zusammengebauten Scharniertest), ein Stück Giebelwand
   mit dem neuen Fenster, der echte Fensterflügel, ein Fuß, Fensterstift-Klemmstücke 1,85 / 1,95 /
-  2,05, Wandstreifen, Dachzapfen.
-* **T4:** Fallriegel-Prüfstand (Rahmen, Tür, Hebel, Fuß) und der Tor-Riegel mit seinen Schlaufen.
-* **T2** liegt als Projektdatei bei, falls noch nicht gedruckt.
+  2,05. Wandstreifen und Zapfen: siehe oben.
+* **T4:** Fallriegel-Prüfstand (Rahmen, Tür, Hebel; Fuß aus T3b) und der Tor-Riegel mit seinen Schlaufen.
+* **T2:** Bodensockel, Bodenverzahnung, Zapfenplatte.
 
 ## Bambu-Studio-Projekte
 

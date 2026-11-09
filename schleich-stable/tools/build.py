@@ -26,7 +26,7 @@ TEST_PARTS = ([(n, n, None) for n in ("groove_post", "panel_strip", "socket_plat
                  ("T3b_stand", "test_stand", None)]
               + [(f"T3b_pin_{b:.2f}", "win_pin_coupon", b) for b in (1.85, 1.95, 2.05)]
               + [("T4_frame", "rig_frame", None), ("T4_door", "rig_door", None), ("T4_lever", "fl_lever", None),
-                 ("T4_stand", "test_stand", None), ("T4_bolt_test", "bolt_test_plate", None)])
+                 ("T4_bolt_test", "bolt_test_plate", None)])
 
 
 def read_instances():

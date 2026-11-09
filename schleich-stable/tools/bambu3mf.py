@@ -57,11 +57,11 @@ PROCESSES = {
     # accelerations for the tall, slim posts on the moving bed
     "posts": {
         "name": "Stall 0.24mm Pfosten v3 @BBL A1", "inherits": "0.24mm Draft @BBL A1", "layer": 0.24,
-        "keys": {"wall_loops": "2", "sparse_infill_density": "20%",
+        "keys": {"wall_loops": "2", "sparse_infill_density": "25%",
                  "enable_support": "1", "support_type": "tree(auto)", "support_style": "tree_slim",
                  "support_threshold_angle": "30", "support_on_build_plate_only": "0", "bridge_no_support": "1",
                  "support_top_z_distance": "0.2", "support_bottom_z_distance": "0.2",
-                 "support_interface_top_layers": "1", "support_interface_bottom_layers": "1",
+                 "support_interface_top_layers": "2", "support_interface_bottom_layers": "2",
                  "support_object_xy_distance": "0.35",
                  "brim_type": "outer_only", "brim_width": "8", "brim_object_gap": "0.1", "enable_prime_tower": "0",
                  "default_acceleration": "3000", "outer_wall_acceleration": "2000", "inner_wall_acceleration": "3000",

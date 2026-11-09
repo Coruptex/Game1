@@ -63,17 +63,17 @@ GROUPS = [
 
 # test plates: parts from stl/tests/ (tools/build.py TEST_PARTS) or stl/
 TESTS = [
-    ("T2_Boden_Passungen", "T2 (nur falls noch nicht gedruckt): Bodensockel und Bodenverzahnung", "black", "floor", 12,
-     [("tests/socket_plate", 1), ("tests/tile_a", 1), ("tests/tile_b", 1)]),
-    ("T3a_Pfosten_Scharnier", "T3a: Pfosten-Scharnieraugen 2,05 bis 2,45 und Nutenpfosten", "black", "posts", 40,
+    ("T2_Boden_Passungen", "T2: Bodensockel, Bodenverzahnung, Dach-Zapfentaschen (0,28 mm wie Boden und Dach)", "black", "floor", 12,
+     [("tests/socket_plate", 1), ("tests/tile_a", 1), ("tests/tile_b", 1), ("tests/tab_plate", 1)]),
+    ("T3a_Pfosten_Scharnier", "T3a: Pfosten-Scharnieraugen 2,05 bis 2,45, Nutenpfosten, Wandstreifen, Wandzapfen (0,24 mm wie Pfosten und Wände)", "black", "posts", 40,
      [("tests/T3a_post_2.05", 1), ("tests/T3a_post_2.15", 1), ("tests/T3a_post_2.25", 1),
-      ("tests/T3a_post_2.35", 1), ("tests/T3a_post_2.45", 1), ("tests/groove_post", 1)]),
-    ("T3b_Tuer_Fenster", "T3b: Türflügel-Teststücke 2,15, Fenster-Teststück, Fensterstift, Wand- und Dachzapfen", "black", "standard", 7,
-     [("tests/T3b_leaf_2.15", 2), ("tests/T3b_window_section", 1), ("casement_A", 1), ("tests/T3b_stand", 1),
-      ("tests/T3b_pin_1.85", 1), ("tests/T3b_pin_1.95", 1), ("tests/T3b_pin_2.05", 1),
-      ("tests/panel_strip", 1), ("tests/tab_plate", 1), ("tests/tab_key", 1)]),
-    ("T4_Verschluss", "T4: Fallriegel-Prüfstand und Tor-Riegel", "black", "standard", 7,
-     [("tests/T4_frame", 1), ("tests/T4_door", 1), ("tests/T4_lever", 1), ("tests/T4_stand", 1),
+      ("tests/T3a_post_2.35", 1), ("tests/T3a_post_2.45", 1), ("tests/groove_post", 1),
+      ("tests/panel_strip", 1), ("tests/tab_key", 1)]),
+    ("T3b_Tuer_Fenster", "T3b: Türflügel-Teststück 2,15, Fenster-Teststück mit Flügel und Fuß, Fensterstift-Klemmstücke", "black", "standard", 7,
+     [("tests/T3b_leaf_2.15", 1), ("tests/T3b_window_section", 1), ("casement_A", 1), ("tests/T3b_stand", 1),
+      ("tests/T3b_pin_1.85", 1), ("tests/T3b_pin_1.95", 1), ("tests/T3b_pin_2.05", 1)]),
+    ("T4_Verschluss", "T4: Fallriegel-Prüfstand (Fuß aus T3b) und Tor-Riegel", "black", "standard", 7,
+     [("tests/T4_frame", 1), ("tests/T4_door", 1), ("tests/T4_lever", 1),
       ("tests/T4_bolt_test", 1), ("bolt_bar", 1)]),
 ]
 
