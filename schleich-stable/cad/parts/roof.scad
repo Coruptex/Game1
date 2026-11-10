@@ -53,7 +53,8 @@ module c_end_frame() {
     translate([0, Y1 + frame_t / 2, 0]) rotate([90, 0, 0]) linear_extrude(frame_t) difference() {
         c_under2d(0.8);
         // notches around the mid posts (bearing on their bevelled tops)
-        for (x = [X1, X2]) translate([x - PW2 - fit_socket, Z_c_low - 1]) square([post_w + 2 * fit_socket, 40]);
+        // 0.20 mm each side (own value: no longer tied to the floor-socket fit, which T2 set to 0.15)
+        for (x = [X1, X2]) translate([x - PW2 - 0.2, Z_c_low - 1]) square([post_w + 2 * 0.2, 40]);
         // truss openings between the posts, split by a king post
         intersection() {
             offset(delta = -9) intersection() {

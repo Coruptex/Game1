@@ -31,10 +31,11 @@ fit_slide_post = 0.15;
 fit_slide  = 0.20;
 // Clearance per side for roof tabs in roof pockets
 fit_tab    = 0.25;
-// Clearance per side for posts in floor sockets
-fit_socket = 0.20;
+// Clearance per side for posts in floor sockets.
+// Test T2 (Nov 2026, socket plate 15 / 20 / 30): 0.15 fitted best. Confirmed.
+fit_socket = 0.15;
 // Clearance per side for floor-tile interlock fingers
-fit_tile   = 0.25;
+fit_tile   = 0.15;   // Test T2 (Nov 2026, tiles 15 / 25 / 35): 0.15 fitted best. Confirmed.
 // Axial gap between hinge knuckles. 0.8 leaves room for the slightly
 // rough underside that support material leaves on the post knuckles.
 hinge_gap  = 0.80;

@@ -1,44 +1,83 @@
-# Testanleitung: T2 und T4 (noch offen)
+# Testanleitung: was noch offen ist
 
-Stand 10. November 2026. Die STL-Dateien liegen im Ordner **`1_TEST_noch_offen`**. Die
-Druckeinstellungen wählst du selbst. Nimm für jeden Test die Einstellungen, die du später für
-die zugehörigen Teile verwendest, und dasselbe Filament (Sorte und Hersteller). Die Farbe ist
-egal.
+Stand 10. November 2026. Fast alles ist getestet. Offen sind nur noch der **Dachzapfen-Test**
+(die Teile hast du schon) und ein kurzer Handgriff mit dem **Torriegel**.
 
-**Wichtig für alle Tests:** nicht aufbohren, nicht feilen, nicht nachschneiden. Stützen und
-Brim entfernen ist erlaubt. Bewerte jedes Teil so, wie es vom Drucker kommt.
+**Wichtig für alle Tests:** nicht aufbohren, nicht feilen, nicht nachschneiden. Bewerte jedes
+Teil so, wie es vom Drucker kommt.
 
-**Stifte:** Alle Scharnierstifte sind Stücke von 1,75-mm-Filament. Ziehe ein Stück gerade,
-schneide es mit dem Seitenschneider quer ab und entgrate die Enden leicht mit dem Fingernagel.
-
-## Deine bisherigen Ergebnisse (eingearbeitet)
+## Deine Ergebnisse (eingearbeitet)
 
 | Test | Ergebnis | Übernommen |
 |---|---|---|
 | T1 Türflügel | 2,15 am besten | Loch in Türen und Fensterflügeln 2,15 mm |
 | T3a Pfostenstücke | **2,05** am besten | Loch in allen Pfosten-Scharnieraugen 2,05 mm |
-| T3a Nutenpfosten | **15** am besten | Wandnuten in allen Pfosten 0,15 mm Luft je Seite (vorher 0,20) |
-| T3b Fuß | Wandstück passt | Nut in Sockel und Boden bleibt bei 0,20 mm, wie im Fuß |
-| T3b Fensterstift | **1,95** am besten | oberes Fensterauge an der Giebelwand 1,95 mm (war schon so) |
+| T3a Nutenpfosten | **15** am besten | Wandnuten in allen Pfosten 0,15 mm Luft je Seite |
+| T3b Fuß | Wandstück passt | Nut in Sockel und Boden 0,20 mm, wie im Fuß |
+| T3b Fensterstift | **1,95** am besten | oberes Fensterauge an der Giebelwand 1,95 mm |
+| T2 Sockelplatte | **15** am besten | Pfostensockel in den Bodenplatten 0,15 mm Luft je Seite (vorher 0,20) |
+| T2 Bodenverzahnung | **15** am besten | Bodenverzahnung 0,15 mm Luft je Seite (vorher 0,25) |
+| T4 Fallriegel | funktioniert | bleibt so, wie er in Boxentüren und Boxenfronten eingebaut ist |
 
-## Was noch offen ist
+## Offen 1: Dachzapfen-Test
 
-| Ordner | Wozu | Wann drucken |
-|---|---|---|
-| `T4_Fallriegel` | Fallriegel der Boxentüren und Schieberiegel der Tore | **vor** den Boxentüren, Boxenfronten und Toren |
-| `T2_Boden_und_Dach` | Pfostensockel im Boden, Bodenverzahnung, Dachzapfen | **vor** den Bodenplatten und Dächern |
+![Dachzapfen-Test](images/dachzapfen_test.jpg)
 
-Der Fallriegel ist schon in die Boxentüren und Boxenfronten eingebaut (dein Wunsch). T4 ist ein
-kleines Stück aus Boxentür und Boxenfront in Originalmaßen. Druck es zuerst, dann merkst du
-einen Fehler an einem kleinen Teil statt an vier großen.
+**Was wird getestet?** Oben an den Giebelwänden, Trennwänden und Boxenfronten sitzen kleine
+Zapfen. Sie stecken in Taschen an der **Unterseite** der Dächer. So kann das Dach nicht
+verrutschen. Die Zapfenplatte ist ein Stück Dach mit drei solchen Taschen, das
+Wandzapfen-Stück ist ein Stück Wandoberkante mit einem Zapfen.
 
-Teile, die du schon hast, brauchst du nicht neu zu drucken: Nutenpfosten und Wandzapfen-Stück
-aus T3a (für T2), den Fuß aus T3b (für T4). Sie liegen in den Unterordnern `schon_gedruckt_...`
-bei, falls eins fehlt.
+**Teile:** Zapfenplatte (aus T2) und Wandzapfen-Stück (aus T3a: das flache Stück, 40 × 14 mm,
+mit dem kleinen Zapfen an einer langen Kante).
+
+1. **Zapfenplatte umdrehen.** Die Taschen liegen auf der Unterseite, also auf der Seite, die
+   auf dem Druckbett lag. Die Zahlen stehen oben. Dreh die Platte über die lange Kante um, dann
+   bleibt die Reihenfolge gleich: links 15, Mitte 25, rechts 35. Jede Zahl steht genau über
+   ihrer Tasche.
+2. **Wandzapfen-Stück senkrecht halten**, wie eine kleine Wand, den Zapfen nach unten.
+3. Den Zapfen nacheinander in jede der drei Taschen stecken, ohne Druck.
+
+| Ergebnis | Bedeutung |
+|---|---|
+| A: geht nicht oder nur mit Druck hinein | zu eng |
+| B: fällt von selbst oder mit ganz leichtem Druck hinein und hat kaum Spiel | **ideal** |
+| C: fällt hinein und wackelt deutlich hin und her | zu locker |
+
+Gesucht ist die **kleinste Tasche mit B**. Im Modell sind 25 eingestellt.
+
+**Melde mir:** für 15, 25 und 35 jeweils A, B oder C.
+
+## Offen 2: Torriegel kurz ausprobieren
+
+![So funktioniert der Torriegel](images/torriegel.jpg)
+
+**Wozu ist das?** Das große Tor in der Mitte hat zwei Flügel. Außen auf beiden Flügeln sitzt in
+Riegelhöhe je eine Schlaufe: eine kurze am linken Flügel, eine lange am rechten. Der
+**Torriegel** ist ein Stab mit einem Knopf am Ende, der durch beide Schlaufen geschoben wird.
+
+* **Verriegelt:** Der Riegel steckt in beiden Schlaufen und überbrückt den Spalt zwischen den
+  Flügeln. Keiner der beiden Flügel geht auf.
+* **Entriegelt:** Am Knopf 13 mm nach rechts ziehen. Der Riegel kommt aus der linken Schlaufe
+  heraus, bleibt aber in der langen rechten Schlaufe stecken. Jetzt gehen beide Flügel auf.
+  Der Riegel fährt am rechten Flügel mit und geht nicht verloren.
+
+Die **Riegelplatte** aus T4 ist genau der rot gestrichelte Ausschnitt: beide Schlaufen im
+echten Abstand, aber auf einem Stück statt auf zwei Flügeln. Damit prüfst du nur, ob der
+Riegel gut durch die Schlaufen gleitet.
+
+**So probierst du es:** Den Torriegel mit dem glatten Ende voran von rechts in die lange
+Schlaufe schieben, weiter durch die kurze Schlaufe, bis der Knopf an der langen Schlaufe
+anliegt. Dann wieder 13 mm zurückziehen und wieder hineinschieben.
+
+Gut ist, wenn er von Hand ohne Kraft gleitet, nicht klemmt und nicht spürbar wackelt (Luft
+0,3 mm je Seite).
+
+**Melde mir:** gleitet / klemmt / wackelt.
 
 ---
 
-## T4: Fallriegel und Tor-Riegel
+## T4: Fallriegel (erledigt, zum Nachlesen)
 
 ![Fallriegel-Prüfstand](images/fallriegel_T4.jpg)
 
@@ -84,27 +123,12 @@ angehoben. Er darf nicht abgehen. Senkrecht nach oben gestellt geht er ab; so wi
 **Test 6, Kippen:** Prüfstand um etwa 30 Grad nach vorn und nach hinten neigen. Die Tür muss
 verriegelt bleiben. Auf dem Kopf fällt der Hebel auf, das ist bei einem Fallriegel normal.
 
-**Tor-Riegel:** den Riegel durch beide Schlaufen der Riegelplatte schieben. Gut ist, wenn er
-von Hand ohne Kraft gleitet, nicht klemmt und nicht spürbar wackelt (Luft 0,3 mm je Seite).
-
-**Melde mir:** Einrasten (immer? manchmal?), Bedienkraft beim Anheben (leicht / mittel /
-schwer), Halt (hält einen Ruck?), Zustand nach 100-mal, Kipptest, Tor-Riegel (gleitet / klemmt
-/ wackelt). Fotos helfen.
+Dein Ergebnis: funktioniert. Falls du den Dauertest (Test 4) noch machst und danach etwas
+auffällt, sag mir Bescheid.
 
 ---
 
-## T2: Bodensockel, Bodenverzahnung, Dach-Zapfentaschen
+## T2: Bodensockel und Bodenverzahnung (erledigt)
 
-Druck T2 mit denselben Einstellungen, die du später für Boden und Dach nimmst. Nur dann sagt der
-Test etwas über deine Bodenplatten und Dächer.
-
-* **Sockelplatte:** den Nutenpfosten aus T3a in die drei Sockel stecken (15 / 20 / 30). Gut ist,
-  wenn er von Hand hineingeht und nicht wackelt. Im Modell sind 20 eingestellt.
-* **Bodenverzahnung:** Stück A waagerecht in die drei Aussparungen von Stück B schieben (15 /
-  25 / 35). Gut ist, wenn es leicht gleitet, ohne zu klemmen, und die Oberflächen bündig sind.
-  Im Modell sind 25 eingestellt.
-* **Dachzapfen:** das Wandzapfen-Stück aus T3a mit dem Zapfen in die drei Taschen der
-  Zapfenplatte stecken (15 / 25 / 35). Gut ist, wenn es von selbst hineinfällt und kaum Spiel
-  hat. Im Modell sind 25 eingestellt.
-
-**Melde mir:** den besten Sockel, die beste Verzahnung und die beste Dachzapfen-Tasche.
+Dein Ergebnis: Sockel 15, Verzahnung 15. Beides ist eingebaut. Den Dachzapfen-Test aus T2
+beschreibt „Offen 1“ oben.

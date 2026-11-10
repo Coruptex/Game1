@@ -1,9 +1,8 @@
 # Boxentür-Verschluss: Prüfung und Empfehlung
 
 Stand 10. November 2026. Auf deinen Wunsch ist der **Fallriegel jetzt in die Boxentüren und
-Boxenfronten eingebaut** (STL-Dateien). Gedruckt und getestet ist er noch nicht. Druck deshalb
-zuerst das kleine Teststück **T4** ([TESTANLEITUNG.md](TESTANLEITUNG.md)), dann erst die vier
-Boxentüren und Boxenfronten. Alles hier ist berechnet bzw. am Rechner simuliert.
+Boxenfronten eingebaut** (STL-Dateien). Dein Teststück **T4** funktioniert (deine Meldung vom
+10. November). Die Zahlen unten sind berechnet bzw. am Rechner simuliert.
 
 ## 1. So funktioniert der bisherige Klickverschluss
 

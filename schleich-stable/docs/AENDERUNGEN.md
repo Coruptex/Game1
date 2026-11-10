@@ -1,5 +1,20 @@
 # Änderungsliste (8. bis 10. November 2026)
 
+## T2 und T4 eingearbeitet (10. November, später)
+
+* **Pfostensockel** in den Bodenplatten: 0,15 mm Luft je Seite (T2 „15“; vorher 0,20).
+* **Bodenverzahnung**: 0,15 mm Luft je Seite (T2 „15“; vorher 0,25). Die Höhenluft über der
+  Zunge bleibt bei 0,4 mm.
+* Neu sind dadurch nur die **6 Bodenplatten**. Alle anderen Dateien sind unverändert.
+* Beim Prüfen gefunden: Die Aussparungen des Mitteldachs um die beiden Mittelpfosten nutzten
+  denselben Wert wie die Bodensockel. Das hat nichts miteinander zu tun. Sie haben jetzt einen
+  eigenen Wert und bleiben bei 0,20 mm; das Mitteldach ist unverändert.
+* **Fallriegel** durch T4 bestätigt („funktioniert“).
+* Neue Bilder in der Testanleitung: wie der Dachzapfen-Test geht und wie der Torriegel das Tor
+  verschließt.
+* Nachgeprüft: keine Überschneidung, alle Stifte frei, Türen schwenken wie vorher, Pferde passen.
+
+
 ## Deine Testergebnisse, Fallriegel, Pfostenblock, STL (10. November)
 
 * **Alles als STL-Dateien**, ohne meine Druckeinstellungen. Die Bambu-Studio-Projekte sind

@@ -16,7 +16,7 @@ mymodelhorse.com, but it is an original design and is not affiliated with Schlei
 | Size | **489 x 253 mm** base; **497 x 268 x 276 mm** overall (roof eaves and door bolts) |
 | Stalls | 4, each 173 x 113 mm inside, for horses up to 170 x 53 x 120 mm (checked in the validation with a horse proxy) |
 | Aisle / main door | 113 mm aisle; arched double doors 100 mm wide, 160 mm clear at the crown |
-| Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: gravity drop latch (lever on a peg, T-catch on the stall front; test piece T4 still to be printed); left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
+| Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: gravity drop latch (lever on a peg, T-catch on the stall front; confirmed with test piece T4); left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
 | Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows (hinge outside the window frame, which runs all the way round), 3 lift-off roof units (the central roof locks the side roofs) |
 | Parts | 55 printed pieces from 27 STL files (plus two optional post blocks that print the 12 posts as two stiff groups); 12 hinge pins cut from 1.75 mm filament |
 | Print | about **2.3 kg PLA**; delivered as **STL files** (German names, print orientation, two-colour walls as separate wall/trim files), slicer settings chosen by the user |
@@ -34,9 +34,9 @@ saved and why nothing was simply scaled down.
 1. `python3 tools/build.py && python3 tools/stl_package.py` -> `build/Stall_STL.zip` (German
    guide inside: [docs/STL_LIES_MICH.md](docs/STL_LIES_MICH.md), parts list
    [docs/TEILELISTE.md](docs/TEILELISTE.md)).
-2. **Open tests:** T4 (drop latch, before the stall doors) and T2 (floor and roof fits), see
-   [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md). T1, T3a and T3b are printed and their results
-   are in `cad/config.scad`.
+2. **Tests:** T1-T4 are printed and their results are in `cad/config.scad`. Still open: the
+   roof-tab check and a quick slide check of the main-door bolt, see
+   [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md).
 3. **Print** the parts, **assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
 
 What changed in this round: [docs/AENDERUNGEN.md](docs/AENDERUNGEN.md) (German).
@@ -96,6 +96,8 @@ python3 tools/latch_sim.py                # drop latch, T4 test rig: kinematic c
 python3 tools/latch_sim.py production     # drop latch on the real stall door + stall front
 python3 tools/stl_package.py              # STL delivery -> build/Stall_STL.zip, docs/TEILELISTE.md, docs/BOM.md
 blender -b -P tools/render_blocks.py && python3 tools/annotate_blocks.py   # post block picture
+blender -b -P tools/render_bolt.py && python3 tools/annotate_bolt.py       # main-door bolt picture
+blender -b -P tools/render_tabs.py && python3 tools/annotate_tabs.py       # roof-tab test picture
 blender -b -P tools/render_window.py -- 150 && python3 tools/annotate_window.py   # window close-ups
 blender -b -P tools/render_latch.py && python3 tools/annotate_latch.py           # latch images
 python3 tools/render_export.py && tools/render_all.sh   # renders -> docs/images/
