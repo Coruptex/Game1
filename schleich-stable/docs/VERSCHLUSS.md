@@ -98,6 +98,8 @@ Brettern der Tür. Am Rechner mit der echten Boxentür und Boxenfront nachgeprü
 * der Hebel geht nur senkrecht nach oben gestellt ab;
 * Boxenfront ±1 mm seitlich, Tür ±0,4 mm in der Höhe: sperrt in allen 9 Fällen;
 * Türschwung und Pferdedurchgang unverändert (Tür frei bis 90 bzw. 105 Grad).
+* Anschlag unter dem Hebel (nach deinem T4-Test, 10. November): ragt 2,8 mm über die
+  Vorderseite des Hebels, damit ein kippelnder Hebel nicht daran vorbeirutscht.
 
 ![Nötiger Hub beim Schließen an der echten Boxentür](images/latch_curve_production.png)
 

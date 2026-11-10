@@ -156,10 +156,13 @@ def main():
         fn = f"{name}_1x.stl"
         put(trimesh.load(os.path.join(STL, "blocks", p + ".stl"), force="mesh"), os.path.join(bfolder, fn))
         rows.append((FOLDER["post"] + "/Pfostenblock", fn, 1, "schwarz", sup, brim, note))
-    for src, name, sub in TESTS:
-        d = os.path.join(STAGE, "1_TEST_noch_offen", sub)
-        os.makedirs(d, exist_ok=True)
-        put(trimesh.load(os.path.join(STL, src + ".stl"), force="mesh"), os.path.join(d, name + ".stl"))
+    # all tests are printed and confirmed (10 Nov 2026): no test folder in the final delivery;
+    # TESTS stays as the record of which coupon file belonged to which test
+    pdf = os.path.join(ROOT, "docs", "Aufbauanleitung.pdf")
+    if os.path.exists(pdf):
+        shutil.copy(pdf, os.path.join(STAGE, "Aufbauanleitung.pdf"))
+    else:
+        print("WARNING: docs/Aufbauanleitung.pdf missing (tools/manual_pdf.py)")
 
     # part lists
     n_pieces = sum(q for _, _, q in parts)

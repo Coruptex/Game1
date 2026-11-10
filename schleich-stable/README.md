@@ -34,10 +34,10 @@ saved and why nothing was simply scaled down.
 1. `python3 tools/build.py && python3 tools/stl_package.py` -> `build/Stall_STL.zip` (German
    guide inside: [docs/STL_LIES_MICH.md](docs/STL_LIES_MICH.md), parts list
    [docs/TEILELISTE.md](docs/TEILELISTE.md)).
-2. **Tests:** T1-T4 are printed and their results are in `cad/config.scad`. Still open: the
-   roof-tab check and a quick slide check of the main-door bolt, see
-   [docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md).
-3. **Print** the parts, **assemble** with [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
+2. **Tests:** T1-T4 are printed and every fit in `cad/config.scad` is confirmed by them
+   ([docs/TESTANLEITUNG.md](docs/TESTANLEITUNG.md), [docs/VERBINDUNGEN.md](docs/VERBINDUNGEN.md)).
+3. **Print** the parts, **assemble** with the picture manual [docs/Aufbauanleitung.pdf](docs/Aufbauanleitung.pdf)
+   (German) or [docs/ASSEMBLY.md](docs/ASSEMBLY.md).
 
 What changed in this round: [docs/AENDERUNGEN.md](docs/AENDERUNGEN.md) (German).
 
@@ -98,6 +98,7 @@ python3 tools/stl_package.py              # STL delivery -> build/Stall_STL.zip,
 blender -b -P tools/render_blocks.py && python3 tools/annotate_blocks.py   # post block picture
 blender -b -P tools/render_bolt.py && python3 tools/annotate_bolt.py       # main-door bolt picture
 blender -b -P tools/render_tabs.py && python3 tools/annotate_tabs.py       # roof-tab test picture
+python3 tools/manual_pdf.py --poses && blender -b -P tools/manual_render.py && python3 tools/manual_pdf.py   # assembly manual PDF
 blender -b -P tools/render_window.py -- 150 && python3 tools/annotate_window.py   # window close-ups
 blender -b -P tools/render_latch.py && python3 tools/annotate_latch.py           # latch images
 python3 tools/render_export.py && tools/render_all.sh   # renders -> docs/images/

@@ -1,10 +1,7 @@
-# Testanleitung: was noch offen ist
+# Testanleitung: alle Tests erledigt
 
-Stand 10. November 2026. Fast alles ist getestet. Offen sind nur noch der **Dachzapfen-Test**
-(die Teile hast du schon) und ein kurzer Handgriff mit dem **Torriegel**.
-
-**Wichtig für alle Tests:** nicht aufbohren, nicht feilen, nicht nachschneiden. Bewerte jedes
-Teil so, wie es vom Drucker kommt.
+Stand 10. November 2026. Alle Tests sind gedruckt und eingearbeitet. Die Anleitungen unten
+bleiben zum Nachlesen.
 
 ## Deine Ergebnisse (eingearbeitet)
 
@@ -18,8 +15,10 @@ Teil so, wie es vom Drucker kommt.
 | T2 Sockelplatte | **15** am besten | Pfostensockel in den Bodenplatten 0,15 mm Luft je Seite (vorher 0,20) |
 | T2 Bodenverzahnung | **15** am besten | Bodenverzahnung 0,15 mm Luft je Seite (vorher 0,25) |
 | T4 Fallriegel | funktioniert | bleibt so, wie er in Boxentüren und Boxenfronten eingebaut ist |
+| T2 Zapfenplatte | **15** am besten | Dachtaschen 0,15 mm Luft je Seite (vorher 0,25) |
+| T4 Torriegel | gleitet | bleibt bei 0,3 mm Luft je Seite |
 
-## Offen 1: Dachzapfen-Test
+## Dachzapfen-Test (erledigt)
 
 ![Dachzapfen-Test](images/dachzapfen_test.jpg)
 
@@ -48,7 +47,7 @@ Gesucht ist die **kleinste Tasche mit B**. Im Modell sind 25 eingestellt.
 
 **Melde mir:** für 15, 25 und 35 jeweils A, B oder C.
 
-## Offen 2: Torriegel kurz ausprobieren
+## Torriegel (erledigt)
 
 ![So funktioniert der Torriegel](images/torriegel.jpg)
 
@@ -130,5 +129,4 @@ auffällt, sag mir Bescheid.
 
 ## T2: Bodensockel und Bodenverzahnung (erledigt)
 
-Dein Ergebnis: Sockel 15, Verzahnung 15. Beides ist eingebaut. Den Dachzapfen-Test aus T2
-beschreibt „Offen 1“ oben.
+Dein Ergebnis: Sockel 15, Verzahnung 15, Dachzapfen 15. Alles ist eingebaut.

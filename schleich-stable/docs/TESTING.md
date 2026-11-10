@@ -8,10 +8,10 @@ instructions in German: [TESTANLEITUNG.md](TESTANLEITUNG.md).
 | Plate | Files | Contents | Status |
 |---|---|---|---|
 | T1 | (printed) | 3 hinge post stubs 1.75/1.85/1.95, 3 hinge leaves 2.15/2.30/2.45, 3 click-latch pairs | **printed Nov 2026:** leaf 2.15 best (larger too loose) -> `bore_free = 2.15`; all three post stubs too tight |
-| T2 | (printed) | socket plate, tile interlock, roof-tab plate (+ groove post and tab key from T3a) | **printed Nov 2026:** socket 15 -> `fit_socket = 0.15`, tiles 15 -> `fit_tile = 0.15`; roof tabs not tested yet |
+| T2 | (printed) | socket plate, tile interlock, roof-tab plate (+ groove post and tab key from T3a) | **printed Nov 2026:** socket 15 -> `fit_socket = 0.15`, tiles 15 -> `fit_tile = 0.15`, roof tabs 15 -> `fit_tab = 0.15` |
 | T3a | (printed) | 5 post stubs 2.05 ... 2.45, groove post, wall strip, tab key | **printed Nov 2026:** post stub 2.05 best -> `bore_post = 2.05`; groove 15 best -> `fit_slide_post = 0.15` |
 | T3b | (printed) | door leaf 2.15, gable-wing window section + casement + stand, window pin clamps 1.85/1.95/2.05 | **printed Nov 2026:** stand fits (plinth groove 0.20 stays); pin clamp 1.95 best -> `bore_win_hold = 1.95` |
-| T4 | (printed) | drop-latch test rig (frame, door, lever; stand from T3b), main-door bolt loops + bolt bar | **printed Nov 2026:** drop latch works; bolt sliding not explicitly reported |
+| T4 | (printed) | drop-latch test rig (frame, door, lever; stand from T3b), main-door bolt loops + bolt bar | **printed Nov 2026:** drop latch works; bolt slides |
 
 T1-T3 were printed with the Bambu Studio presets in `slicer/bambu_studio/`. Since 10 Nov 2026
 the user sets up the slicer himself; the remaining tests should use the settings of the parts
@@ -30,7 +30,7 @@ Fit parameters and the coupons that set them:
 | `fit_slide` | flat plinth / floor groove | T3b stand (fits at 0.20) |
 | `fit_socket` | flat floor, upright post | T2 socket plate + T3a groove post |
 | `fit_tile` | flat floor | T2 tiles |
-| `fit_tab` | flat | T2 tab plate + T3a tab key |
+| `fit_tab` | flat | T2 tab plate + T3a tab key (confirmed 0.15) |
 
 The sections below describe the original T1/T2 coupons, which are reused in T2/T3.
 

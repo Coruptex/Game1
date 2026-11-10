@@ -30,14 +30,14 @@ Stand 10. November 2026, mit deinen Testergebnissen aus T1 bis T4. Es gibt drei 
 | Pfostensockel | 12 Pfosten in den Bodenplatten | **0,15 mm je Seite** (vorher 0,20) | ja | **T2: 15 am besten (deine Meldung)** | **bestätigt** |
 | Wandnuten in den Pfosten | Wände, Giebelwände, Trennwände, Boxenfronten, Giebelfelder | **0,15 mm je Seite** (vorher 0,20), 0,5 mm Luft am Nutgrund | ja, Spalt 0,15 mm; jede Wand lässt sich senkrecht herausziehen | **T3a: 15 am besten (deine Meldung)** | **bestätigt** |
 | Wandnut im Sockel und Boden | Unterkanten der Wände | 0,20 mm je Seite | ja | **T3b: Wandstück passt in den Fuß (gleiche Nut, deine Meldung)** | **bestätigt** |
-| Dachzapfen | Zapfen der Giebelwände und Trennwände in den Taschen der Seitendächer, Zapfen der Boxenfronten im Mitteldach | 0,25 mm je Seite | ja | T2 (Zapfenplatte) + Wandzapfen-Stück aus T3a, Anleitung mit Bild in der Testanleitung | **Test offen** |
+| Dachzapfen | Zapfen der Giebelwände und Trennwände in den Taschen der Seitendächer, Zapfen der Boxenfronten im Mitteldach | **0,15 mm je Seite** (vorher 0,25) | ja; Dach weiter verriegelt (Seitendach sperrt nach 1,25 mm) | **T2: 15 am besten (deine Meldung)** | **bestätigt** |
 | Dachverriegelung | Sperrrippen der Seitendächer unter dem Mitteldach | 1,0 mm | ja (sperrt nach 1,25 mm) | nicht nötig (große Luft) | rechnerisch geprüft |
 | Türscharnier, Türseite | Tore, Boxentüren (flach gedruckt, Tropfenloch) | Loch **2,15 mm** auf 1,75-mm-Stift | ja | **T1: 2,15 am besten (deine Meldung)** | **bestätigt** |
 | Türscharnier, Pfostenseite | stehend gedruckte Pfosten | Loch **2,05 mm** | ja (Stift läuft frei durch) | **T3a: 2,05 am besten (deine Meldung)** | **bestätigt** |
 | Scharnier zusammengebaut | Pfosten + Tür + Stift | 0,8 mm zwischen den Augen, 0,6 mm seitlich | ja, frei bis 105 Grad (Tore) bzw. 90 bis 105 Grad (Boxentüren) | T3a Test 2: kein eigenes Ergebnis gemeldet | rechnerisch geprüft, beide Lochgrößen einzeln bestätigt |
 | Fensterscharnier | Fensterflügel an der Giebelwand | Flügel 2,15, Wandaugen unten 2,15, oben **1,95 (klemmt)** | ja: frei von 0 bis 175 Grad, kleinster Abstand 0,5 mm | **T3b: Klemmstück 1,95 am besten (deine Meldung)**; Schwenktest am Fenster-Teststück nicht gemeldet | Klemmloch **bestätigt**, Schwenken rechnerisch geprüft |
 | Boxentür-Verschluss | **Fallriegel** (seit 10. November eingebaut) | Kerbe 1,25 mm je Seite, 0,8 mm vor dem T-Kopf | ja, an der echten Boxentür simuliert (siehe [VERSCHLUSS.md](VERSCHLUSS.md)) | **T4: funktioniert (deine Meldung)** | **bestätigt** |
-| Tor-Riegel | Riegel durch die Schlaufen der Torflügel | 0,3 mm je Seite | ja, Spalt 0,3 mm | T4 (Riegelplatte): gedruckt, Gleiten noch nicht ausdrücklich gemeldet | **kurz ausprobieren** |
+| Tor-Riegel | Riegel durch die Schlaufen der Torflügel | 0,3 mm je Seite | ja, Spalt 0,3 mm | **T4: gleitet (deine Meldung)** | **bestätigt** |
 | Stift-Sicherung | Tor- und Boxentürstifte stehen auf dem Boden, oben blind; Fensterstift oben geklemmt, unten blind | – | ja | Fensterstift: T3b | Fenster bestätigt, Türen rechnerisch geprüft |
 
 **Hinweis zu deinen eigenen Druckeinstellungen:** Die bestätigten Werte stammen aus Drucken mit
@@ -58,5 +58,5 @@ Die Tabelle der geplanten Luftspalte zwischen allen Nachbarteilen steht in
    eingetragen; die 6 Bodenplatten sind neu. Die Aussparungen des Mitteldachs um die
    Mittelpfosten hingen bisher am selben Wert wie die Sockel; sie haben jetzt einen eigenen Wert
    und bleiben bei 0,20 mm. Fallriegel durch T4 bestätigt.
-3. **Noch offen:** Dachzapfen (Zapfenplatte) und ein kurzer Gleittest des Torriegels. Passt beim
-   Dachzapfen ein anderer Wert besser, schicke ich dir die Dächer und Wände neu.
+3. **Erledigt (10. November, final):** Dachzapfen 0,15 (T2) eingetragen, die 3 Dächer sind neu.
+   Torriegel gleitet (T4). Damit ist jede Passung durch einen deiner Testdrucke bestätigt.

@@ -31,6 +31,7 @@ fl_peg_d  = 4.0;            // pivot peg
 fl_hole_d = 4.8;            // hub bore: vertical hole in a flat print, prints ~0.3 under size
 fl_boss_d = 9;              // boss under the lever (lifts it above the door trims)
 fl_ax     = 0.6;            // axial play of the lever on its peg
+fl_stop_out = 2.2;          // rest stop: reach beyond the lever front face (+ fl_ax)
 fl_key_r  = 3.6;            // reach of the one-sided key on the peg (radius)
 fl_key_w  = 3.0;            // key width
 fl_px_in  = 13;             // pivot: distance from the door's free edge
@@ -101,8 +102,10 @@ module fl_door_hardware(px, py, t) {
             translate([0, 0, zk + fl_key_r - fl_peg_d / 2]) linear_extrude(0.8)
                 intersection() { circle(r = fl_key_r, $fn = 48); translate([-fl_key_w / 2, -fl_peg_d / 2 + 0.3]) square([fl_key_w, fl_key_r + 2]); }
         }
-        // rest stop under the arm: holds the lever level when the door is open
-        translate([6, -fl_h / 2 - 3.5, t - 0.7]) cube([4, 3.5, fl_lift + fl_t - 0.4 + 0.7]);
+        // rest stop under the arm: holds the lever level when the door is open.
+        // It reaches fl_stop_out beyond the lever's front face (incl. the axial
+        // play), so a lever that tilts on its peg cannot slip past it (T4, user, Nov 2026)
+        translate([5.5, -fl_h / 2 - 4, t - 0.7]) cube([5, 4, fl_lift + fl_t + fl_ax + fl_stop_out + 0.7]);
     }
 }
 

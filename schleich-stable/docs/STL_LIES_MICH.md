@@ -9,7 +9,7 @@ steht in [TEILELISTE.md](TEILELISTE.md).
 
 | Ordner | Inhalt |
 |---|---|
-| `1_TEST_noch_offen/` | die Testteile T2 und T4 (alle gedruckt; offen ist nur noch der Dachzapfen-Test mit Teilen, die du schon hast) |
+| `Aufbauanleitung.pdf` | Zusammenbau Schritt für Schritt, mit Bildern |
 | `2_PRODUKTION/1_Boden_hellgrau/` | 6 Bodenplatten |
 | `2_PRODUKTION/2_Pfosten_schwarz/` | `Einzeln/` (12 Pfosten) **oder** `Pfostenblock/` (dieselben 12 Pfosten in zwei Blöcken) |
 | `2_PRODUKTION/3_Waende_weiss_mit_schwarzen_Leisten/` | je Wand zwei Dateien: `..._Wand_weiss` und `..._Leisten_schwarz` |
@@ -22,12 +22,10 @@ Dateien liegen schon richtig herum: flache Teile mit der Schauseite nach oben, P
 Bitte nicht drehen oder kippen. Auf dem Bett verschieben und um die senkrechte Achse drehen ist
 in Ordnung.
 
-## Reihenfolge
+## Reihenfolge und Aufbau
 
-T1 bis T4 sind gedruckt und eingearbeitet. Du kannst alles drucken, in beliebiger Reihenfolge.
-Einzige Ausnahme: Den **Dachzapfen-Test** (Zapfenplatte + Wandzapfen-Stück, beide hast du schon)
-mach bitte vor den Dächern, siehe [TESTANLEITUNG.md](TESTANLEITUNG.md). Passt eine andere Tasche
-besser als 25, schicke ich dir die Dächer und Wände neu.
+Alle Tests sind erledigt, du kannst alles drucken, in beliebiger Reihenfolge. Wie du den Stall
+zusammenbaust, zeigt die **`Aufbauanleitung.pdf`** Schritt für Schritt mit Bildern.
 
 ## Wände in Weiß mit schwarzen Leisten
 
@@ -84,7 +82,7 @@ Durchfluss oder eine Lochkompensation können eine Passung enger oder lockerer m
 | Pfosten | 0,24 mm | 2 | nur unter den Scharnieraugen | 8 mm einzeln, 5 mm am Block |
 | Türen, Fensterflügel, Hebel, Giebelwände, Boxenfronten | 0,20 mm | 2 | keine | Fensterflügel 3 mm |
 | Seitenwände, Trennwände, Giebelfelder | 0,24 mm | 2 | keine | – |
-| Boden, Dach | 0,28 mm; Sockel und Verzahnung mit deinen Einstellungen bestätigt (T2) | 2 | keine | Mitteldach 5 mm |
+| Boden, Dach | 0,28 mm; Sockel, Verzahnung und Dachzapfen mit deinen Einstellungen bestätigt (T2) | 2 | keine | Mitteldach 5 mm |
 
 ## Stifte
 

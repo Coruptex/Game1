@@ -1,5 +1,21 @@
 # Änderungsliste (8. bis 10. November 2026)
 
+## Finale Version (10. November)
+
+* **Dachzapfen** 0,15 mm Luft je Seite (T2 „15“; vorher 0,25). Neu sind dadurch die
+  **3 Dächer** (Taschen für die Zapfen). Nachgeprüft: Das Mitteldach hält die Seitendächer
+  weiter fest, ein Seitendach lässt sich erst nach Abnehmen des Mitteldachs abheben.
+* **Torriegel** gleitet (T4), bleibt unverändert.
+* **Fallriegel, Anschlag unter dem Hebel** (dein Hinweis): Er ragt jetzt 2,8 mm über die
+  Vorderseite des Hebels hinaus (vorher endete er 0,4 mm davor) und ist 5 statt 4 mm breit.
+  Ein Hebel, der auf seinem Zapfen etwas kippelt, rutscht nicht mehr daran vorbei. Am Rechner
+  geprüft: auch bei 15 Grad Schiefstand und 0,6 mm Spiel liegt der Hebel auf dem Anschlag.
+  Einrasten, Sperren und Abziehen funktionieren wie vorher, die Tür schwenkt wie vorher. Neu
+  ist dadurch die **Boxentür** (4 Stück).
+* Damit ist **jede Passung durch einen deiner Testdrucke bestätigt**.
+* Neu: **Aufbauanleitung als PDF** (`Aufbauanleitung.pdf`), Schritt für Schritt mit Bildern.
+
+
 ## T2 und T4 eingearbeitet (10. November, später)
 
 * **Pfostensockel** in den Bodenplatten: 0,15 mm Luft je Seite (T2 „15“; vorher 0,20).

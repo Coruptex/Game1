@@ -29,8 +29,9 @@ fit_slide_post = 0.15;
 // Clearance per side for panel bottoms in the plinth / floor grooves (flat
 // prints). The T3b stand uses this groove and fitted at 0.20.
 fit_slide  = 0.20;
-// Clearance per side for roof tabs in roof pockets
-fit_tab    = 0.25;
+// Clearance per side for roof tabs in roof pockets.
+// Test T2 (Nov 2026, tab plate 15 / 25 / 35): 0.15 fitted best. Confirmed.
+fit_tab    = 0.15;
 // Clearance per side for posts in floor sockets.
 // Test T2 (Nov 2026, socket plate 15 / 20 / 30): 0.15 fitted best. Confirmed.
 fit_socket = 0.15;
