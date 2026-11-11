@@ -26,8 +26,10 @@ module stall_quad(q) {
 instances = [
     ["floor_LF", "floor_LF", "floor"], ["floor_AF", "floor_AF", "floor"], ["floor_RF", "floor_RF", "floor"],
     ["floor_LB", "floor_LB", "floor"], ["floor_AB", "floor_AB", "floor"], ["floor_RB", "floor_RB", "floor"],
-    ["post_corner_FL", "post_corner", "post"], ["post_corner_FR", "post_corner", "post"],
-    ["post_corner_BL", "post_corner", "post"], ["post_corner_BR", "post_corner", "post"],
+    // corner posts: since their tops follow the side-roof pitch (8 Nov 2026), FR and BL
+    // are MIRROR images of FL and BR (tools/check_instances.py) -> two print parts
+    ["post_corner_FL", "post_corner_A", "post"], ["post_corner_FR", "post_corner_B", "post"],
+    ["post_corner_BL", "post_corner_B", "post"], ["post_corner_BR", "post_corner_A", "post"],
     ["post_sidemid_FL", "post_sidemid", "post"], ["post_sidemid_FR", "post_sidemid", "post"],
     ["post_jamb_FL", "post_jamb_L", "post"], ["post_jamb_BR", "post_jamb_L", "post"],
     ["post_jamb_FR", "post_jamb_R", "post"], ["post_jamb_BL", "post_jamb_R", "post"],
@@ -111,7 +113,8 @@ module inst(n, ang = 0) {
 // unique printable parts, in print orientation
 module print_part(p) {
     if (has(p, "floor_")) floor_tile(tail(p, 6));
-    else if (p == "post_corner") post_print("corner_FL");
+    else if (p == "post_corner_A") post_print("corner_FL");
+    else if (p == "post_corner_B") post_print("corner_FR");
     else if (p == "post_sidemid") post_print("sidemid_FL");
     else if (p == "post_jamb_L") post_print("jamb_FL");
     else if (p == "post_jamb_R") post_print("jamb_FR");

@@ -25,7 +25,7 @@ include <parts/post_blocks.scad>
 include <instances.scad>
 
 /* [Selection] */
-part = "assembly"; // [assembly, floor_LF, floor_AF, floor_RF, floor_LB, floor_AB, floor_RB, post_corner, post_sidemid, post_jamb_L, post_jamb_R, post_mid, side_wall, gable_wing_A, gable_wing_B, partition, stall_front, pediment, main_leaf_A, main_leaf_B, bolt_bar, stall_door, casement_A, casement_B, roof_central, roof_side_A, roof_side_B]
+part = "assembly"; // [assembly, floor_LF, floor_AF, floor_RF, floor_LB, floor_AB, floor_RB, post_corner_A, post_corner_B, post_sidemid, post_jamb_L, post_jamb_R, post_mid, side_wall, gable_wing_A, gable_wing_B, partition, stall_front, pediment, main_leaf_A, main_leaf_B, bolt_bar, stall_door, casement_A, casement_B, roof_central, roof_side_A, roof_side_B]
 mode = "print";    // [print, placed]
 /* [Assembly view] */
 show_roof = true;

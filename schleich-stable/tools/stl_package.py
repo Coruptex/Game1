@@ -33,7 +33,8 @@ NAMES = {
     "floor_LB": ("Boden_links_hinten", "", "", ""),
     "floor_AB": ("Boden_Gang_hinten", "", "", ""),
     "floor_RB": ("Boden_rechts_hinten", "", "", ""),
-    "post_corner": ("Eckpfosten", "", "8 mm", "stehend; oder im Pfostenblock außen"),
+    "post_corner_A": ("Eckpfosten_A", "", "8 mm", "vorne links + hinten rechts; Spiegelbild von B; oder im Pfostenblock außen"),
+    "post_corner_B": ("Eckpfosten_B", "", "8 mm", "vorne rechts + hinten links; Spiegelbild von A; oder im Pfostenblock außen"),
     "post_sidemid": ("Seitenpfosten", "", "8 mm", "stehend; oder im Pfostenblock außen"),
     "post_jamb_L": ("Torpfosten_mit_Boxentuer", "unter den Scharnieraugen", "8 mm", "stehend; oder im Pfostenblock Gang"),
     "post_jamb_R": ("Torpfosten_ohne_Boxentuer", "unter den Scharnieraugen", "8 mm", "stehend; oder im Pfostenblock Gang"),
@@ -56,7 +57,7 @@ NAMES = {
     "roof_side_B": ("Seitendach_rechts", "", "", ""),
 }
 BLOCKS = [("posts_block_short", "Pfostenblock_aussen_4_Eck_2_Seitenpfosten", "", "5 mm",
-           "statt 4 Eckpfosten + 2 Seitenpfosten"),
+           "statt 2 Eckpfosten A + 2 Eckpfosten B + 2 Seitenpfosten"),
           ("posts_block_hinge", "Pfostenblock_Gang_6_Pfosten_mit_Scharnieraugen", "unter den Scharnieraugen", "5 mm",
            "statt 2 + 2 Torpfosten + 2 Mittelpfosten")]
 # open tests: (source in stl/, file name, subfolder)

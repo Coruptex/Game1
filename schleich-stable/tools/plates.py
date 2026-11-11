@@ -47,7 +47,7 @@ GROUPS = [
     # upright posts: wide spacing so a post that comes loose on the moving
     # bed (A1 = bed slinger) cannot knock over its neighbours
     ("Pfosten_kurz", "Eck- und Seitenpfosten (ohne Scharniere)", "black", "posts", 34,
-     [("post_corner", 4), ("post_sidemid", 2)], "frei", ""),
+     [("post_corner_A", 2), ("post_corner_B", 2), ("post_sidemid", 2)], "frei", ""),
     ("Waende", "Seitenwände, Trennwände, Giebelfelder", "white", "walls", GAP,
      [("side_wall", 4), ("partition", 2), ("pediment", 2)], "frei", "trim"),
     ("Mitteldach", "Mitteldach", "roof", "central_roof", GAP, [("roof_central", 1)], "frei", ""),

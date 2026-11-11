@@ -32,7 +32,7 @@ LIGHT = Color(0.94, 0.94, 0.94)
 # code -> (name, count)
 PARTS = {"B1": ("Boden links vorne", 1), "B2": ("Boden Gang vorne", 1), "B3": ("Boden rechts vorne", 1),
          "B4": ("Boden links hinten", 1), "B5": ("Boden Gang hinten", 1), "B6": ("Boden rechts hinten", 1),
-         "P1": ("Eckpfosten", 4), "P2": ("Seitenpfosten", 2), "P3": ("Torpfosten mit Boxentür", 2),
+         "P1A": ("Eckpfosten A", 2), "P1B": ("Eckpfosten B", 2), "P2": ("Seitenpfosten", 2), "P3": ("Torpfosten mit Boxentür", 2),
          "P4": ("Torpfosten ohne Boxentür", 2), "P5": ("Mittelpfosten", 2),
          "W1": ("Seitenwand", 4), "W2": ("Trennwand", 2), "W3": ("Giebelwand A", 2), "W4": ("Giebelwand B", 2),
          "W5": ("Boxenfront", 4), "W6": ("Giebelfeld über dem Tor", 2),
@@ -50,8 +50,9 @@ STEPS = [
          badges=["2×", "2×", "2×"],
          parts=[("P3", 2), ("P4", 2), ("P5", 2), ("T1", 2), ("T2", 2), ("T3", 4), ("S1", 4), ("S2", 4)],
          hint="Tür so halten, dass ihre Augen in den Lücken der Pfostenaugen sitzen. Stift von unten durch alle Augen schieben."),
-    dict(n=3, title="Pfosten in den Boden stecken", scenes=["s03_pfosten"], parts=[("P1", 4), ("P2", 2)],
-         hint="Jeder Pfosten in seinen Sockel. Die Nuten zeigen zu den Wänden. Die Türen hängen schon dran."),
+    dict(n=3, title="Pfosten in den Boden stecken", scenes=["s03_pfosten"], parts=[("P1A", 2), ("P1B", 2), ("P2", 2)],
+         hint="Vor einem Tor stehend: links Eckpfosten A, rechts Eckpfosten B (an beiden Toren gleich). Die Schräge oben "
+              "steigt zur Stallmitte an, die Nuten zeigen zu den Wänden."),
     dict(n=4, title="Seitenwände und Trennwände", scenes=["s04_waende"], parts=[("W1", 4), ("W2", 2)],
          hint="Von oben in die Nuten der Pfosten schieben. Die Fensterleisten zeigen nach außen."),
     dict(n=5, title="Giebelwände", scenes=["s05_giebel"], parts=[("W3", 2), ("W4", 2)],

@@ -75,10 +75,12 @@ will rest on the floor, which keeps them in.
 ## 3. Posts
 
 Push all 12 posts into their sockets: 4 corners, 2 side-mid, 4 gable-door posts and 2 mid
-posts, each with its doors. The four corner posts are identical, as are the two side-mid
-posts. Rotate each one so its grooves line up with the plinth or floor grooves of the walls
-that meet it. The sloped top of the corner and side-mid posts then rises toward the
-inside of the stable, parallel to the side roof.
+posts, each with its doors. The corner posts come in two mirror-image versions:
+standing in front of either gate, `post_corner_A` goes at the left corner and `post_corner_B`
+at the right corner. The two side-mid posts are identical. Rotate each post so its grooves
+line up with the plinth or floor grooves of the walls that meet it. The sloped top of the
+corner and side-mid posts then rises toward the inside of the stable, parallel to the side
+roof.
 
 * `post_jamb_L` goes at **front-left** and **back-right**. `post_jamb_R` goes at front-right
   and back-left. The main door faces outward. On the jamb_L posts the stall door faces along

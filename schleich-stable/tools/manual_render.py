@@ -47,7 +47,7 @@ def item(path, off=(0, 0, 0), new=False, code=None, arrow=None, num=None):
 # ------------------------------------------------------------------ parts
 FLOOR = ["floor_LF", "floor_AF", "floor_RF", "floor_LB", "floor_AB", "floor_RB"]
 # post -> (code, things hung on it before it goes in)
-POSTS = {"post_corner_FL": ("P1", []), "post_corner_FR": ("P1", []), "post_corner_BL": ("P1", []), "post_corner_BR": ("P1", []),
+POSTS = {"post_corner_FL": ("P1A", []), "post_corner_FR": ("P1B", []), "post_corner_BL": ("P1B", []), "post_corner_BR": ("P1A", []),
          "post_sidemid_FL": ("P2", []), "post_sidemid_FR": ("P2", []),
          "post_jamb_FL": ("P3", ["main_leaf_FL", "SD:FL", "pin_main_FL", "pin_stall_FL"]),
          "post_jamb_BR": ("P3", ["main_leaf_BR", "SD:BR", "pin_main_BR", "pin_stall_BR"]),
@@ -146,7 +146,7 @@ SCENES = {
 
 # thumbnails: code -> (one placed instance, extra files drawn with it)
 THUMBS = {"B1": ["floor_LF"], "B2": ["floor_AF"], "B3": ["floor_RF"], "B4": ["floor_LB"], "B5": ["floor_AB"], "B6": ["floor_RB"],
-          "P1": ["post_corner_FL"], "P2": ["post_sidemid_FL"], "P3": ["post_jamb_FL"], "P4": ["post_jamb_FR"], "P5": ["post_mid_FL"],
+          "P1A": ["post_corner_FL"], "P1B": ["post_corner_FR"], "P2": ["post_sidemid_FL"], "P3": ["post_jamb_FL"], "P4": ["post_jamb_FR"], "P5": ["post_mid_FL"],
           "W1": ["side_wall_FL"], "W2": ["partition_L"], "W3": ["gable_wing_FL"], "W4": ["gable_wing_FR"],
           "W5": ["stall_front_FL"], "W6": ["pediment_F"],
           "T1": ["main_leaf_FL"], "T2": ["main_leaf_FR"], "T3": ["MS:sd_closed_FL"], "T4": ["MS:lever_down"], "T5": ["bolt_bar_F"],

@@ -28,8 +28,9 @@ pb_flange  = [8, 0.6]; // spine foot: width, height
 pb_debug   = "none";  // checks: "posts" / "aids" (spine + fins, no teeth) / "teeth"
 
 // [print part, groove face used (+x/-x/+y/-y), groove start z (print frame)]
-pb_short = [["post_corner", "+x", 20], ["post_sidemid", "+x", 3], ["post_corner", "+x", 20],
-            ["post_corner", "+x", 20], ["post_sidemid", "+x", 3], ["post_corner", "+x", 20]];
+// corner post B is the mirror image of A: its long groove faces -x
+pb_short = [["post_corner_A", "+x", 20], ["post_sidemid", "+x", 3], ["post_corner_B", "-x", 20],
+            ["post_corner_A", "+x", 20], ["post_sidemid", "+x", 3], ["post_corner_B", "-x", 20]];
 pb_hinge = [["post_jamb_L", "-x", 20], ["post_mid", "-x", 3], ["post_jamb_R", "+x", 20],
             ["post_jamb_L", "-x", 20], ["post_mid", "-x", 3], ["post_jamb_R", "+x", 20]];
 

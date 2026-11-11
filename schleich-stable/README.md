@@ -18,7 +18,7 @@ mymodelhorse.com, but it is an original design and is not affiliated with Schlei
 | Aisle / main door | 113 mm aisle; arched double doors 100 mm wide, 160 mm clear at the crown |
 | Stall doors | 72 x 125 mm opening (62 mm passage when open) with neck yoke; latch: gravity drop latch (lever on a peg, T-catch on the stall front; confirmed with test piece T4); left and right doors hinge at opposite ends, so all open fully in the narrow aisle |
 | Moving parts | 4 main door leaves (slide bolt), 4 stall doors, 4 casement windows (hinge outside the window frame, which runs all the way round), 3 lift-off roof units (the central roof locks the side roofs) |
-| Parts | 55 printed pieces from 27 STL files (plus two optional post blocks that print the 12 posts as two stiff groups); 12 hinge pins cut from 1.75 mm filament |
+| Parts | 55 printed pieces from 28 STL files (plus two optional post blocks that print the 12 posts as two stiff groups); 12 hinge pins cut from 1.75 mm filament |
 | Print | about **2.3 kg PLA**; delivered as **STL files** (German names, print orientation, two-colour walls as separate wall/trim files), slicer settings chosen by the user |
 
 This is the compact version (v2). The first, full-size version was 565 x 357 x 329 mm with

@@ -17,7 +17,7 @@ from build import read_instances, unique_parts  # noqa: E402
 SUPPORT = {"post_jamb_L", "post_jamb_R", "post_mid", "plate_T1"}
 SUPPORT_ARGS = ["--support-material", "--support-material-auto", "--support-material-style", "organic",
                 "--support-material-threshold", "30", "--support-material-contact-distance", "0.2"]
-BRIM = {"post_corner": 8, "post_sidemid": 8, "post_jamb_L": 8, "post_jamb_R": 8, "post_mid": 8,
+BRIM = {"post_corner_A": 8, "post_corner_B": 8, "post_sidemid": 8, "post_jamb_L": 8, "post_jamb_R": 8, "post_mid": 8,
         "roof_central": 5, "plate_T1": 3, "plate_T2": 3}
 
 

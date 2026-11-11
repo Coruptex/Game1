@@ -1,4 +1,22 @@
-# Änderungsliste (8. bis 10. November 2026)
+# Änderungsliste (8. bis 11. November 2026)
+
+## Eckpfosten in zwei Ausführungen (11. November)
+
+* **Fehler gefunden (dein Video):** Seit die Eckpfosten oben der Dachschräge folgen (8. November),
+  sind die vier Ecken nicht mehr gleich. Vorne rechts und hinten links braucht es das
+  **Spiegelbild**. Mit vier gleichen Pfosten passt dort entweder die Schräge oder die Wandnut,
+  nie beides. Mein Fehler: Ich hatte nach der Schräge nicht geprüft, ob die 4 Ecken noch ein
+  einziges Druckteil sein können.
+* **Jetzt:** `Eckpfosten_A_2x` (vor einem Tor stehend: linke Ecke) und `Eckpfosten_B_2x`
+  (rechte Ecke). Der Pfostenblock außen enthält 2 × A und 2 × B.
+* **Von deinen 4 gedruckten Eckpfosten** passen 2 als A. Neu drucken musst du nur
+  **2 × Eckpfosten B**.
+* **Alle anderen Teile geprüft**, mit einem neuen Prüfprogramm (`tools/check_instances.py`):
+  Für jedes der 51 eingebauten Teile wird getestet, ob es durch bloßes Drehen aus seiner
+  Druckdatei entsteht. Ergebnis: Nur die Eckpfosten waren betroffen. Bei den Seitenwänden liegt
+  an einem Ende eine 0,55 mm tiefe Zierfuge zwischen zwei Brettern an der anderen Stelle; die
+  Wand passt an allen vier Stellen genau gleich.
+
 
 ## Finale Version (10. November)
 
