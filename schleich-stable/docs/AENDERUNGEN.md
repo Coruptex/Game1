@@ -1,4 +1,18 @@
-# Änderungsliste (8. bis 11. November 2026)
+# Änderungsliste (8. bis 13. November 2026)
+
+## Sperrrippen am Seitendach verstärkt (13. November)
+
+* **Dein Hinweis:** Die zwei Rippen oben an jedem Seitendach brechen leicht ab. Sie verriegeln das
+  Seitendach: Solange das Mitteldach aufliegt, stoßen sie nach 1,25 mm Anheben an dessen
+  Unterseite.
+* **Jetzt:** 4 statt 2,4 mm dick, 36 statt 30 mm lang mit schrägen Enden, auf beiden Seiten ein
+  breiter schräger Fuß. Die Seite, die verriegelt, sitzt genau wie vorher. Die Ziegelfugen
+  schneiden nicht mehr in den Fuß der Rippe (vorher entstand dort eine kleine Kerbe).
+* **Geprüft:** Verriegelung wie vorher (Seitendach sperrt nach 1,25 mm, ohne Mitteldach frei),
+  keine Überschneidung mit anderen Teilen, keine Überhänge über 20 Grad, also ohne Stützen
+  druckbar. Das Druckteil wird 1,9 mm länger (194 × 243 mm), passt weiter auf das A1-Bett.
+* **Neu:** `Seitendach_links_1x.stl` und `Seitendach_rechts_1x.stl`.
+
 
 ## Eckpfosten in zwei Ausführungen (11. November)
 

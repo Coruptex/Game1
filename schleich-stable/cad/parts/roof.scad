@@ -119,11 +119,17 @@ s_x1   = X1 - PW2 - 0.5;                           // upper edge, just clear of 
 s_len  = (s_x1 - s_xe) / cos(pitch_side);
 s_y0   = Y0 - wall_t / 2 - overhang_gable;
 s_y1   = Y2 + wall_t / 2 + overhang_gable;
-// lock fins: blades under the central eave, lock_gap below its underside
+// lock fins: blades under the central eave, lock_gap below its underside.
+// Reinforced 13 Nov 2026 (user: "they break off quickly"): 4 mm instead of
+// 2.4 mm thick, flared feet on both sides, 36 mm long with 45 deg ends. The
+// outer face (the one that locks) stays where it was.
 lock_gap = 1.0;
-lock_x   = c_xe + 3;                 // 3 mm inside the central eave edge
-lock_t   = 2.4;
-lock_len = 30;
+lock_x   = c_xe + 3;                 // centre of the OLD 2.4 mm blade (outer face = lock_x - 1.2)
+lock_t   = 4.0;                      // blade thickness, grows inward from the outer face
+lock_len = 36;                       // length at the foot (ends chamfered 45 deg)
+lock_foot_out = 4.0;                 // outer foot: reach along the roof, flares from 3 mm below the top
+lock_foot_in  = [1.2, 3.0];          // inner foot: reach, height (steep: the side roof prints 20 deg tilted,
+                                     // this face then leans about 42 deg -> no support)
 lock_y   = [(Y0 + Y1) / 2, (Y1 + Y2) / 2];   // middle of each stall
 s_row  = 9;
 // placement of the front-left panel: local x up the slope, y = world Y, z normal
@@ -139,25 +145,41 @@ module s_tab_pockets_world() {
 // lock fins in world coordinates: vertical blades standing in the side
 // roof, top edge parallel to the central roof's underside
 module s_lock_fins_world() {
-    xa = lock_x - lock_t / 2; xb = lock_x + lock_t / 2;
-    for (yc = lock_y) translate([0, yc + lock_len / 2, 0]) rotate([90, 0, 0]) linear_extrude(lock_len)
-        polygon([[xa, z_side_roof(xa) + 1.0], [xb, z_side_roof(xb) + 1.0],
-                 [xb, z_c_roof(xb) - lock_gap], [xa, z_c_roof(xa) - lock_gap]]);
+    xa = lock_x - 1.2;                       // outer (locking) face, unchanged
+    xb = xa + lock_t;                        // inner face
+    xo = xa - lock_foot_out;                 // outer foot end
+    xi = xb + lock_foot_in[0];               // inner foot end
+    zb = function(x) z_side_roof(x) + 1.0;   // foot line, 1 mm inside the roof slab
+    zt = function(x) z_c_roof(x) - lock_gap; // top line, parallel to the central roof
+    h  = zt(xb) - zb(xb);
+    for (yc = lock_y) intersection() {
+        translate([0, yc + lock_len / 2, 0]) rotate([90, 0, 0]) linear_extrude(lock_len)
+            polygon([[xo, zb(xo)], [xi, zb(xi)], [xb, zb(xb) + lock_foot_in[1]], [xb, zt(xb)],
+                     [xa, zt(xa)], [xa, zt(xa) - 3]]);
+        // 45 deg ends: full length at the foot, shorter at the top
+        translate([xo - 1, 0, 0]) rotate([90, 0, 90]) linear_extrude(xi - xo + 2)
+            polygon([[yc - lock_len / 2, zb(xo) - 2], [yc + lock_len / 2, zb(xo) - 2],
+                     [yc + lock_len / 2, zb(xb) + 2], [yc + lock_len / 2 - (h - 1), zb(xb) + h + 1],
+                     [yc - lock_len / 2 + (h - 1), zb(xb) + h + 1], [yc - lock_len / 2, zb(xb) + 2]]);
+    }
 }
 module side_roof_local() {
     difference() {
         union() {
-            intersection() {
-                shingle_slab(s_len, s_y1 - s_y0, roof_t, tile_step, s_row);
-                // round the exposed eave corners, front and back (child safety)
-                translate([0, 0, -1]) linear_extrude(10) union() {
-                    rrect(s_len, s_y1 - s_y0, 4);
-                    translate([s_len / 2, 0]) square([s_len / 2, s_y1 - s_y0]);
+            // shingle joints only in the slab: they must not notch the lock-fin feet
+            difference() {
+                intersection() {
+                    shingle_slab(s_len, s_y1 - s_y0, roof_t, tile_step, s_row);
+                    // round the exposed eave corners, front and back (child safety)
+                    translate([0, 0, -1]) linear_extrude(10) union() {
+                        rrect(s_len, s_y1 - s_y0, 4);
+                        translate([s_len / 2, 0]) square([s_len / 2, s_y1 - s_y0]);
+                    }
                 }
+                shingle_joints(s_len, s_y1 - s_y0, s_row);
             }
             s_unplace() s_lock_fins_world();
         }
-        shingle_joints(s_len, s_y1 - s_y0, s_row);
         s_unplace() s_tab_pockets_world();
         // drip edge: soften the eave
         translate([-1, -1, -1]) rotate([0, 45, 0]) cube([1.6, 400, 1.6]);
